@@ -1,0 +1,10 @@
+# Don't commit compiled code, only source ts files.
+app/*.js
+app/*.map
+app/**/*.js
+app/**/*.map
+
+# Don't commit files that can be regenerated easily
+/node_modules/*
+/typings/*
+npm-debug.log

@@ -35,6 +35,7 @@
     "@types/core-js": "^0.9.34",
     "@types/node": "^6.0.45",
     "concurrently": "^3.0.0",
+		"less":"^2.7.1",
     "lite-server": "^2.2.2",
     "typescript": "^2.0.3",
 		"minifier":"^0.8.0"

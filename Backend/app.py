@@ -1,4 +1,5 @@
 #!env/bin/python
+
 from flask import Flask, request, jsonify
 from mentii import user_ctrl
 
@@ -12,6 +13,11 @@ def index():
 def register():
     response = user_ctrl.register(request.json)
     return jsonify(response)
+
+@app.route('/activate/<activationid>', methods=['POST'])
+def activate(activationid):
+	response = user_ctrl.activate(activationid)
+	return response
 
 '''
 #Testing reading from the database

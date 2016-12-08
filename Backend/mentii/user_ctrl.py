@@ -24,17 +24,22 @@ def getPassword(json):
     return json['password']
 
 def addUser(email, password):
-	uuid = str(uuid.uuid4())
+	activationid = str(uuid.uuid4())
 	dynamodb = boto3.resource('dynamodb')
 	table = dynamodb.Table('users')
+	#this will change an existing user withthe same email.
+	#TODO:we need enforce uniqueness on email
 	response = table.put_item(
 		Item={
 			'email': email,
 			'password': password,
-			'activationid': uuid
+			'activationid': activationid
 		}
 	)
-	return response
+	#TODO:send email with activation link here
+	#currently this is returning the activationid for testing but once the email
+	#is working it should just return a success message
+	return activationid
 
 def activate(activationid):
 	dynamodb = boto3.resource('dynamodb')

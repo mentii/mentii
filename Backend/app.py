@@ -1,9 +1,18 @@
 #!env/bin/python
 
 from flask import Flask, request, jsonify
+from flask_mail import Mail
 from mentii import user_ctrl
 
 app = Flask(__name__)
+mail = Mail(app)
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'mentiiapp@gmail.com'
+app.config['MAIL_PASSWORD'] = 'SeniorDesign'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail = Mail(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -11,10 +20,10 @@ def index():
 
 @app.route('/register/', methods=['POST'])
 def register():
-    response = user_ctrl.register(request.json)
+    response = user_ctrl.register(request.json, mail)
     return jsonify(response)
 
-@app.route('/activate/<activationid>', methods=['POST'])
+@app.route('/activate/<activationid>', methods=['GET'])
 def activate(activationid):
 	response = user_ctrl.activate(activationid)
 	return response

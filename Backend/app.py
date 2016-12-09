@@ -1,11 +1,14 @@
 #!env/bin/python
 
 from flask import Flask, request, jsonify
+from flask_cors import CORS, cross_origin
 from flask_mail import Mail
 from mentii import user_ctrl
 
 app = Flask(__name__)
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 mail = Mail(app)
+
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'mentiiapp@gmail.com'
@@ -18,7 +21,7 @@ mail = Mail(app)
 def index():
     return "hello from flask"
 
-@app.route('/register/', methods=['POST'])
+@app.route('/register/', methods=['POST', 'OPTIONS'])
 def register():
     response = user_ctrl.register(request.json, mail)
     return jsonify(response)

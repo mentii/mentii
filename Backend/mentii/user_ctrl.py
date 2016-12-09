@@ -12,21 +12,21 @@ def register(jsonData, mailer):
 def validateRegistration(jsonData):
     '''
     Validate the email address and password
-    for a user.  
+    for a user.
     '''
     try:
         email = getEmail(jsonData)
         #Emails must have only one @ and at least one . after the @
         emailRegex = re.compile(r"[^@]+@[^@]+\.[^@]+")
         if not emailRegex.match(email):
-            return False 
+            return False
 
         if isEmailInSystem(email):
             return False
-        
+
         password = getPassword(jsonData)
         #Passwords must be at least 8 characters
-        if len(password) < 8: 
+        if len(password) < 8:
             return False
 
         return True
@@ -61,8 +61,8 @@ def addUser(email, password, mailer):
 
 def sendEmail(email, activationId, mailer):
     '''
-    Create a message and send it from our email to 
-    the passed in email. The message should contain 
+    Create a message and send it from our email to
+    the passed in email. The message should contain
     a link built with the activationId
     '''
     #Build Message
@@ -75,7 +75,7 @@ def isEmailInSystem(email):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('users')
     result = table.get_item(Key={'email': email})
-    #Result is a dictionary that will have the key Item if 
+    #Result is a dictionary that will have the key Item if
     # it was able to find an item.
     return "Item" in result.keys()
 

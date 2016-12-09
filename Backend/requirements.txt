@@ -4,6 +4,7 @@ botocore==1.4.77
 click==6.6
 docutils==0.12
 Flask==0.11.1
+Flask-Cors==3.0.2
 Flask-Mail==0.9.1
 futures==3.0.5
 itsdangerous==0.24

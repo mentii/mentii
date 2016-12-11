@@ -4,15 +4,25 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from flask_mail import Mail
 from mentii import user_ctrl
+import ConfigParser as cp
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 mail = Mail(app)
 
+#Parse any external configuration options
+parser = cp.ConfigParser()
+parser.read("config/prodConfig.ini")
+
+#Email setup
+address = parser.get('EmailData', 'address')
+password = parser.get('EmailData', 'password')
+
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = 'mentiiapp@gmail.com'
-app.config['MAIL_PASSWORD'] = 'SeniorDesign'
+app.config['MAIL_USERNAME'] = address
+app.config['MAIL_DEFAULT_SENDER'] = address
+app.config['MAIL_PASSWORD'] = password
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)

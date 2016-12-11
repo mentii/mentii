@@ -66,7 +66,7 @@ def sendEmail(email, activationId, mailer):
     a link built with the activationId
     '''
     #Build Message
-    msg = Message('Mentii: Thank You for Creating an Account!', sender = 'mentiiapp@gmail.com', recipients=[email])
+    msg = Message('Mentii: Thank You for Creating an Account!', recipients=[email])
     msg.body = "Here is your activationId link: api.mentii.me/activate/{}".format(activationId)
     #Send Email
     mailer.send(msg)
@@ -90,7 +90,7 @@ def activate(activationId):
             #scanResponse is a dictionary that has a list of 'Items'
             items = scanResponse['Items']
             if len(items) != 1:
-                return "Error!!"
+                return "Error!! Could not find an item with that code."
             email = items[0]['email']
         #Update using the email we have
 	response = table.update_item(

@@ -1,0 +1,51 @@
+body {
+  padding-top: 70px;
+}
+
+.navbar-default .navbar-brand {
+  /*TODO: set this color as the brand-primary color*/
+  color: rgb(160, 201, 160);
+}
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-brand:hover:active,
+.navbar-default .navbar-brand:hover:visited,
+.navbar-default .navbar-brand:hover:link {
+  /*TODO: set this color as the brand-primary color*/
+  color: rgb(160, 201, 160);
+}
+
+.navbar-default .navbar-nav>li>a:hover {
+  color: rgb(160, 201, 160);
+}
+
+.header {
+  margin: 0 auto;
+  text-align: center;
+  color: white;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.raleway-font {
+  font-family: 'Raleway', sans-serif;
+}
+
+.open-sans-font {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.text-brand {
+  color: rgb(160, 201, 160);
+}
+
+.welcome {
+  margin-top: 10%;
+  text-align: center;
+}

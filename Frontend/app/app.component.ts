@@ -5,16 +5,9 @@ import { Component } from '@angular/core';
 // import { ROUTER_DIRECTIVES } from '@angular/router';
 
 @Component({
+  moduleId: module.id,
   selector: 'my-app',
-  template: `
-
-            <a [routerLink]="['/']">Home</a>
-            <a [routerLink]="['/registration']">Register</a>
-
-
-    <!-- Router Outlet -->
-    <router-outlet></router-outlet>
-  `,
+  templateUrl: 'app.template.html',
   // Not necessary as we have provided directives using
   // `RouterModule` to root module
   // Tell component to use router directives

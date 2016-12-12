@@ -9,8 +9,9 @@ import { RegistrationComponent } from './registration/registration.component';
 
 // Route Configuration
 export const routes: Routes = [
-  { path: '', component: RootComponent },
+  { path: '', component: RootComponent }, // Application root
   { path: 'register', component: RegistrationComponent }
+  // { path: '**', component: PageNotFoundComponent } // TODO: Page Not Found
 ];
 
 export const routing: ModuleWithProviders = RouterModule.forRoot(routes);

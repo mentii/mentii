@@ -82,11 +82,7 @@ def isEmailInSystem(email):
   #Result is a dictionary that will have the key Item if
   # it was able to find an item.
   result = table.get_item(Key={'email': email}, AttributesToGet=['active'])
-  if 'Item' in result.keys():
-    
-    if 'active' in result['Item'].keys() and result['Item']['active'] == 'T':
-      return True
-  return False
+  return 'Item' in result.keys() and 'active' in result['Item'].keys() and result['Item']['active'] == 'T'
 
 def activate(activationId):
   dynamodb = boto3.resource('dynamodb')

@@ -17,20 +17,13 @@ def validateRegistrationJSON(jsonData):
   Validate that the JSON object contains
   an email and password attributes
   '''
-  try:
-    email = parseEmail(jsonData)
-    password = parsePassword(jsonData)
-  except Exception as e:
-    print e
-    return False
-  
-  return True
+  return 'password' in jsonData.keys() and 'email' in jsonData.keys()
 
 def parseEmail(jsonData):
-  return jsonData['email']
+    return jsonData['email']
 
 def parsePassword(jsonData):
-  return jsonData['password']
+    return jsonData['password']
 
 def isEmailValid(email):
   '''
@@ -38,7 +31,7 @@ def isEmailValid(email):
   format required.
   '''
   emailRegex = re.compile(r"[^@]+@[^@]+\.[^@]+")
-  return emailRegex.match(email)
+  return emailRegex.match(email) is not None
 
 def isPasswordValid(password):
   return len(password) >= 8
@@ -87,6 +80,7 @@ def isEmailInSystem(email):
 def activate(activationId):
   dynamodb = boto3.resource('dynamodb')
   table = dynamodb.Table('users')
+  items = []
 
   #Scan for the email associated with this activationId
   scanResponse = table.scan(FilterExpression=Attr('activationId').eq(activationId))
@@ -95,7 +89,7 @@ def activate(activationId):
     #scanResponse is a dictionary that has a list of 'Items'
     items = scanResponse['Items']
 
-  if len(items) != 1:
+  if not items and 'email' in items[0].keys():
     return "Error!! Could not find an item with that code."
   else:
     email = items[0]['email']
@@ -105,10 +99,9 @@ def activate(activationId):
     Key={
         'email': email,
       },
-      UpdateExpression="SET active = :a, activationId = :aid",
+      UpdateExpression="SET active = :a",
       ExpressionAttributeValues={
-        ':a': 'T',
-        ':aid': 'none'
+        ':a': 'T'
       },
       ReturnValues='UPDATED_NEW'
     )

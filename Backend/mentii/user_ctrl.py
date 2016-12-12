@@ -17,7 +17,9 @@ def validateRegistrationJSON(jsonData):
   Validate that the JSON object contains
   an email and password attributes
   '''
-  return 'password' in jsonData.keys() and 'email' in jsonData.keys()
+  if jsonData is not None:
+    return 'password' in jsonData.keys() and 'email' in jsonData.keys()
+  return False
 
 def parseEmail(jsonData):
     return jsonData['email']

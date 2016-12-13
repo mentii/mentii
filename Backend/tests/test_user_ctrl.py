@@ -1,5 +1,4 @@
 import unittest
-import user_ctrl as usr #TODO need to some how import from /mentii
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from flask_mail import Mail
@@ -11,7 +10,7 @@ mail = Mail(app)
 class UserControlTests(unittest.TestCase):
 
   def test_parseEmail(self):
-    validJson = {"email" : "johndoe@email.com"}   
+    validJson = {"email" : "johndoe@email.com"}
     self.assertTrue(usr.parseEmail(validJson), msg="Unable to parse email from json data")
 
   def test_parsePassword(self):
@@ -65,22 +64,27 @@ class UserControlTests(unittest.TestCase):
     email = "email"
     password = "password8"
     activationId = usr.addUserAndSendEmail(email,password,mail)
-    
+
     self.assertEqual(activationId,"none")
 
   # TODO sendEmail
 
   # TODO add test activationId
   def test_activate(self):
-    activationId = "?" 
+    activationId = "?"
     response = usr.activate(activationId)
     self.assertEqual(response, "Success")
 
   def test_activate_fail(self):
-    activationId = "none" 
+    activationId = "none"
     response = usr.activate(activationId)
     self.assertEqual(response, "Error!! Could not find an item with that code.")
-    
 
 if __name__ == '__main__':
-    unittest.main()
+    if __package__ is None:
+        import sys
+        from os import path
+        sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
+        from mentii import user_ctrl as usr
+    else:
+        from ..mentii import user_ctrl as usr

@@ -30,4 +30,8 @@ echo "TARING UP AND MOVING PROJECT"
 tar -cf build.tar ./mentii
 mv --backup=numbered ./build.tar /home/asp78/public_html/builds/build.tar
 
+## Send slack notification
+date=`date`
+git_last=`git log --pretty=format:'%h' -n 1`
+/home/asp78/slacknotify.sh "Build Complete at $date. Latest commit: $git_last"
 echo "DONE!"

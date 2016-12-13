@@ -11,5 +11,8 @@ run-lite:
 	@ pip install -r requirements.txt
 	@ python app.py
 
+deploy: 
+	@./updateBackendEnv.sh
+
 clean:
 	@ rm -rf ./env/

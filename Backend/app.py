@@ -5,6 +5,7 @@ from flask_cors import CORS, cross_origin
 from flask_mail import Mail
 from mentii import user_ctrl
 import ConfigParser as cp
+import boto3
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
@@ -29,19 +30,21 @@ mail = Mail(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    return "hello from flask"
+  return "hello from flask"
 
 @app.route('/register/', methods=['POST', 'OPTIONS'])
 def register():
-    if request.method =='POST':
-        response = user_ctrl.register(request.json, mail)
-        return jsonify(response)
-    else:
-        return "Success"
+  if request.method =='POST':
+    dynamoDBInstance = boto3.resource('dynamodb')
+    response = user_ctrl.register(request.json, mail, dynamoDBInstance)
+    return jsonify(response)
+  else:
+    return "Success"
 
 @app.route('/activate/<activationid>', methods=['GET'])
 def activate(activationid):
-	response = user_ctrl.activate(activationid)
+	dynamoDBInsance = boto3.resource('dynamodb')
+	response = user_ctrl.activate(activationid, dynamoDBInstance)
 	return response
 
 if __name__ == '__main__':

@@ -4,10 +4,10 @@ from flask_mail import Message
 from boto3.dynamodb.conditions import Key, Attr
 import uuid
 
-def register(jsonData, mailer):
+def register(jsonData, mailer, dbInstance):
   if validateRegistrationJSON(jsonData):
     email = parseEmail(jsonData)
-    activationId = addUserAndSendEmail(email, parsePassword(jsonData), mailer)
+    activationId = addUserAndSendEmail(email, parsePassword(jsonData), mailer, dbInstance)
     return activationId
   else:
     return 'Failing Registration Validation'
@@ -22,18 +22,18 @@ def validateRegistrationJSON(jsonData):
   return False
 
 def parseEmail(jsonData):
-    try:
-      email = jsonData['email']
-      return email
-    except Exception: 
-      return None
+  try:
+    email = jsonData['email']
+    return email
+  except Exception: 
+    return None
 
 def parsePassword(jsonData):
-    try:
-      password = jsonData['password']
-      return password
-    except Exception: 
-      return None
+  try:
+    password = jsonData['password']
+    return password
+  except Exception: 
+    return None
 
 def isEmailValid(email):
   '''
@@ -46,10 +46,10 @@ def isEmailValid(email):
 def isPasswordValid(password):
   return len(password) >= 8
 
-def addUserAndSendEmail(email, password, mailer):
-  if isEmailValid(email) and isPasswordValid(password) and not isEmailInSystem(email):
+def addUserAndSendEmail(email, password, mailer, dbInstance):
+  if isEmailValid(email) and isPasswordValid(password) and not isEmailInSystem(email, dbInstance):
     activationId = str(uuid.uuid4())
-    dynamodb = boto3.resource('dynamodb')
+    dynamodb = dbInstance
     table = dynamodb.Table('users')
 
     #This will change an existing user with the same email.
@@ -78,8 +78,8 @@ def sendEmail(email, activationId, mailer):
   #Send Email
   mailer.send(msg)
 
-def isEmailInSystem(email):
-  dynamodb = boto3.resource('dynamodb')
+def isEmailInSystem(email, dbInstance):
+  dynamodb = dbInstance
   table = dynamodb.Table('users')
 
   #Result is a dictionary that will have the key Item if
@@ -87,8 +87,8 @@ def isEmailInSystem(email):
   result = table.get_item(Key={'email': email}, AttributesToGet=['active'])
   return 'Item' in result.keys() and 'active' in result['Item'].keys() and result['Item']['active'] == 'T'
 
-def activate(activationId):
-  dynamodb = boto3.resource('dynamodb')
+def activate(activationId, dbInstance):
+  dynamodb = dbInstance
   table = dynamodb.Table('users')
   items = []
 

@@ -22,10 +22,18 @@ def validateRegistrationJSON(jsonData):
   return False
 
 def parseEmail(jsonData):
-    return jsonData['email']
+    try:
+      email = jsonData['email']
+      return email
+    except Exception: 
+      return None
 
 def parsePassword(jsonData):
-    return jsonData['password']
+    try:
+      password = jsonData['password']
+      return password
+    except Exception: 
+      return None
 
 def isEmailValid(email):
   '''

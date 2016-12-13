@@ -21,7 +21,7 @@ export class RegistrationComponent {
   }
 
   submit() {
-    let url = this.mentiiConfig.rootUrl + '/register/';
+    let url = this.mentiiConfig.getRootUrl() + '/register/';
     let headers = new Headers({ 'Content-Type': 'application/json' });
     let options = new RequestOptions({ headers: headers });
     let body = {

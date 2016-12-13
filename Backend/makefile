@@ -3,13 +3,13 @@ default:
 
 run: clean
 	@ pip install virtualenv
-	@ virtualenv mentii_env
+	@ virtualenv env
 	@ xterm ./runBackend.sh &
 
 run-lite:
-	@ source mentii_env/bin/activate
+	@ source env/bin/activate
 	@ pip install -r requirements.txt
 	@ python app.py
 
 clean:
-	@ rm -rf ./mentii_env/
+	@ rm -rf ./env/

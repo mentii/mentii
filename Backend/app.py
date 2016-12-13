@@ -12,7 +12,7 @@ mail = Mail(app)
 
 #Parse any external configuration options
 parser = cp.ConfigParser()
-parser.read("config/prodConfig.ini")
+parser.read("/config/prodConfig.ini")
 
 #Email setup
 address = parser.get('EmailData', 'address')

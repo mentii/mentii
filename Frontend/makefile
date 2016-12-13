@@ -1,4 +1,4 @@
-default: run
+default: start
 
 clean:
 	@ rm -rf ./node_modules

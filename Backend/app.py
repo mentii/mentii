@@ -33,8 +33,11 @@ def index():
 
 @app.route('/register/', methods=['POST', 'OPTIONS'])
 def register():
-    response = user_ctrl.register(request.json, mail)
-    return jsonify(response)
+    if request.method =='POST':
+        response = user_ctrl.register(request.json, mail)
+        return jsonify(response)
+    else:
+        return "Success"
 
 @app.route('/activate/<activationid>', methods=['GET'])
 def activate(activationid):

@@ -19,7 +19,6 @@ export class MentiiConfig {
         url = 'http://api.mentii.me';
       };
     }
-    console.log(url);
     return url;
   }
 }

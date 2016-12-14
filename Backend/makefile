@@ -3,7 +3,7 @@ default:
 
 run: clean
 	@ pip install virtualenv
-	@ virtualenv env
+	@ virtualenv -p /usr/bin/python env
 	@ xterm ./runBackend.sh &
 
 run-lite:

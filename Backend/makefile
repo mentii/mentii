@@ -12,7 +12,10 @@ run-lite:
 	@ python app.py
 
 deploy: 
-	@./updateBackendEnv.sh
+	@ ./updateBackendEnv.sh
 
 clean:
 	@ rm -rf ./env/
+
+runtests:
+	@ ./runTests.sh

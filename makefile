@@ -13,3 +13,7 @@ deploy:
 
 compile:
 	@ cd ./Frontend; make compile -s
+
+runtests:
+	@ cd ./Frontend; make runtests -s
+	@ cd ./Backend; make runtests -s

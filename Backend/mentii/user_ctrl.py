@@ -73,7 +73,7 @@ def sendEmail(email, activationId, mailer):
   '''
   #Build Message
   msg = Message('Mentii: Thank You for Creating an Account!', recipients=[email])
-  msg.body = "Here is your activationId link: api.mentii.me/activate/{}".format(activationId)
+  msg.body = "Here is your activationId link: api.mentii.me/activate/{0}".format(activationId)
 
   #Send Email
   mailer.send(msg)

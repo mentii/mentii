@@ -25,14 +25,14 @@ def parseEmail(jsonData):
   try:
     email = jsonData['email']
     return email
-  except Exception: 
+  except Exception:
     return None
 
 def parsePassword(jsonData):
   try:
     password = jsonData['password']
     return password
-  except Exception: 
+  except Exception:
     return None
 
 def isEmailValid(email):

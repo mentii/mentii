@@ -1,25 +1,27 @@
 import { Directive, forwardRef, Attribute } from '@angular/core';
 import { Validator, AbstractControl, NG_VALIDATORS } from '@angular/forms';
 @Directive({
-    selector: '[validateEqual][formControlName],[validateEqual][formControl],[validateEqual][ngModel]',
-    providers: [
-        { provide: NG_VALIDATORS, useExisting: forwardRef(() => EqualValidator), multi: true }
-    ]
+  selector: '[validateEqual][formControlName],[validateEqual][formControl],[validateEqual][ngModel]',
+  providers: [
+      { provide: NG_VALIDATORS, useExisting: forwardRef(() => EqualValidator), multi: true }
+  ]
 })
 export class EqualValidator implements Validator {
-    constructor( @Attribute('validateEqual') public validateEqual: string) {}
+  constructor(
+		@Attribute('validateEqual') public validateEqual: string) {}
 
-    validate(c: AbstractControl): { [key: string]: any } {
-        // self value
-        let v = c.value;
+  validate(control: AbstractControl): { [key: string]: any } {
+    // control to compare to
+    let comparedControl = control.root.get(this.validateEqual);
 
-        // control to compare to
-        let e = c.root.get(this.validateEqual);
+		if(!control.value || !comparedControl) {
+			return null;
+		}
 
-        // confirm compare to control exists and values are not equal
-        if (e && v !== e.value) return {
-            validateEqual: false
-        }
-        return null;
-    }
+	    // confirm values are not equal
+    if (control.value !== comparedControl.value) {
+			return { validateEqual: false }
+		}
+    return null;
+  }
 }

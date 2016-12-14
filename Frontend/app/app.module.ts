@@ -8,10 +8,11 @@ import { RootComponent }   from './root/root.component';
 import { PageNotFoundComponent }   from './pageNotFound/pageNotFound.component';
 import { routing } from './app.routes';
 import { EqualValidator } from './directives/equal-validator.directive';
+import { DeleteValue } from './directives/delete-value-validator.directive';
 
 @NgModule({
   imports:      [ BrowserModule, FormsModule, HttpModule, routing],
-	declarations: [ AppComponent, RegistrationComponent, RootComponent, PageNotFoundComponent, EqualValidator],
+	declarations: [ AppComponent, RegistrationComponent, RootComponent, PageNotFoundComponent, EqualValidator, DeleteValue],
 	bootstrap:    [ AppComponent ]
 })
 export class AppModule { }

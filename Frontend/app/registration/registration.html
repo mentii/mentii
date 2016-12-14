@@ -20,14 +20,14 @@
       </div>
       <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" placeholder="********" class="form-control" id="password" required minlength=8 [(ngModel)]="model.password" name="password" #password="ngModel">
+        <input type="password" placeholder="********" class="form-control" id="password" required minlength=8 deleteValue="confirmPassword" [(ngModel)]="model.password" name="password" #password="ngModel">
         <span [hidden]="password.valid || password.pristine" class="text-danger">
           A password 8 or more characters long is required
         </span>
       </div>
       <div class="form-group">
         <label for="confirmPassword">Confirm Password</label>
-        <input type="password" placeholder="********" class="form-control" id="confirmPassword" required validateEqual="password" minlength=8 [(ngModel)]="model.confirmPassword" name="confirmPassword" #confirmPassword="ngModel">
+        <input type="password" placeholder="********" class="form-control" id="confirmPassword" required minlength=8 validateEqual="password"[(ngModel)]="model.confirmPassword" name="confirmPassword" #confirmPassword="ngModel">
         <span [hidden]="confirmPassword.valid || confirmPassword.pristine" class="text-danger">
           Passwords do not match
         </span>

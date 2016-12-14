@@ -10,18 +10,13 @@ git clean -fd
 git checkout $1
 git pull
 
-## Move to buid_dir
-echo "MOVING TO BUILD_DIR"
-cp -R /home/asp78/git/mentii /home/asp78/build_dir/
-
 ## Remove .git and .gitignore
 echo "REMOVING .git AND .gitignore FILES"
-cd /home/asp78/build_dir
-rm -rf ./mentii/.git ./mentii/.gitignore
+mv ./.git/ ../
+mv ./.gitignore ../
 
 ## Build
 echo "BUILDING PROJECT"
-cd ./mentii
 make compile
 cd ..
 
@@ -30,8 +25,14 @@ echo "TARING UP AND MOVING PROJECT"
 tar -cf build.tar ./mentii
 mv --backup=numbered ./build.tar /home/asp78/public_html/builds/build.tar
 
+## Replace  .git and .gitignore
+mv ./.git ./mentii/
+mv ./.gitignore ./mentii/
+
 ## Send slack notification
 date=`date`
+cd /home/asp78/git/mentii
 git_last=`git log --pretty=format:'%h' -n 1`
+echo $git_last
 /home/asp78/slacknotify.sh "Build Complete at $date. Latest commit: $git_last"
 echo "DONE!"

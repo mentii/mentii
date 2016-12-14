@@ -5,6 +5,7 @@ clean:
 
 compile: clean
 	@ npm install
+	@ npm run-script tsc
 
 start: compile
 	@ xterm -e "./runFrontend.sh dev" &

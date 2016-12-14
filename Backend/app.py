@@ -43,9 +43,9 @@ def register():
 
 @app.route('/activate/<activationid>', methods=['GET'])
 def activate(activationid):
-	dynamoDBInsance = boto3.resource('dynamodb')
-	response = user_ctrl.activate(activationid, dynamoDBInstance)
-	return response
+  dynamoDBInstance = boto3.resource('dynamodb')
+  response = user_ctrl.activate(activationid, dynamoDBInstance)
+  return response
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=False)
+  app.run(host='0.0.0.0', debug=False)

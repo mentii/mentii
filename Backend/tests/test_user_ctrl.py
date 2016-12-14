@@ -10,7 +10,7 @@ mail = Mail(app)
 class UserControlTests(unittest.TestCase):
 
   def test_parseEmail(self):
-    validJson = {"email" : "johndoe@email.com"}   
+    validJson = {"email" : "johndoe@email.com"}
     invalidJson = {}
     self.assertEqual(usr.parseEmail(validJson),"johndoe@email.com",msg="Unable to parse email field from json data")
     self.assertIsNone(usr.parseEmail(invalidJson))
@@ -47,7 +47,8 @@ class UserControlTests(unittest.TestCase):
 
   def test_register_fail(self):
     jsonData = {"email" : "mail@email.com"}
-    self.assertEqual(usr.register(jsonData,mail),"Failing Registration Validation")
+    dbInstance = "blah"
+    self.assertEqual(usr.register(jsonData,mail,dbInstance),"Failing Registration Validation")
 
 class UserControlDBTests(unittest.TestCase):
   '''@classmethod
@@ -85,7 +86,7 @@ class UserControlDBTests(unittest.TestCase):
     dynamodb.hard_reset()
 
     # Remove the patch from Boto code (if any)
-    clean_boto_patch()  
+    clean_boto_patch()
 
   def test_isEmailInSystem(self):
     email = ""
@@ -96,7 +97,7 @@ class UserControlDBTests(unittest.TestCase):
   # TODO register() success case
 
   # TODO need to create a test email in the system to query
- 
+
 
   # TODO test email instead of what's below?
   # add test case where existing user with the same email is given

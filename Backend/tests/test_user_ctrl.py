@@ -4,24 +4,32 @@ from flask_cors import CORS, cross_origin
 from flask_mail import Mail
 import ConfigParser as cp
 
+import sys
+from os import path
+sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
+from mentii import user_ctrl as usr
+
 app = Flask(__name__)
 mail = Mail(app)
 
 class UserControlTests(unittest.TestCase):
 
   def test_parseEmail(self):
+    print("Running parseEmail Test")
     validJson = {"email" : "johndoe@email.com"}
     invalidJson = {}
     self.assertEqual(usr.parseEmail(validJson),"johndoe@email.com",msg="Unable to parse email field from json data")
     self.assertIsNone(usr.parseEmail(invalidJson))
 
   def test_parsePassword(self):
+    print("Running parsePassword Test")
     validJson = {"password" : "pw"}
     invalidJson = {}
     self.assertEqual(usr.parsePassword(validJson),"pw",msg="Unable to parse password field from json data")
     self.assertIsNone(usr.parsePassword(invalidJson))
 
   def test_validateRegistrationJSON(self):
+    print("Running validateRegistrationJSON Test")
     validJson = {"email" : "marydoe@mentii.com", "password":"water"}
     missingEmail = {"password":"notMissing"}
     missingPassword = {"email" : "notMissing"}
@@ -32,6 +40,8 @@ class UserControlTests(unittest.TestCase):
     self.assertFalse(usr.validateRegistrationJSON(None))
 
   def test_isEmailValid(self):
+    print("Running isEmailValid Test")
+
     validEmail = "hello@world.com"
     invalidEmail = "helloworldcom"
 
@@ -39,6 +49,7 @@ class UserControlTests(unittest.TestCase):
     self.assertFalse(usr.isEmailValid(invalidEmail))
 
   def test_isPasswordValid(self):
+    print("Running isPasswordValid Test")
     validPassword = "iameight"
     invalidPassword = "less"
 
@@ -46,6 +57,7 @@ class UserControlTests(unittest.TestCase):
     self.assertFalse(usr.isPasswordValid(invalidPassword))
 
   def test_register_fail(self):
+    print("Running register fail Test")
     jsonData = {"email" : "mail@email.com"}
     dbInstance = "blah"
     self.assertEqual(usr.register(jsonData,mail,dbInstance),"Failing Registration Validation")

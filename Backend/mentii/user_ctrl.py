@@ -3,11 +3,13 @@ import re
 from flask_mail import Message
 from boto3.dynamodb.conditions import Key, Attr
 import uuid
+import hashlib
 
 def register(jsonData, mailer, dbInstance):
   if validateRegistrationJSON(jsonData):
     email = parseEmail(jsonData)
-    activationId = addUserAndSendEmail(email, parsePassword(jsonData), mailer, dbInstance)
+    hashedPassword = hashlib.md5( parsePassword(jsonData) ).hexdigest()
+    activationId = addUserAndSendEmail(email, hashedPassword, mailer, dbInstance)
     return activationId
   else:
     return 'Failing Registration Validation'

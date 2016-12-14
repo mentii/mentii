@@ -3,7 +3,7 @@ default:
 
 run: clean
 	@ pip install virtualenv
-	@ virtualenv env
+	@ virtualenv -p /usr/bin/python env
 	@ xterm ./runBackend.sh &
 
 run-lite:
@@ -11,8 +11,11 @@ run-lite:
 	@ pip install -r requirements.txt
 	@ python app.py
 
-deploy: 
-	@./updateBackendEnv.sh
+deploy:
+	@ ./updateBackendEnv.sh
 
 clean:
 	@ rm -rf ./env/
+
+runtests:
+	@ ./runTests.sh

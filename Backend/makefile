@@ -7,9 +7,7 @@ run: clean
 	@ xterm ./runBackend.sh &
 
 run-lite:
-	@ source env/bin/activate
-	@ pip install -r requirements.txt
-	@ python app.py
+	@ xterm ./runBackend.sh &
 
 deploy:
 	@ ./updateBackendEnv.sh

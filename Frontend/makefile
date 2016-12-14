@@ -12,6 +12,9 @@ compile: clean
 runtests: compile
 	@ ./node_modules/karma/bin/karma start
 
+runtests-nocompile:
+	@ ./node_modules/karma/bin/karma start
+
 start: compile
 	@ xterm -e "./runFrontend.sh dev" &
 

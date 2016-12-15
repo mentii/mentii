@@ -1,0 +1,54 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div class="welcome">
+      <h1 class="text-brand">
+        mentii<br/>
+        <hr style="width: 50%;">
+      </h1>
+    </div>
+  </div>
+</div>
+<div class="row" [hidden]="regSuccess">
+  <div class="col-xs-12 col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6">
+    <form #registerForm="ngForm" autocomplete="off">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" placeholder="user@example.com" class="form-control" id="email" required pattern="[^@]+@[^@]+\.[^@]+" [(ngModel)]="model.email" name="email" #email="ngModel">
+        <span [hidden]="email.pristine || email.valid" class="text-danger">
+          A valid email is required
+        </span>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" placeholder="********" class="form-control" id="password" required minlength=8 deleteValue="confirmPassword" [(ngModel)]="model.password" name="password" #password="ngModel">
+        <span [hidden]="password.valid || password.pristine" class="text-danger">
+          A password 8 or more characters long is required
+        </span>
+      </div>
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" placeholder="********" class="form-control" id="confirmPassword" required minlength=8 validateEqual="password"[(ngModel)]="model.confirmPassword" name="confirmPassword" #confirmPassword="ngModel">
+        <span [hidden]="confirmPassword.valid || confirmPassword.pristine" class="text-danger">
+          Passwords do not match
+        </span>
+      </div>
+      <button type="submit" class="btn btn-primary" [disabled]="!registerForm.form.valid" (click)="submit(); newModel(); registerForm.reset();">Register Account</button>
+    </form>
+    <br/>
+    <a [routerLink]="['']">Back to Sign In</a>
+  </div>
+</div>
+<div class="row" [hidden]="!regSuccess">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class='text-center'>
+        <h1 class="text-brand">
+          <i class="fa fa-smile-o fa-4x" aria-hidden="true"></i><br/>
+          Registration Complete!
+        </h1>
+        <p>Check your email for an activation link.</p>
+        <a [routerLink]="['']">Return to Sign In</a>
+      </div>
+    </div>
+  </div>
+</div>

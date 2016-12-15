@@ -1,0 +1,5 @@
+[EmailData]
+Address: mentiiapp@gmail.com
+Password: FakePassword
+[DatabaseData]
+isProd: False

@@ -2,11 +2,13 @@ default:
 	@ make -s run
 
 run: clean
+	@ cd ../../LocalDB; make -s run
 	@ pip install virtualenv
 	@ virtualenv -p /usr/bin/python env
 	@ xterm ./runBackend.sh &
 
 run-lite:
+	@ cd ../../LocalDB; make -s run
 	@ xterm ./runBackend.sh &
 
 deploy:
@@ -15,5 +17,6 @@ deploy:
 clean:
 	@ rm -rf ./env/
 
-runtests:
+runtests: clean
+	@ cd ../../LocalDB; make -s run
 	@ ./runTests.sh

@@ -2,7 +2,6 @@ default:
 	@ make -s run
 
 run: clean
-	@ cd ../../LocalDB; make -s
 	@ pip install virtualenv
 	@ virtualenv -p /usr/bin/python env
 	@ xterm ./runBackend.sh &

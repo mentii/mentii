@@ -64,7 +64,7 @@ class UserControlTests(unittest.TestCase):
     self.assertFalse(usr.isPasswordValid(invalidPassword))
 
   def test_register_fail(self):
-    print("Running register fail Test")
+    print("Running register fail case Test")
     jsonData = {"email" : "mail@email.com"}
     dbInstance = "blah"
     self.assertEqual(usr.register(jsonData,mail,dbInstance),"Failing Registration Validation")
@@ -72,13 +72,16 @@ class UserControlTests(unittest.TestCase):
 class UserControlDBTests(unittest.TestCase):
   @classmethod
   def setUpClass(self):
+    settingsName = "table_settings.json"
+    mockData = "mock_data.json"
+
     try:
-      table = db.createTableFromFile("table_settings.json", dynamodb)
+      table = db.createTableFromFile("./tests/"+settingsName, dynamodb)
     except ClientError:
       db.getTable('users', dynamodb).delete()
-      table = db.createTableFromFile("table_settings.json", dynamodb)
+      table = db.createTableFromFile("./tests/"+settingsName, dynamodb)
 
-    db.preloadData("mock_data.json", table)
+    db.preloadData("./tests/"+mockData, table)
 
   @classmethod
   def tearDownClass(self):
@@ -94,7 +97,7 @@ class UserControlDBTests(unittest.TestCase):
     self.assertTrue(response)'''
 
   def test_isEmailInSystem_fail(self):
-    print("Running isEmailInSystem FAIL Test")
+    print("Running isEmailInSystem fail case Test")
 
     email = "no_test@mentii.com"
     response = usr.isEmailInSystem(email, dynamodb)
@@ -116,7 +119,7 @@ class UserControlDBTests(unittest.TestCase):
   # add test case where existing user with the same email is given
 
   def test_addUserAndSendEmail_fail(self):
-    print("Running addUserAndSendEmail FAIL Test")
+    print("Running addUserAndSendEmail fail case Test")
 
     email = "email"
     password = "password8"
@@ -147,7 +150,7 @@ class UserControlDBTests(unittest.TestCase):
     self.assertEqual(response, "Success")'''
 
   def test_activate_fail(self):
-    print("Running activate FAIL Test")
+    print("Running activate fail case Test")
 
     activationId = "none"
     response = usr.activate(activationId, dynamodb)

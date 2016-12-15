@@ -62,8 +62,7 @@ def addUserAndSendEmail(email, password, mailer, dbInstance):
       Item={
         'email': email,
         'password': password,
-        'activationId': activationId,
-        'active': "F"
+        'activationId': activationId
       }
     )
     try:
@@ -109,7 +108,7 @@ def activate(activationId, dbInstance):
     #scanResponse is a dictionary that has a list of 'Items'
     items = scanResponse['Items']
 
-  if len(items) == 0 or 'email' not in items[0].keys():
+  if not items or 'email' not in items[0].keys():
     return "Error!! Could not find an item with that code."
   else:
     email = items[0]['email']

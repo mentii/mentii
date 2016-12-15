@@ -26,6 +26,6 @@ runtests-nocompile:
 	@ cd ./Backend; make runtests -s
 
 setup:
-	@ cd ../LocalDB; make -s
+	@ cd ../LocalDB; make -s run
 	@ cd ./Backend; make -s
 	@ cd ./Frontend; make -s

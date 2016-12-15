@@ -49,7 +49,7 @@ def getDatabaseClient():
   else:
     print("Returning the Dev resource")
     return boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
-      
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
   return "hello from flask"

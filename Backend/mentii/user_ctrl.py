@@ -8,11 +8,14 @@ import hashlib
 def register(jsonData, mailer, dbInstance):
   if validateRegistrationJSON(jsonData):
     email = parseEmail(jsonData)
-    hashedPassword = hashlib.md5( parsePassword(jsonData) ).hexdigest()
+    hashedPassword = hashPassword(parsePassword(jsonData))
     activationId = addUserAndSendEmail(email, hashedPassword, mailer, dbInstance)
     return activationId
   else:
     return 'Failing Registration Validation'
+
+def hashPassword(password):
+  return hashlib.md5( password ).hexdigest()
 
 def validateRegistrationJSON(jsonData):
   '''
@@ -63,7 +66,11 @@ def addUserAndSendEmail(email, password, mailer, dbInstance):
         'active': "F"
       }
     )
-    sendEmail(email, activationId, mailer)
+    try:
+      sendEmail(email, activationId, mailer)
+    except:
+      print("Unable to send email")
+
     return activationId
   else:
     return 'none'
@@ -102,7 +109,7 @@ def activate(activationId, dbInstance):
     #scanResponse is a dictionary that has a list of 'Items'
     items = scanResponse['Items']
 
-  if not items and 'email' in items[0].keys():
+  if len(items) == 0 or 'email' not in items[0].keys():
     return "Error!! Could not find an item with that code."
   else:
     email = items[0]['email']

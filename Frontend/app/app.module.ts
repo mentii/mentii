@@ -12,7 +12,7 @@ import { DeleteValue } from './directives/delete-value-validator.directive';
 
 @NgModule({
   imports:      [ BrowserModule, FormsModule, HttpModule, routing],
-	declarations: [ AppComponent, RegistrationComponent, RootComponent, PageNotFoundComponent, EqualValidator, DeleteValue],
-	bootstrap:    [ AppComponent ]
+  declarations: [ AppComponent, RegistrationComponent, RootComponent, PageNotFoundComponent, EqualValidator, DeleteValue],
+  bootstrap:    [ AppComponent ]
 })
 export class AppModule { }

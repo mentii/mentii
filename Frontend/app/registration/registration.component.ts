@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import {Http, Response, Headers, RequestOptions} from "@angular/http";
 import {RegistrationModel} from './registration.model';
 import {MentiiConfig} from '../mentii.config';
-import {RegistrationCompleteComponent} from './registrationComplete.component'
 
 @Component({
   moduleId: module.id,
@@ -13,7 +12,7 @@ import {RegistrationCompleteComponent} from './registrationComplete.component'
 export class RegistrationComponent {
   model = new RegistrationModel('', '', '');
   mentiiConfig = new MentiiConfig();
-	regSuccess = false;
+  regSuccess = false;
 
   constructor(public http: Http){
   }
@@ -38,9 +37,9 @@ export class RegistrationComponent {
       // TODO: Handle failure or errors
       (res:any)=>{
         let data = res.json();
-				if (data !== 'Failing Registration Validation') {
-					this.regSuccess = true;
-				}
+        if (data !== 'Failing Registration Validation') {
+          this.regSuccess = true;
+        }
       }
       // TODO: Handle success better that current
     )

@@ -1,0 +1,19 @@
+{
+  "table_name" :"users",
+  "key_schema":[
+    {
+      "AttributeName": "email",
+      "KeyType": "HASH"
+    }
+  ],
+  "attribute_definitions":[
+    {
+      "AttributeName": "email",
+      "AttributeType": "S"
+    }
+  ],
+  "provisioned_throughput":{
+    "ReadCapacityUnits": 5,
+    "WriteCapacityUnits": 5
+  }
+}

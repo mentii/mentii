@@ -62,7 +62,8 @@ def addUserAndSendEmail(email, password, mailer, dbInstance):
       Item={
         'email': email,
         'password': password,
-        'activationId': activationId
+        'activationId': activationId,
+        'active': "F"
       }
     )
     try:

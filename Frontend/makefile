@@ -3,7 +3,7 @@ default: start
 TERMINALSPAWNER=xterm -e
 osType=$(shell uname -a | awk -F " " '{print $$1}')
 ifeq ($(osType),Darwin)
-	TERMINALSPAWNER=open -a Terminal
+	TERMINALSPAWNER=xterm -e
 endif
 
 clean:

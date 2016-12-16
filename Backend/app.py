@@ -1,9 +1,11 @@
 #!env/bin/python
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS, cross_origin
+from flask.ext.api import status
 from flask_mail import Mail
 from mentii import user_ctrl
+from utils import jsonCreator as jc
 import ConfigParser as cp
 import boto3
 import sys
@@ -52,22 +54,22 @@ def getDatabaseClient():
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-  return "hello from flask"
+  return "hello from flask", status.HTTP_200_OK
 
 @app.route('/register/', methods=['POST', 'OPTIONS'])
 def register():
   if request.method =='POST':
     dynamoDBInstance = getDatabaseClient()
-    response = user_ctrl.register(request.json, mail, dynamoDBInstance)
-    return jsonify(response)
+    res = user_ctrl.register(request.json, mail, dynamoDBInstance)
+    return jc.createResponse(res, [], 201)
   else:
-    return "Success"
+    return jc.createResponse("Success", [], 200)
 
 @app.route('/activate/<activationid>', methods=['GET'])
 def activate(activationid):
   dynamoDBInstance = getDatabaseClient()
-  response = user_ctrl.activate(activationid, dynamoDBInstance)
-  return response
+  res = user_ctrl.activate(activationid, dynamoDBInstance)
+  return jc.createResponse(res, [], 200)
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', debug=False)

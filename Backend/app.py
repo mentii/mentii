@@ -54,7 +54,7 @@ def getDatabaseClient():
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-  return "hello from flask", status.HTTP_200_OK
+  return cr.createEmptyResponse(200)
 
 @app.route('/register/', methods=['POST', 'OPTIONS'])
 def register():

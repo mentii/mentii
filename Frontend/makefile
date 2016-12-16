@@ -1,5 +1,11 @@
 default: start
 
+TERMINALSPAWNER=xterm -e
+osType=$(shell uname -a | awk -F " " '{print $$1}')
+ifneq ($(osType),Linux)
+	TERMINALSPAWNER=open -a Terminal
+endif
+
 clean:
 	@ rm -rf ./node_modules
 	@ cd app; find . -name "*.js.map" -type f -delete
@@ -16,17 +22,7 @@ runtests-nocompile:
 	@ ./node_modules/karma/bin/karma start
 
 start: compile
-	@ osType=$(shell uname -a | awk -F " " '{print $$1}'); \
-  if [ $$osType = Linux ]; then \
-		xterm -e "./runFrontend.sh dev" &; \
-	else \
-		open -a Terminal "./runFrontend.sh dev" &; \
-	fi
+	@ $(TERMINALSPAWNER) "./runFrontend.sh dev" &
 
 run: compile
-	@ osType=$(shell uname -a | awk -F " " '{print $$1}'); \
-  if [ $$osType = Linux ]; then \
-		xterm -e "./runFrontend.sh prod" &; \
-	else \
-		open -a Terminal "./runFrontend.sh prod" &; \
-	fi
+	@ $(TERMINALSPAWNER) "./runFrontend.sh prod" &

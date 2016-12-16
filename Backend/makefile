@@ -1,25 +1,21 @@
 default:
 	@ make -s run
 
+TERMINALSPAWNER=xterm -e
+osType=$(shell uname -a | awk -F " " '{print $$1}')
+ifneq ($(osType),Linux)
+	TERMINALSPAWNER=open -a Terminal
+endif
+
 run: clean
 	@ cd ../../LocalDB; make -s
 	@ pip install virtualenv
 	@ virtualenv -p /usr/bin/python env
-	@ osType=$(shell uname -a | awk -F " " '{print $$1}'); \
-  if [ $$osType = Linux ]; then \
-		xterm ./runBackend.sh &; \
-	else \
-		open -a Terminal ./runBackend.sh &; \
-	fi
+	@ $(TERMINALSPAWNER) ./runBackend.sh &
 
 run-lite:
 	@ cd ../../LocalDB; make -s
-	@ osType=$(shell uname -a | awk -F " " '{print $$1}'); \
-  if [ $$osType = Linux ]; then \
-		xterm ./runBackend.sh &; \
-	else \
-		open -a Terminal ./runBackend.sh &; \
-	fi
+	@ $(TERMINALSPAWNER) ./runBackend.sh &
 
 deploy:
 	@ ./updateBackendEnv.sh

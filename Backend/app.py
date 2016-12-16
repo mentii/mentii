@@ -2,7 +2,6 @@
 
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS, cross_origin
-from flask.ext.api import status
 from flask_mail import Mail
 from mentii import user_ctrl
 import utils.ResponseCreation as cr

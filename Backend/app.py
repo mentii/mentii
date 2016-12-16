@@ -76,5 +76,12 @@ def activate(activationid):
   else:
     return cr.createResponse(res, 400)
 
+@app.route('/signin/', methods=['POST', 'OPTIONS'])
+def signin():
+  if request.method =='POST':
+    return cr.createEmptyResponse(200)
+  else:
+    return cr.createEmptyResponse(200)
+
 if __name__ == '__main__':
   app.run(host='0.0.0.0', debug=False)

@@ -61,7 +61,10 @@ def register():
   if request.method =='POST':
     dynamoDBInstance = getDatabaseClient()
     res = user_ctrl.register(request.json, mail, dynamoDBInstance)
-    return jc.createResponse(res, [], 201)
+    if res is not None:
+      return jc.createResponse(res, [], 201)
+    else:
+        return jc.createResponse("", [{'title': "Error registering user", 'payload' : request.json}], 400)
   else:
     return jc.createResponse("Success", [], 200)
 
@@ -69,7 +72,10 @@ def register():
 def activate(activationid):
   dynamoDBInstance = getDatabaseClient()
   res = user_ctrl.activate(activationid, dynamoDBInstance)
-  return jc.createResponse(res, [], 200)
+  if res is not None:
+    return jc.createResponse(res, [], 200)
+  else:
+    return jc.createResponse("", [{'title': "Error activating user", 'payload' : activationid}], 400)
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', debug=False)

@@ -12,7 +12,7 @@ def register(jsonData, mailer, dbInstance):
     activationId = addUserAndSendEmail(email, hashedPassword, mailer, dbInstance)
     return activationId
   else:
-    return 'Failing Registration Validation'
+    return None
 
 def hashPassword(password):
   return hashlib.md5( password ).hexdigest()
@@ -70,10 +70,11 @@ def addUserAndSendEmail(email, password, mailer, dbInstance):
       sendEmail(email, activationId, mailer)
     except:
       print("Unable to send email")
+      return None
 
     return activationId
   else:
-    return 'none'
+    return None
 
 def sendEmail(email, activationId, mailer):
   '''
@@ -110,7 +111,7 @@ def activate(activationId, dbInstance):
     items = scanResponse['Items']
 
   if not items or 'email' not in items[0].keys():
-    return "Error!! Could not find an item with that code."
+    return None
   else:
     email = items[0]['email']
 
@@ -125,4 +126,4 @@ def activate(activationId, dbInstance):
       },
       ReturnValues='UPDATED_NEW'
     )
-    return "Success"
+    return True

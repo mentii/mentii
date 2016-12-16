@@ -16,7 +16,17 @@ runtests-nocompile:
 	@ ./node_modules/karma/bin/karma start
 
 start: compile
-	@ xterm -e "./runFrontend.sh dev" &
+	@ osType=$(shell uname -a | awk -F " " '{print $$1}'); \
+  if [ $$osType = Linux ]; then \
+		xterm -e "./runFrontend.sh dev" &; \
+	else \
+		open -a Terminal "./runFrontend.sh dev" &; \
+	fi
 
 run: compile
-	@ xterm -e "./runFrontend.sh prod" &
+	@ osType=$(shell uname -a | awk -F " " '{print $$1}'); \
+  if [ $$osType = Linux ]; then \
+		xterm -e "./runFrontend.sh prod" &; \
+	else \
+		open -a Terminal "./runFrontend.sh prod" &; \
+	fi

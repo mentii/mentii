@@ -5,11 +5,21 @@ run: clean
 	@ cd ../../LocalDB; make -s
 	@ pip install virtualenv
 	@ virtualenv -p /usr/bin/python env
-	@ xterm ./runBackend.sh &
+	@ osType=$(shell uname -a | awk -F " " '{print $$1}'); \
+  if [ $$osType = Linux ]; then \
+		xterm ./runBackend.sh &; \
+	else \
+		open -a Terminal ./runBackend.sh &; \
+	fi
 
 run-lite:
 	@ cd ../../LocalDB; make -s
-	@ xterm ./runBackend.sh &
+	@ osType=$(shell uname -a | awk -F " " '{print $$1}'); \
+  if [ $$osType = Linux ]; then \
+		xterm ./runBackend.sh &; \
+	else \
+		open -a Terminal ./runBackend.sh &; \
+	fi
 
 deploy:
 	@ ./updateBackendEnv.sh

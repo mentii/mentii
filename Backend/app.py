@@ -5,7 +5,7 @@ from flask_cors import CORS, cross_origin
 from flask.ext.api import status
 from flask_mail import Mail
 from mentii import user_ctrl
-from utils import jsonCreator as jc
+import utils.ResponseCreation as cr
 import ConfigParser as cp
 import boto3
 import sys
@@ -61,21 +61,21 @@ def register():
   if request.method =='POST':
     dynamoDBInstance = getDatabaseClient()
     res = user_ctrl.register(request.json, mail, dynamoDBInstance)
-    if res is not None:
-      return jc.createResponse(res, [], 201)
+    if not res.hasErrors():
+      return cr.createResponse(res, 201)
     else:
-        return jc.createResponse("", [{'title': "Error registering user", 'payload' : request.json}], 400)
+      return cr.createResponse(res, 400)
   else:
-    return jc.createResponse("Success", [], 200)
+    return cr.createEmptyResponse(200)
 
 @app.route('/activate/<activationid>', methods=['GET'])
 def activate(activationid):
   dynamoDBInstance = getDatabaseClient()
   res = user_ctrl.activate(activationid, dynamoDBInstance)
-  if res is not None:
-    return jc.createResponse(res, [], 200)
+  if not res.hasErrors():
+    return cr.createResponse(res, 200)
   else:
-    return jc.createResponse("", [{'title': "Error activating user", 'payload' : activationid}], 400)
+    return cr.createResponse(res, 400)
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', debug=False)

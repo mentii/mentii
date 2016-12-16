@@ -1,9 +1,10 @@
 #!env/bin/python
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS, cross_origin
 from flask_mail import Mail
 from mentii import user_ctrl
+import utils.ResponseCreation as cr
 import ConfigParser as cp
 import boto3
 import sys
@@ -52,22 +53,28 @@ def getDatabaseClient():
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-  return "hello from flask"
+  return cr.createEmptyResponse(200)
 
 @app.route('/register/', methods=['POST', 'OPTIONS'])
 def register():
   if request.method =='POST':
     dynamoDBInstance = getDatabaseClient()
-    response = user_ctrl.register(request.json, mail, dynamoDBInstance)
-    return jsonify(response)
+    res = user_ctrl.register(request.json, mail, dynamoDBInstance)
+    if not res.hasErrors():
+      return cr.createResponse(res, 201)
+    else:
+      return cr.createResponse(res, 400)
   else:
-    return "Success"
+    return cr.createEmptyResponse(200)
 
 @app.route('/activate/<activationid>', methods=['GET'])
 def activate(activationid):
   dynamoDBInstance = getDatabaseClient()
-  response = user_ctrl.activate(activationid, dynamoDBInstance)
-  return response
+  res = user_ctrl.activate(activationid, dynamoDBInstance)
+  if not res.hasErrors():
+    return cr.createResponse(res, 200)
+  else:
+    return cr.createResponse(res, 400)
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', debug=False)

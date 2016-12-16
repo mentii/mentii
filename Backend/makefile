@@ -8,11 +8,13 @@ ifeq ($(osType),Darwin)
 endif
 
 run: clean
+	@ cd ../../LocalDB; make -s
 	@ pip install virtualenv
 	@ virtualenv -p /usr/bin/python env
 	@ $(TERMINALSPAWNER) ./runBackend.sh &
 
 run-lite:
+	@ cd ../../LocalDB; make -s
 	@ cd ../../LocalDB; make -s
 	@ $(TERMINALSPAWNER) ./runBackend.sh &
 

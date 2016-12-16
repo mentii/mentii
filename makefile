@@ -1,5 +1,13 @@
 default: run
 
+test:
+	@ osType=$(shell uname -a | awk -F " " '{print $$1}'); \
+  if [ $$osType = Linux ]; then \
+		echo "IS LINUX"; \
+	else \
+		echo "IS NOT LINUX"; \
+	fi
+
 run:
 	@ cd ../LocalDB; make -s
 	@ cd ./Backend; make -s

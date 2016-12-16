@@ -1,5 +1,11 @@
 default: start
 
+TERMINALSPAWNER=xterm -e
+osType=$(shell uname -a | awk -F " " '{print $$1}')
+ifeq ($(osType),Darwin)
+	TERMINALSPAWNER=xterm -e
+endif
+
 clean:
 	@ rm -rf ./node_modules
 	@ cd app; find . -name "*.js.map" -type f -delete
@@ -16,7 +22,7 @@ runtests-nocompile:
 	@ ./node_modules/karma/bin/karma start
 
 start: compile
-	@ xterm -e "./runFrontend.sh dev" &
+	@ $(TERMINALSPAWNER) "./runFrontend.sh dev" &
 
 run: compile
-	@ xterm -e "./runFrontend.sh prod" &
+	@ $(TERMINALSPAWNER) "./runFrontend.sh prod" &

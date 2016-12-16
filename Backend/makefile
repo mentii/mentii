@@ -1,15 +1,21 @@
 default:
 	@ make -s run
 
+TERMINALSPAWNER=xterm -e
+osType=$(shell uname -a | awk -F " " '{print $$1}')
+ifeq ($(osType),Darwin)
+	TERMINALSPAWNER=xterm -e
+endif
+
 run: clean
 	@ cd ../../LocalDB; make -s
 	@ pip install virtualenv
 	@ virtualenv -p /usr/bin/python env
-	@ xterm ./runBackend.sh &
+	@ $(TERMINALSPAWNER) ./runBackend.sh &
 
 run-lite:
 	@ cd ../../LocalDB; make -s
-	@ xterm ./runBackend.sh &
+	@ $(TERMINALSPAWNER) ./runBackend.sh &
 
 deploy:
 	@ ./updateBackendEnv.sh

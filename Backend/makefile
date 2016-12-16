@@ -15,7 +15,6 @@ run: clean
 
 run-lite:
 	@ cd ../../LocalDB; make -s
-	@ cd ../../LocalDB; make -s
 	@ $(TERMINALSPAWNER) ./runBackend.sh &
 
 deploy:

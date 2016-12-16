@@ -7,12 +7,12 @@ from utils.ResponseCreation import *
 
 class ControllerResponseTests(unittest.TestCase):
   @classmethod
-  def setUpClass(self):
+  def setUp(self):
     self.response = ControllerResponse()
   
   def test_addError(self):
     print("Running addError Test")
-    response = ControllerResponse()
+    response = self.response
     testMessage = "testing error"
     testTitle = "Test"
     #Check that there are no errors on a new object
@@ -25,7 +25,7 @@ class ControllerResponseTests(unittest.TestCase):
   
   def test_addToPayload(self):
     print("Running addToPayload Test")
-    response = ControllerResponse()
+    response = self.response
     testValue = "testing data"
     testAttribute = "Test"
     #Check that there are no errors on a new object
@@ -37,7 +37,7 @@ class ControllerResponseTests(unittest.TestCase):
 
   def test_hasErrors(self):
     print("Running hasErrors Test")
-    response = ControllerResponse()
+    response = self.response
     #test that has errors is not true until an error is added
     testValue = "testing data"
     testAttribute = "Test"

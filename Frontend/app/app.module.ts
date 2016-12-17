@@ -6,13 +6,14 @@ import { AppComponent } from './app.component';
 import { RegistrationComponent }   from './registration/registration.component';
 import { RootComponent }   from './root/root.component';
 import { PageNotFoundComponent }   from './pageNotFound/pageNotFound.component';
+import { SecureTestComponent }   from './secure-test/secure-test.component';
 import { routing } from './app.routes';
 import { EqualValidator } from './directives/equal-validator.directive';
 import { DeleteValue } from './directives/delete-value-validator.directive';
 
 @NgModule({
   imports:      [ BrowserModule, FormsModule, HttpModule, routing],
-  declarations: [ AppComponent, RegistrationComponent, RootComponent, PageNotFoundComponent, EqualValidator, DeleteValue],
+  declarations: [ AppComponent, RegistrationComponent, RootComponent, PageNotFoundComponent, SecureTestComponent, EqualValidator, DeleteValue],
   bootstrap:    [ AppComponent ]
 })
 export class AppModule { }

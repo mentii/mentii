@@ -10,16 +10,16 @@
 </div>
 <div class="row">
   <div class="col-xs-12 col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6">
-    <form>
+    <form #signinForm="ngForm" autocomplete="off">
       <div class="form-group">
         <label for="email">Email</label>
-        <input type="email" placeholder="user@example.com" class="form-control" id="email" required name="email">
+        <input type="email" placeholder="user@example.com" class="form-control" id="email" required pattern="[^@]+@[^@]+\.[^@]+" [(ngModel)]="model.email" name="email" #email="ngModel">
       </div>
       <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" placeholder="********" class="form-control" id="password" required minlength=8 name="password">
+        <input type="password" placeholder="********" class="form-control" id="password" required minlength=8 [(ngModel)]="model.password" name="password" #password="ngModel">
       </div>
-      <button type="submit" class="btn btn-primary" disabled="disabled">Sign In</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!signinForm.form.valid" (click)="submit()">Sign In</button>
     </form>
     <br/>
     <a [routerLink]="['/register']">Register for an Account</a><br/>

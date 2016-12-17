@@ -6,7 +6,6 @@ class MentiiAuthentication:
     self.secret = 'SECRET_KEY'
 
   def generate_auth_token(self, user_credentials, expiration = 600):
-    print user_credentials
     s = Serializer('SECRET_KEY', expires_in = expiration)
     email = user_credentials['email']
     password = user_credentials['password']
@@ -17,7 +16,6 @@ class MentiiAuthentication:
     s = Serializer('SECRET_KEY')
     try:
       data = s.loads(token)
-      print data
     except SignatureExpired:
       print 'signature expired' # TODO: throw exception
       return None # valid token, but expired

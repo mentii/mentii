@@ -33,7 +33,7 @@ export class RegistrationComponent {
 
     /* TODO: Move this out to some sort of user.service.ts that will handle registration, signin, changing permissions, logout, etc. */
     //this.http.post('http://api.mentii.me/register', this.model).subscribe(
-    this.http.post(url, body, headers).subscribe(
+    this.http.post(url, body, options).subscribe(
       // TODO: Handle failure or errors
       (res:any)=>{
         let data = res.json();

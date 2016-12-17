@@ -3,8 +3,12 @@
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS, cross_origin
 from flask_mail import Mail
+from flask.ext.httpauth import HTTPBasicAuth
+from flask import g
 from mentii import user_ctrl
+from utils.MentiiAuth import MentiiAuthentication
 import utils.ResponseCreation as cr
+from utils.ResponseCreation import ControllerResponse
 import ConfigParser as cp
 import boto3
 import sys
@@ -13,6 +17,7 @@ import sys
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 mail = Mail(app)
+auth = HTTPBasicAuth()
 
 #Configuration setup
 configPath = "/config/prodConfig.ini"
@@ -39,6 +44,15 @@ app.config['MAIL_PASSWORD'] = password
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
+
+@auth.verify_password
+def verify_password(token, password):
+  ma = MentiiAuthentication()
+  user = ma.verify_auth_token(token)
+  if not user:
+    return False
+  g.authenticated_user = user
+  return True
 
 def getDatabaseClient():
   '''
@@ -79,7 +93,26 @@ def activate(activationid):
 @app.route('/signin/', methods=['POST', 'OPTIONS'])
 def signin():
   if request.method =='POST':
+    response = ControllerResponse()
+    ma = MentiiAuthentication()
+    token = ma.generate_auth_token(request.json)
+    response.addToPayload('token', token)
+    return cr.createResponse(response, 200)
+  else:
     return cr.createEmptyResponse(200)
+
+@app.route('/secure/', methods=['POST', 'OPTIONS'])
+@auth.login_required
+def secure():
+  '''
+  This is an endpoint for testing authentication
+  '''
+  if request.method =='POST':
+    # Do ya thang for the endpoint here. call another class/function etc
+    # testing function just returns data on the authenticated user
+    response = ControllerResponse()
+    response.addToPayload('data', g.authenticated_user)
+    return cr.createResponse(response, 200)
   else:
     return cr.createEmptyResponse(200)
 

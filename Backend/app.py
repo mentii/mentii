@@ -13,6 +13,9 @@ import ConfigParser as cp
 import boto3
 import sys
 
+from boto3.dynamodb.conditions import Key, Attr
+import hashlib
+
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
@@ -45,15 +48,6 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
 
-@auth.verify_password
-def verify_password(token, password):
-  ma = MentiiAuthentication()
-  user = ma.verify_auth_token(token)
-  if not user:
-    return False
-  g.authenticated_user = user
-  return True
-
 def getDatabaseClient():
   '''
   Return the correct database client object based
@@ -64,6 +58,30 @@ def getDatabaseClient():
   else:
     print("Returning the Dev resource")
     return boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
+
+@auth.verify_password
+def verify_password(email_or_token, password):
+  ma = MentiiAuthentication()
+  user = ma.verify_auth_token(email_or_token)
+  if not user:
+    if email_or_token == '' or password == '':
+      return False
+    dynamodb = getDatabaseClient()
+    table = dynamodb.Table('users')
+    result = table.get_item(Key={'email': email_or_token}, AttributesToGet=['active', 'password'])
+    if 'Item' not in result:
+      return False
+    if result['Item']['active'] != 'T':
+      return False
+    hashedPassword = result['Item']['password']
+    testPassword = hashlib.md5(password).hexdigest()
+    if hashedPassword != testPassword:
+      return False
+    else:
+      g.authenticated_user = result['Item']
+  else:
+    g.authenticated_user = user
+  return True
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -91,11 +109,13 @@ def activate(activationid):
     return cr.createResponse(res, 400)
 
 @app.route('/signin/', methods=['POST', 'OPTIONS'])
+@auth.login_required
 def signin():
   if request.method =='POST':
+    user_credentials = {'email': request.authorization.username, 'password': request.authorization.password}
     response = ControllerResponse()
     ma = MentiiAuthentication()
-    token = ma.generate_auth_token(request.json)
+    token = ma.generate_auth_token(user_credentials)
     response.addToPayload('token', token)
     return cr.createResponse(response, 200)
   else:

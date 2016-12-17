@@ -1,4 +1,6 @@
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
+from boto3.dynamodb.conditions import Key, Attr
+import hashlib
 
 class MentiiAuthentication:
 

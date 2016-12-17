@@ -17,12 +17,13 @@ export class RootComponent {
   }
 
   submit() {
+    let email = this.model.email;
+    let password = this.model.password;
     let url = this.mentiiConfig.getRootUrl() + '/signin/';
-    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let headers = new Headers({"Authorization": "Basic " + btoa(email+":"+password)});
+    headers.append("Content-Type", 'application/json');
     let options = new RequestOptions({ headers: headers });
     let body = {
-      "email": this.model.email,
-      "password": this.model.password
     }
 
     /* TODO: Move this out to some sort of user.service.ts that will handle registration, signin, changing permissions, logout, etc. */

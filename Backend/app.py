@@ -13,9 +13,6 @@ import ConfigParser as cp
 import boto3
 import sys
 
-from boto3.dynamodb.conditions import Key, Attr
-import hashlib
-
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
@@ -61,27 +58,8 @@ def getDatabaseClient():
 
 @auth.verify_password
 def verify_password(email_or_token, password):
-  ma = MentiiAuthentication()
-  user = ma.verify_auth_token(email_or_token)
-  if not user:
-    if email_or_token == '' or password == '':
-      return False
-    dynamodb = getDatabaseClient()
-    table = dynamodb.Table('users')
-    result = table.get_item(Key={'email': email_or_token}, AttributesToGet=['active', 'password'])
-    if 'Item' not in result:
-      return False
-    if result['Item']['active'] != 'T':
-      return False
-    hashedPassword = result['Item']['password']
-    testPassword = hashlib.md5(password).hexdigest()
-    if hashedPassword != testPassword:
-      return False
-    else:
-      g.authenticated_user = result['Item']
-  else:
-    g.authenticated_user = user
-  return True
+  dynamoDBInstance = getDatabaseClient()
+  return MentiiAuthentication().verify_password(email_or_token, password, dynamoDBInstance)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -112,10 +90,9 @@ def activate(activationid):
 @auth.login_required
 def signin():
   if request.method =='POST':
-    user_credentials = {'email': request.authorization.username, 'password': request.authorization.password}
+    userCredentials = {'email': request.authorization.username, 'password': request.authorization.password}
     response = ControllerResponse()
-    ma = MentiiAuthentication()
-    token = ma.generate_auth_token(user_credentials)
+    token = MentiiAuthentication.generate_auth_token(userCredentials)
     response.addToPayload('token', token)
     return cr.createResponse(response, 200)
   else:
@@ -131,7 +108,7 @@ def secure():
     # Do ya thang for the endpoint here. call another class/function etc
     # testing function just returns data on the authenticated user
     response = ControllerResponse()
-    response.addToPayload('data', g.authenticated_user)
+    response.addToPayload('user', g.authenticatedUser)
     return cr.createResponse(response, 200)
   else:
     return cr.createEmptyResponse(200)

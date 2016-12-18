@@ -15,6 +15,15 @@ export class SecureTestComponent {
     this.testToken();
   }
 
+  handleError(error){
+    alert("Auth token failed. Service returned code: " + error.status + " " + error.statusText + ". Returning to Sign in.");
+    this.router.navigateByUrl('');
+  }
+
+  handleSuccess(data){
+    alert("Auth token successful. You are: " + data.json().payload.user.email);
+  }
+
   testToken () {
     // TODO: Store the auth token somewhere else and retrieve it from there
     let auth_token = localStorage.getItem("auth_token");
@@ -27,23 +36,10 @@ export class SecureTestComponent {
 
     /* TODO: Move this out to some sort of user.service.ts that will handle registration, signin, changing permissions, logout, etc. */
     //this.http.post('http://api.mentii.me/register', this.model).subscribe(
-    this.http.post(url, body, options).subscribe(
-      // TODO: Handle failure or errors
-      (res:any)=>{
-        let data = res.json();
-
-        // TODO: Handle success better that current
-        if (data.payload) {
-          //TODO: Remove this, testing only
-          console.log("user: " + data.payload);
-          alert("your token works");
-
-        } else {
-          alert("no data payload from server");
-        }
-
-      }
-
-    )
+    this.http.post(url, body, options)
+    .subscribe(
+      data => this.handleSuccess(data),
+      err => this.handleError(err)
+    );
   }
 }

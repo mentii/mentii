@@ -128,8 +128,8 @@ if __name__ == '__main__':
   print(table.table_status)
   preloadData("mock_data.json", table)
 
-  d = '{ "email" : "fire@test.com", "password": "passwerd" }'
-  k = '{ "email" : "test2@mentii.com"}'
+  d = '{ "email" : "fire@mentii.me", "password": "passwerd" }'
+  k = '{ "email" : "test2@mentii.me"}'
   print(addItem(d, table))
   response = getItem(k,table)
   print(response['Item']['password'])

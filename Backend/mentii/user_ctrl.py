@@ -22,8 +22,8 @@ def register(jsonData, mailer, dbInstance):
   if not isPasswordValid(password):
     response.addError("Password Invalid", "The password is invalid")
   
-  if isEmailInSystem(email, dbInstance):
-    response.addError("Email Already in System", "The email is in the system already")
+  if isEmailInSystem(email, dbInstance) and isUserActive(email, dbInstance):
+    response.addError("Email Already Active in System", "The email is in the system already")
 
   if not response.hasErrors():
     hashedPassword = hashPassword(parsePassword(jsonData))

@@ -18,7 +18,6 @@ export class SecureTestComponent {
 
   handleError(error){
     alert("Auth token failed. Service returned code: " + error.status + " " + error.statusText + ". Returning to Sign in.");
-    this.router.navigateByUrl('');
   }
 
   handleSuccess(data){

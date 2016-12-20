@@ -116,13 +116,8 @@ def sendEmail(email, activationId, mailer):
   mailer.send(msg)
 
 def isEmailInSystem(email, dbInstance):
-  dynamodb = dbInstance
-  table = dynamodb.Table('users')
-
-  #Result is a dictionary that will have the key Item if
-  # it was able to find an item.
-  result = table.get_item(Key={'email': email}, ProjectionExpression='email')
-  return 'Item' in result.keys() and 'email' in result['Item'].keys()
+  user = getUserByEmail(email, dbInstance)
+  return user != None and 'email' in user.keys()
 
 def activate(activationId, dbInstance):
   response = ControllerResponse()
@@ -158,10 +153,20 @@ def activate(activationId, dbInstance):
   return response
 
 def isUserActive(email, dbInstance):
-  dynamodb = dbInstance
-  table = dynamodb.Table('users')
+  user = getUserByEmail(email, dbInstance)
 
-  #Result is a dictionary that will have the key Item if
-  # it was able to find an item.
-  result = table.get_item(Key={'email': email}, ProjectionExpression='active')
-  return 'Item' in result.keys() and 'active' in result['Item'].keys() and result['Item']['active'] == 'T'
+  return user != None and 'active' in user.keys() and user['active'] == 'T'
+
+def isUserActive(user):
+  return user != None and 'active' in user.keys() and user['active'] == 'T'
+
+def getUserByEmail(email, dbInstance):
+  user = None
+
+  table = dbInstance.Table('users')
+  result = table.get_item(Key={'email': email})
+
+  if 'Item' in result.keys():
+    user = result['Item']
+
+  return user

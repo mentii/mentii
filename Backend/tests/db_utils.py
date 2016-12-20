@@ -52,11 +52,15 @@ def preloadData(jsonData, table):
       for item in items:
         email = item['email']
         password = item['password']
+        active = item['active']
+        activationId = item['activationId']
 
         table.put_item(
           Item={
-             'email': email,
-             'password': password
+            'email': email,
+            'password': password,
+            'active' : active,
+            'activationId' : activationId
           }
         )
   except IOError as e:

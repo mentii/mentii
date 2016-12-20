@@ -113,7 +113,7 @@ def isEmailInSystem(email, dbInstance):
 
   #Result is a dictionary that will have the key Item if
   # it was able to find an item.
-  result = table.get_item(Key={'email': email}, AttributesToGet=['active'])
+  result = table.get_item(Key={'email': email}, ProjectionExpression='active')
   return 'Item' in result.keys() and 'active' in result['Item'].keys() and result['Item']['active'] == 'T'
 
 def activate(activationId, dbInstance):

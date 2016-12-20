@@ -88,19 +88,17 @@ class UserControlDBTests(unittest.TestCase):
   def tearDownClass(self):
     table = db.getTable('users', dynamodb).delete()
 
-  '''
-  WIP - will clean up later
   def test_isEmailInSystem(self):
     print("Running isEmailInSystem Test")
 
     email = "test@mentii.com"
     response = usr.isEmailInSystem(email, dynamodb)
-    self.assertTrue(response)'''
+    self.assertTrue(response)
 
-  def test_isEmailInSystem_fail(self):
-    print("Running isEmailInSystem fail case Test")
+  def test_isEmailNotInSystem(self):
+    print("Running isEmailNotInSystem Test")
 
-    email = "no_test@mentii.com"
+    email = "notInDB@mentii.com"
     response = usr.isEmailInSystem(email, dynamodb)
     self.assertFalse(response)
 

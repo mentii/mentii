@@ -14,7 +14,7 @@ class MentiiAuthentication:
     '''
     Builds a standard user object to return to the client for all authenticated calls
     '''
-    #Eventually add role to this packet
+    #TODO: Eventually add role to this packet
     return {'email': userData['email']}
 
   @staticmethod
@@ -27,9 +27,10 @@ class MentiiAuthentication:
     return parser.get('MentiiAuthentication', 'appSecret')
 
   @staticmethod
-  def generate_auth_token(userCredentials, expiration = 600):
+  def generate_auth_token(userCredentials, expiration = 86400):
     '''
-    Generates the auth token based off of the user's email and password with a default expiration duration
+    Generates the auth token based off of the user's email and password with a default expiration duration.
+    Default token will last 1 day.
     '''
     appSecret = MentiiAuthentication.get_app_secret()
     s = Serializer(appSecret, expires_in = expiration)
@@ -47,10 +48,8 @@ class MentiiAuthentication:
     try:
       data = s.loads(token)
     except SignatureExpired:
-      print 'signature expired' # TODO: throw exception
       return None # valid token, but expired
     except BadSignature:
-      print 'bad signature' # TODO: throw exception
       return None # invalid token
     user = data
     return user
@@ -67,7 +66,7 @@ class MentiiAuthentication:
       if emailOrToken == '' or password == '':
         return False
       table = dynamoDBInstance.Table('users')
-      # Eventually add the user's role to this so we can read if they are an admin or not by the token
+      # TODO: Eventually add the user's role to this so we can read if they are an admin or not by the token
       result = table.get_item(Key={'email': emailOrToken}, AttributesToGet=['email', 'active', 'password'])
       if 'Item' not in result:
         return False

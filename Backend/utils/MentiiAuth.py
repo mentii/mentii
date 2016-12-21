@@ -3,6 +3,7 @@ from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSign
 from boto3.dynamodb.conditions import Key, Attr
 import hashlib
 import ConfigParser as cp
+from mentii import user_ctrl
 
 class MentiiAuthentication:
 
@@ -55,13 +56,6 @@ class MentiiAuthentication:
     return retval
 
   @staticmethod
-  def isUserActive(user):
-    '''
-    Checks that retrieved user is active
-    '''
-    return ('active' in user and user['active'] == 'T')
-
-  @staticmethod
   def isPasswordValid(user, password):
     '''
     Checks that supplied password matches password in database
@@ -75,19 +69,6 @@ class MentiiAuthentication:
     return isPasswordValid
 
   @staticmethod
-  def getUserFromDB(email, dynamoDBInstance):
-    '''
-    Reads out a user from the db based on email. Returns None if no user is found
-    '''
-    user = None
-    table = dynamoDBInstance.Table('users')
-    # TODO: Eventually add the user's role to this so we can read if they are an admin or not by the token
-    result = table.get_item(Key={'email': email}, ProjectionExpression='email, active, password')
-    if 'Item' in result:
-      user = result['Item'] #user from db
-    return user
-
-  @staticmethod
   def verify_password(emailOrToken, password, dynamoDBInstance):
     '''
     Verifies the user's credentials for all authenticated calls. This is called by the @auth.login_required
@@ -98,8 +79,8 @@ class MentiiAuthentication:
     isPasswordVerified = False
     if not user:
       if emailOrToken != '' and password != '':
-        userFromDB = MentiiAuthentication.getUserFromDB(emailOrToken, dynamoDBInstance) # user object from db
-        if userFromDB != None and MentiiAuthentication.isUserActive(userFromDB) and MentiiAuthentication.isPasswordValid(userFromDB, password):
+        userFromDB = user_ctrl.getUserByEmail(emailOrToken, dynamoDBInstance) # user object from db
+        if userFromDB != None and user_ctrl.isUserActive(userFromDB) and MentiiAuthentication.isPasswordValid(userFromDB, password):
           g.authenticatedUser = MentiiAuthentication.build_user_object(userFromDB)
           isPasswordVerified = True
     else:

@@ -22,6 +22,7 @@ deploy:
 
 clean:
 	@ rm -rf ./env/
+	@ find . -name "*.pyc" -type f -delete
 
 runtests: clean
 	@ cd ../../LocalDB; make -s

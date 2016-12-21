@@ -14,7 +14,6 @@ class MentiiAuthentication:
     '''
     Builds a standard user object to return to the client for all authenticated calls
     '''
-    #TODO: Eventually add role to this packet
     return {'email': userData['email']}
 
   @staticmethod
@@ -43,15 +42,49 @@ class MentiiAuthentication:
     '''
     Reads the auth token to make sure it has not been modified and that it is not expired
     '''
+    retval = None
     appSecret = MentiiAuthentication.get_app_secret()
     s = Serializer(appSecret)
     try:
-      data = s.loads(token)
+      user = s.loads(token)
+      retval = user # user from token
     except SignatureExpired:
-      return None # valid token, but expired
+      retval = None # valid token, but expired
     except BadSignature:
-      return None # invalid token
-    user = data
+      retval = None # invalid token
+    return retval
+
+  @staticmethod
+  def isUserActive(user):
+    '''
+    Checks that retrieved user is active
+    '''
+    return ('active' in user and user['active'] == 'T')
+
+  @staticmethod
+  def isPasswordValid(user, password):
+    '''
+    Checks that supplied password matches password in database
+    '''
+    isPasswordValid = False
+    if 'password' in user:
+      hashedPassword = user['password']
+      testPassword = hashlib.md5(password).hexdigest()
+      if hashedPassword == testPassword:
+        isPasswordValid = True
+    return isPasswordValid
+
+  @staticmethod
+  def getUserFromDB(email, dynamoDBInstance):
+    '''
+    Reads out a user from the db based on email. Returns None if no user is found
+    '''
+    user = None
+    table = dynamoDBInstance.Table('users')
+    # TODO: Eventually add the user's role to this so we can read if they are an admin or not by the token
+    result = table.get_item(Key={'email': email}, ProjectionExpression='email, active, password')
+    if 'Item' in result:
+      user = result['Item'] #user from db
     return user
 
   @staticmethod
@@ -62,22 +95,14 @@ class MentiiAuthentication:
     either email or the token. If the token is passed as the username the password field is unused.
     '''
     user = MentiiAuthentication.verify_auth_token(emailOrToken)
+    isPasswordVerified = False
     if not user:
-      if emailOrToken == '' or password == '':
-        return False
-      table = dynamoDBInstance.Table('users')
-      # TODO: Eventually add the user's role to this so we can read if they are an admin or not by the token
-      result = table.get_item(Key={'email': emailOrToken}, AttributesToGet=['email', 'active', 'password'])
-      if 'Item' not in result:
-        return False
-      if result['Item']['active'] != 'T':
-        return False
-      hashedPassword = result['Item']['password']
-      testPassword = hashlib.md5(password).hexdigest()
-      if hashedPassword != testPassword:
-        return False
-      else:
-        g.authenticatedUser = MentiiAuthentication.build_user_object(result['Item'])
+      if emailOrToken != '' and password != '':
+        userFromDB = MentiiAuthentication.getUserFromDB(emailOrToken, dynamoDBInstance) # user object from db
+        if userFromDB != None and MentiiAuthentication.isUserActive(userFromDB) and MentiiAuthentication.isPasswordValid(userFromDB, password):
+          g.authenticatedUser = MentiiAuthentication.build_user_object(userFromDB)
+          isPasswordVerified = True
     else:
       g.authenticatedUser = MentiiAuthentication.build_user_object(user)
-    return True
+      isPasswordVerified = True
+    return isPasswordVerified

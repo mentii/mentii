@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {Http, Response, Headers, RequestOptions} from "@angular/http";
 import {RegistrationModel} from './registration.model';
-import {MentiiConfig} from '../mentii.config';
+import {MentiiConfig} from '../../mentii.config';
 
 @Component({
   moduleId: module.id,

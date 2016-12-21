@@ -5,9 +5,9 @@ import { ModuleWithProviders }  from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { RootComponent } from './root/root.component';
-import { RegistrationComponent } from './registration/registration.component';
+import { RegistrationComponent } from './user/registration/registration.component';
 import { PageNotFoundComponent } from './pageNotFound/pageNotFound.component';
-import { SecureTestComponent } from './secure-test/secure-test.component';
+import { SecureTestComponent } from './secureTest/secureTest.component';
 
 // Route Configuration
 export const routes: Routes = [

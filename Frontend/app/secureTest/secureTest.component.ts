@@ -7,7 +7,7 @@ import {MentiiConfig} from '../mentii.config';
 @Component({
   moduleId: module.id,
   selector: 'secure-test',
-  templateUrl: 'secure-test.html'
+  templateUrl: 'secureTest.html'
 })
 export class SecureTestComponent {
   mentiiConfig = new MentiiConfig();
@@ -17,7 +17,7 @@ export class SecureTestComponent {
   }
 
   handleError(error){
-    alert("Auth token failed. Service returned code: " + error.status + " " + error.statusText + ". Returning to Sign in.");
+    alert("Auth token failed. Returning to Sign in.");
   }
 
   handleSuccess(data){

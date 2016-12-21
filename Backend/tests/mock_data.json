@@ -1,12 +1,12 @@
 [
   {
-   "email" : "test@mentii.com",
+   "email" : "test@mentii.me",
    "password" : "iameight",
    "activationId" : "12345",
    "active": "T"
   },
   {
-   "email" : "test2@mentii.com",
+   "email" : "test2@mentii.me",
    "password" : "iameight2",
    "activationId" : "abcde",
    "active": "F"

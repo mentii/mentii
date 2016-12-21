@@ -22,8 +22,8 @@ def register(jsonData, mailer, dbInstance):
   if not isPasswordValid(password):
     response.addError("Password Invalid", "The password is invalid")
   
-  if isEmailInSystem(email, dbInstance):
-    response.addError("Email Already in System", "The email is in the system already")
+  if isEmailInSystem(email, dbInstance) and isUserActive(email, dbInstance):
+    response.addError("Email Already Active in System", "The email is in the system already")
 
   if not response.hasErrors():
     hashedPassword = hashPassword(parsePassword(jsonData))
@@ -31,7 +31,7 @@ def register(jsonData, mailer, dbInstance):
     if activationId is not None:
       response.addToPayload("activationId", activationId)
     else:
-      response.addError("Could not create an activation Id")
+      response.addError("Activation Id is None", "Could not create an activation Id")
  
   return response
 
@@ -94,6 +94,14 @@ def addUserAndSendEmail(email, password, mailer, dbInstance):
 
   return activationId
 
+def deleteUser(email, dbInstance):
+  table = dbInstance.Table('users')
+  response = table.delete_item(
+    Key={'email': email}
+  )
+
+  return response
+
 def sendEmail(email, activationId, mailer):
   '''
   Create a message and send it from our email to
@@ -108,13 +116,8 @@ def sendEmail(email, activationId, mailer):
   mailer.send(msg)
 
 def isEmailInSystem(email, dbInstance):
-  dynamodb = dbInstance
-  table = dynamodb.Table('users')
-
-  #Result is a dictionary that will have the key Item if
-  # it was able to find an item.
-  result = table.get_item(Key={'email': email}, AttributesToGet=['active'])
-  return 'Item' in result.keys() and 'active' in result['Item'].keys() and result['Item']['active'] == 'T'
+  user = getUserByEmail(email, dbInstance)
+  return user != None and 'email' in user.keys()
 
 def activate(activationId, dbInstance):
   response = ControllerResponse()
@@ -148,3 +151,22 @@ def activate(activationId, dbInstance):
     response.addToPayload("status", "Success")
 
   return response
+
+def isUserActive(email, dbInstance):
+  user = getUserByEmail(email, dbInstance)
+
+  return user != None and 'active' in user.keys() and user['active'] == 'T'
+
+def isUserActive(user):
+  return user != None and 'active' in user.keys() and user['active'] == 'T'
+
+def getUserByEmail(email, dbInstance):
+  user = None
+
+  table = dbInstance.Table('users')
+  result = table.get_item(Key={'email': email})
+
+  if 'Item' in result.keys():
+    user = result['Item']
+
+  return user

@@ -6,7 +6,7 @@ from flask_mail import Mail
 from flask.ext.httpauth import HTTPBasicAuth
 from flask import g
 from mentii import user_ctrl
-from utils.MentiiAuth import MentiiAuthentication
+from utils import MentiiAuth
 import utils.ResponseCreation as cr
 from utils.ResponseCreation import ControllerResponse
 import ConfigParser as cp
@@ -31,6 +31,7 @@ parser.read(configPath)
 #Email setup
 address = parser.get('EmailData', 'address')
 password = parser.get('EmailData', 'password')
+appSecret = parser.get('MentiiAuthentication', 'appSecret')
 
 #Database configuration
 prod = parser.get('DatabaseData', 'isProd')
@@ -59,7 +60,7 @@ def getDatabaseClient():
 @auth.verify_password
 def verify_password(email_or_token, password):
   dynamoDBInstance = getDatabaseClient()
-  return MentiiAuthentication().verify_password(email_or_token, password, dynamoDBInstance)
+  return MentiiAuth.verify_password(email_or_token, password, dynamoDBInstance, appSecret)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -92,7 +93,7 @@ def signin():
   if request.method =='POST':
     userCredentials = {'email': request.authorization.username, 'password': request.authorization.password}
     response = ControllerResponse()
-    token = MentiiAuthentication.generate_auth_token(userCredentials)
+    token = MentiiAuth.generate_auth_token(userCredentials, appSecret)
     response.addToPayload('token', token)
     return cr.createResponse(response, 200)
   else:

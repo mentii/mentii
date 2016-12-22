@@ -10,7 +10,7 @@ import sys
 from os import path
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 from mentii import user_ctrl
-from utils.MentiiAuth import MentiiAuthentication
+from utils import MentiiAuth
 
 app = Flask(__name__)
 
@@ -37,42 +37,42 @@ class MentiiAuthTests(unittest.TestCase):
     table = db.getTable('users', dynamodb).delete()
 
   def test_verify_password(self):
-    print("Running MentiiAuthentication.verify_password test")
+    print("Running MentiiAuth.verify_password test")
     emailActive = 'test3@mentii.me'
     emailNotActive = 'test4@mentii.me'
     with app.app_context():
-      self.assertTrue(MentiiAuthentication.verify_password(emailActive, 'testing1', dynamodb))
-      self.assertFalse(MentiiAuthentication.verify_password(emailActive, 'wrongpassword', dynamodb))
-      self.assertFalse(MentiiAuthentication.verify_password(emailActive, '', dynamodb))
-      self.assertFalse(MentiiAuthentication.verify_password(emailNotActive, 'testing1', dynamodb))
-      self.assertFalse(MentiiAuthentication.verify_password(emailNotActive, 'wrongpassword', dynamodb))
-      self.assertFalse(MentiiAuthentication.verify_password(emailNotActive, '', dynamodb))
+      self.assertTrue(MentiiAuth.verify_password(emailActive, 'testing1', dynamodb, 'test_app_secret'))
+      self.assertFalse(MentiiAuth.verify_password(emailActive, 'wrongpassword', dynamodb, 'test_app_secret'))
+      self.assertFalse(MentiiAuth.verify_password(emailActive, '', dynamodb, 'test_app_secret'))
+      self.assertFalse(MentiiAuth.verify_password(emailNotActive, 'testing1', dynamodb, 'test_app_secret'))
+      self.assertFalse(MentiiAuth.verify_password(emailNotActive, 'wrongpassword', dynamodb, 'test_app_secret'))
+      self.assertFalse(MentiiAuth.verify_password(emailNotActive, '', dynamodb, 'test_app_secret'))
 
   def test_isPasswordValid(self):
-    print("Running MentiiAuthentication.isPasswordValid test")
+    print("Running MentiiAuth.isPasswordValid test")
     email = 'test3@mentii.me'
     user = user_ctrl.getUserByEmail(email, dynamodb)
-    self.assertTrue(MentiiAuthentication.isPasswordValid(user, 'testing1'))
-    self.assertFalse(MentiiAuthentication.isPasswordValid(user, 'wrongpassword'))
+    self.assertTrue(MentiiAuth.isPasswordValid(user, 'testing1'))
+    self.assertFalse(MentiiAuth.isPasswordValid(user, 'wrongpassword'))
 
   def test_verify_auth_token(self):
-    print("Running MentiiAuthentication.verify_auth_token test")
+    print("Running MentiiAuth.verify_auth_token test")
     email = 'test3@mentii.me'
     user = user_ctrl.getUserByEmail(email, dynamodb)
     userCredentials = {"email": user['email'], "password": user['password']}
     testRetVal = {"email": 'test3@mentii.me', "password": '6b7330782b2feb4924020cc4a57782a9'}
-    auth_token = MentiiAuthentication.generate_auth_token(userCredentials)
+    auth_token = MentiiAuth.generate_auth_token(userCredentials, 'test_app_secret')
     fake_auth_token = 'eyJhbGciOiJIUzI1NiIsImV4cCI6MTQ4MjQ1NTU2MywiaWF0IjoxNDgyMzY5MTYzfQ.eyJwYXNzd29yZCI6InRlc3RpbmcxIiwiZW1haWwiOiJqb25tZDI0QGdtYWlsLmNvbSJ9.GWmgu7P5Ro-sHQBSEuL322sldst7McEHvXqY897K9N'
-    self.assertEqual(MentiiAuthentication.verify_auth_token(auth_token), testRetVal)
-    self.assertIsNone(MentiiAuthentication.verify_auth_token(fake_auth_token))
+    self.assertEqual(MentiiAuth.verify_auth_token(auth_token, 'test_app_secret'), testRetVal)
+    self.assertIsNone(MentiiAuth.verify_auth_token(fake_auth_token, 'test_app_secret'))
 
   def test_generate_auth_token(self):
     print("Running MentiiAuthentication.generate_auth_token test")
     email = 'test3@mentii.me'
     user = user_ctrl.getUserByEmail(email, dynamodb)
     userCredentials = {"email": user['email'], "password": user['password']}
-    auth_token = MentiiAuthentication.generate_auth_token(userCredentials)
-    self.assertIsNotNone(MentiiAuthentication.verify_auth_token(auth_token))
+    auth_token = MentiiAuth.generate_auth_token(userCredentials, 'test_app_secret')
+    self.assertIsNotNone(MentiiAuth.verify_auth_token(auth_token, 'test_app_secret'))
 
 if __name__ == '__main__':
   if __package__ is None:
@@ -80,6 +80,8 @@ if __name__ == '__main__':
     from os import path
     sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
     from mentii import user_ctrl as usr
+    from utils import MentiiAuth
   else:
     from ..mentii import user_ctrl as usr
+    from ..utils import MentiiAuth
   unittest.main()

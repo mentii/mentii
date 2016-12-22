@@ -32,11 +32,16 @@ class MentiiAuthentication:
     Generates the auth token based off of the user's email and password with a default expiration duration.
     Default token will last 1 day.
     '''
-    appSecret = MentiiAuthentication.get_app_secret()
-    s = Serializer(appSecret, expires_in = expiration)
-    email = userCredentials['email']
-    password = userCredentials['password']
-    return s.dumps({ 'email': email, 'password': password })
+    retval = None
+    try:
+      appSecret = MentiiAuthentication.get_app_secret()
+      s = Serializer(appSecret, expires_in = expiration)
+      email = userCredentials['email']
+      password = userCredentials['password']
+      retval = s.dumps({ 'email': email, 'password': password })
+    except:
+      retval = None
+    return retval
 
   @staticmethod
   def verify_auth_token(token):

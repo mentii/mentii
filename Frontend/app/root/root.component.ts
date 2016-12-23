@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { SigninComponent } from '../user/signin/signin.component'
 
 @Component({
   moduleId: module.id,
@@ -7,6 +8,6 @@ import { Component } from '@angular/core';
 })
 export class RootComponent {
 
-  constructor(){
+  constructor( ){
   }
 }

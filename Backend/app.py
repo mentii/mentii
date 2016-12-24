@@ -68,11 +68,11 @@ def index():
 
 @app.route('/register/', methods=['POST', 'OPTIONS'])
 def register():
-  status = 200
   if request.method =='OPTIONS':
-    return cr.createEmptyResponse(status)
+    return cr.createEmptyResponse(200)
   dynamoDBInstance = getDatabaseClient()
   res = user_ctrl.register(request.json, mail, dynamoDBInstance)
+  status = 201
   if res.hasErrors():
     status = 400
   return cr.createResponse(res, status)

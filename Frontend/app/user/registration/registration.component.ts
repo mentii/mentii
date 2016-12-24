@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {Http, Response, Headers, RequestOptions} from "@angular/http";
 import {RegistrationModel} from './registration.model';
-import {MentiiConfig} from '../mentii.config';
+import {MentiiConfig} from '../../mentii.config';
 
 @Component({
   moduleId: module.id,
@@ -33,7 +33,7 @@ export class RegistrationComponent {
 
     /* TODO: Move this out to some sort of user.service.ts that will handle registration, signin, changing permissions, logout, etc. */
     //this.http.post('http://api.mentii.me/register', this.model).subscribe(
-    this.http.post(url, body, headers).subscribe(
+    this.http.post(url, body, options).subscribe(
       // TODO: Handle failure or errors
       (res:any)=>{
         let data = res.json();

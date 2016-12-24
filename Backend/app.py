@@ -71,10 +71,7 @@ def register():
   if request.method =='POST':
     dynamoDBInstance = getDatabaseClient()
     res = user_ctrl.register(request.json, mail, dynamoDBInstance)
-    if not res.hasErrors():
-      return cr.createResponse(res, 201)
-    else:
-      return cr.createResponse(res, 400)
+    return cr.createResponse(res, 200)
   else:
     return cr.createEmptyResponse(200)
 

@@ -12,6 +12,7 @@ import {MentiiConfig} from '../../mentii.config';
 export class RegistrationComponent {
   model = new RegistrationModel('', '', '');
   mentiiConfig = new MentiiConfig();
+  submitDisabled = false;
   regSuccess = false;
 
   constructor(public http: Http){
@@ -22,6 +23,8 @@ export class RegistrationComponent {
   }
 
   submit() {
+    this.submitDisabled = true;
+
     let url = this.mentiiConfig.getRootUrl() + '/register/';
     let headers = new Headers({ 'Content-Type': 'application/json' });
     let options = new RequestOptions({ headers: headers });
@@ -30,18 +33,30 @@ export class RegistrationComponent {
       "password": this.model.password
     }
 
-
     /* TODO: Move this out to some sort of user.service.ts that will handle registration, signin, changing permissions, logout, etc. */
     //this.http.post('http://api.mentii.me/register', this.model).subscribe(
-    this.http.post(url, body, options).subscribe(
-      // TODO: Handle failure or errors
-      (res:any)=>{
-        let data = res.json();
-        if (data !== 'Failing Registration Validation') {
-          this.regSuccess = true;
-        }
+    this.http.post(url, body, options)
+    .subscribe(
+      data => this.handleSuccess(data.json()),
+      err => this.handleError(err)
+    );
+  }
+
+  handleSuccess(data) {
+    if (data['errors'].length > 0) {
+      this.submitDisabled = false;
+      this.newModel();
+      for (let error of data['errors']) {
+        alert("Registation Failed:\n" + error['title']+": "+error['message']);
       }
-      // TODO: Handle success better that current
-    )
+    }
+    else {
+      this.regSuccess = true;
+    }
+  }
+
+  handleError(err) {
+    alert("Registration Failed")
+    console.log(err);
   }
 }

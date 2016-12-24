@@ -12,7 +12,7 @@ import {MentiiConfig} from '../../mentii.config';
 export class RegistrationComponent {
   model = new RegistrationModel('', '', '');
   mentiiConfig = new MentiiConfig();
-  submitInprogress = false;
+  submitInProgress = false;
   regSuccess = false;
 
   constructor(public http: Http){
@@ -23,7 +23,7 @@ export class RegistrationComponent {
   }
 
   submit() {
-    this.submitInprogress = true;
+    this.submitInProgress = true;
 
     let url = this.mentiiConfig.getRootUrl() + '/register/';
     let headers = new Headers({ 'Content-Type': 'application/json' });
@@ -47,8 +47,8 @@ export class RegistrationComponent {
   }
 
   handleError(err) {
-    let data = err.json;
-    this.submitInprogress = false;
+    let data = err.json();
+    this.submitInProgress = false;
     this.newModel();
     let alertMessage = "Registation Failed:\n"
     for (let error of data['errors']) {

@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Http, Response, Headers, RequestOptions } from "@angular/http";
 import { RegistrationModel } from './registration.model';
 import { MentiiConfig } from '../../mentii.config';
 import { UserService } from '../user.service';
@@ -15,7 +14,7 @@ export class RegistrationComponent {
   mentiiConfig = new MentiiConfig();
   regSuccess = false;
 
-  constructor(public http: Http, public userService: UserService){
+  constructor(public userService: UserService){
   }
 
   newModel() {

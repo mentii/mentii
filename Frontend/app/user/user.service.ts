@@ -1,11 +1,16 @@
+// Builtin
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+// Services
 import { AuthHttp } from '../utils/AuthHttp.service'
+// Utilities
 import { MentiiConfig } from '../mentii.config'
+// Models
 import { RegistrationModel } from '../user/registration/registration.model';
+import { SigninModel } from '../user/signin/signin.model';
 
 @Injectable()
 export class UserService {
@@ -16,10 +21,10 @@ export class UserService {
   }
 
   /**
-   * Service method to register a user in the database
-   * @param  {RegistrationModel} registrationModel Model representation of the registration form. Contains an email and password.
-   * @return {Observable<any>}
-   */
+  * Service method to register a user in the database
+  * @param  {RegistrationModel} registrationModel Model representation of the registration form. Contains an email and password.
+  * @return {Observable<any>}
+  */
   register(registrationModel: RegistrationModel):Observable<any> {
     let registerUrl = this.mentiiConfig.getRootUrl() + '/register/';
     let headers = new Headers({ 'Content-Type': 'application/json' });
@@ -28,9 +33,26 @@ export class UserService {
       "email": registrationModel.email,
       "password": registrationModel.password
     }
-
     return this.http.post(registerUrl, body, options)
-    .map((res:Response) => res.json())
-    .catch((error:any) => Observable.throw(error.json().error));
+    .map((res:Response) => res)
+    .catch((error:any) => Observable.throw(error));
+  }
+
+  /**
+  * Service method to authenticate a user and get an auth token
+  * @param  {SigninModel} signInModel Model representation of the sign in form. Contains an email and password
+  * @return {Observable<any>}
+  */
+  signIn(signInModel: SigninModel):Observable<any> {
+    let email = signInModel.email;
+    let password = signInModel.password;
+    let signinUrl = this.mentiiConfig.getRootUrl() + '/signin/';
+    let headers = new Headers({"Authorization": "Basic " + btoa(email+":"+password)});
+    headers.append("Content-Type", 'application/json');
+    let options = new RequestOptions({ headers: headers });
+    let body = {}
+    return this.http.post(signinUrl, body, options)
+    .map((res:Response) => res)
+    .catch((error:any) => Observable.throw(error));
   }
 }

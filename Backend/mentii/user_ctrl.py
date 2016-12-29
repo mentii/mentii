@@ -12,17 +12,17 @@ def register(jsonData, mailer, dbInstance):
   if not validateRegistrationJSON(jsonData):
     response.addError("Register Validation Error", "The json data did not have an email or did not have a password")
     return response
-  
+
   email = parseEmail(jsonData)
   password = parsePassword(jsonData)
 
   if not isEmailValid(email):
     response.addError("Email invalid", "The email is invalid")
-  
+
   if not isPasswordValid(password):
     response.addError("Password Invalid", "The password is invalid")
-  
-  if isEmailInSystem(email, dbInstance) and isUserActive(email, dbInstance):
+
+  if isEmailInSystem(email, dbInstance) and isUserActive(getUserByEmail(email, dbInstance)):
     response.addError("Email Already Active in System", "The email is in the system already")
 
   if not response.hasErrors():
@@ -32,7 +32,7 @@ def register(jsonData, mailer, dbInstance):
       response.addToPayload("activationId", activationId)
     else:
       response.addError("Activation Id is None", "Could not create an activation Id")
- 
+
   return response
 
 def hashPassword(password):
@@ -73,7 +73,7 @@ def isPasswordValid(password):
   return len(password) >= 8
 
 def addUserAndSendEmail(email, password, mailer, dbInstance):
-    
+
   activationId = str(uuid.uuid4())
   dynamodb = dbInstance
   table = dynamodb.Table('users')
@@ -90,7 +90,7 @@ def addUserAndSendEmail(email, password, mailer, dbInstance):
   try:
     sendEmail(email, activationId, mailer)
   except:
-    return None 
+    return None
 
   return activationId
 
@@ -151,11 +151,6 @@ def activate(activationId, dbInstance):
     response.addToPayload("status", "Success")
 
   return response
-
-def isUserActive(email, dbInstance):
-  user = getUserByEmail(email, dbInstance)
-
-  return user != None and 'active' in user.keys() and user['active'] == 'T'
 
 def isUserActive(user):
   return user != None and 'active' in user.keys() and user['active'] == 'T'

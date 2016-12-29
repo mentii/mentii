@@ -52,11 +52,15 @@ def preloadData(jsonData, table):
       for item in items:
         email = item['email']
         password = item['password']
+        active = item['active']
+        activationId = item['activationId']
 
         table.put_item(
           Item={
-             'email': email,
-             'password': password
+            'email': email,
+            'password': password,
+            'active' : active,
+            'activationId' : activationId
           }
         )
   except IOError as e:
@@ -124,8 +128,8 @@ if __name__ == '__main__':
   print(table.table_status)
   preloadData("mock_data.json", table)
 
-  d = '{ "email" : "fire@test.com", "password": "passwerd" }'
-  k = '{ "email" : "test2@mentii.com"}'
+  d = '{ "email" : "fire@mentii.me", "password": "passwerd" }'
+  k = '{ "email" : "test2@mentii.me"}'
   print(addItem(d, table))
   response = getItem(k,table)
   print(response['Item']['password'])

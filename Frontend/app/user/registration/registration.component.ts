@@ -12,6 +12,7 @@ import { UserService } from '../user.service';
 export class RegistrationComponent {
   model = new RegistrationModel('', '', '');
   mentiiConfig = new MentiiConfig();
+  submitInProgress = false;
   regSuccess = false;
 
   constructor(public userService: UserService){
@@ -22,15 +23,25 @@ export class RegistrationComponent {
   }
 
   submit() {
+    this.submitInProgress = true;
     this.userService.register(this.model).subscribe(
-      // TODO: Handle failure or errors
-      (res:any)=>{
-        let data = res.json();
-        if (data !== 'Failing Registration Validation') {
-          this.regSuccess = true;
-        }
-      }
-      // TODO: Handle success better that current
+      data => this.handleSuccess(),
+      err => this.handleError(err)
     )
+  }
+
+  handleSuccess() {
+    this.regSuccess = true;
+  }
+
+  handleError(err) {
+    let data = err.json();
+    this.submitInProgress = false;
+    this.newModel();
+    let alertMessage = "Registation Failed:\n"
+    for (let error of data['errors']) {
+      alertMessage += "Title:" + error['title'] + ", Message:" + error['message'] + "\n";
+    }
+    alert(alertMessage);
   }
 }

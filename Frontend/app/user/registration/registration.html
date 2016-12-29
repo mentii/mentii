@@ -32,7 +32,7 @@
           Passwords do not match
         </span>
       </div>
-      <button type="submit" class="btn btn-primary" [disabled]="!registerForm.form.valid" (click)="submit()">Register Account</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!registerForm.form.valid || submitInProgress" (click)="submit()">Register Account</button>
     </form>
     <br/>
     <a [routerLink]="['']">Back to Sign In</a>

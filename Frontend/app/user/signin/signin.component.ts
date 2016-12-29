@@ -29,7 +29,6 @@ export class SigninComponent {
 
   handleError(err) {
     alert("Sign in failed");
-    console.log(err);
   }
 
   submit() {

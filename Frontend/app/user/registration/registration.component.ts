@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import {Http, Response, Headers, RequestOptions} from "@angular/http";
-import {RegistrationModel} from './registration.model';
-import {MentiiConfig} from '../../mentii.config';
+import { RegistrationModel } from './registration.model';
+import { MentiiConfig } from '../../mentii.config';
+import { UserService } from '../user.service';
 
 @Component({
   moduleId: module.id,
@@ -15,7 +15,7 @@ export class RegistrationComponent {
   submitInProgress = false;
   regSuccess = false;
 
-  constructor(public http: Http){
+  constructor(public userService: UserService){
   }
 
   newModel() {
@@ -24,19 +24,7 @@ export class RegistrationComponent {
 
   submit() {
     this.submitInProgress = true;
-
-    let url = this.mentiiConfig.getRootUrl() + '/register/';
-    let headers = new Headers({ 'Content-Type': 'application/json' });
-    let options = new RequestOptions({ headers: headers });
-    let body = {
-      "email": this.model.email,
-      "password": this.model.password
-    }
-
-    /* TODO: Move this out to some sort of user.service.ts that will handle registration, signin, changing permissions, logout, etc. */
-    //this.http.post('http://api.mentii.me/register', this.model).subscribe(
-    this.http.post(url, body, options)
-    .subscribe(
+    this.userService.register(this.model).subscribe(
       data => this.handleSuccess(),
       err => this.handleError(err)
     );

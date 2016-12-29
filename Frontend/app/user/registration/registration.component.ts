@@ -27,7 +27,7 @@ export class RegistrationComponent {
     this.userService.register(this.model).subscribe(
       data => this.handleSuccess(),
       err => this.handleError(err)
-    )
+    );
   }
 
   handleSuccess() {

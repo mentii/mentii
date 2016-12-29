@@ -9,6 +9,7 @@ import { routing } from './app.routes';
 /* Services */
 import { AuthHttp } from './utils/AuthHttp.service';
 import { UserService } from './user/user.service';
+import { ToastModule } from 'ng2-toastr/ng2-toastr';
 /* Components */
 import { AppComponent } from './app.component';
 import { RegistrationComponent } from './user/registration/registration.component';
@@ -21,7 +22,7 @@ import { EqualValidator } from './directives/equal-validator.directive';
 import { DeleteValue } from './directives/delete-value-validator.directive';
 
 @NgModule({
-  imports:      [ BrowserModule, FormsModule, HttpModule, routing],
+  imports:      [ BrowserModule, FormsModule, HttpModule, ToastModule, routing],
   declarations: [ AppComponent, RegistrationComponent, RootComponent, PageNotFoundComponent, SecureTestComponent, EqualValidator, DeleteValue, SigninComponent],
   providers: [UserService,
     {

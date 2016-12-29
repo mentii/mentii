@@ -27,10 +27,10 @@
     "angular-in-memory-web-api": "~0.2.0",
     "bootstrap": "3.3.7",
     "core-js": "^2.4.1",
+    "ng2-toastr": "^1.3.3",
     "reflect-metadata": "^0.1.8",
-    "rxjs": "^5.0.0-rc.4",
+    "rxjs": "5.0.0-rc.4",
     "systemjs": "0.19.40",
-    "toastr": "^2.1.2",
     "zone.js": "^0.7.3"
   },
   "devDependencies": {

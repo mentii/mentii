@@ -14,11 +14,13 @@ import { AuthHttp } from '../../utils/AuthHttp.service';
 export class SigninComponent {
   model = new SigninModel('', '');
   mentiiConfig = new MentiiConfig();
+  isLoading = false;
 
   constructor(public userService: UserService, public authHttpService: AuthHttp , public router: Router){
   }
 
   handleSuccess(data) {
+    this.isLoading = false;
     if (data.payload.token) {
       this.authHttpService.saveAuthToken(data.payload.token);
       this.router.navigateByUrl('/secure-test');
@@ -28,10 +30,12 @@ export class SigninComponent {
   }
 
   handleError(err) {
+    this.isLoading = false;
     alert("Sign in failed");
   }
 
   submit() {
+    this.isLoading = true;
     this.userService.signIn(this.model)
     .subscribe(
       data => this.handleSuccess(data.json()),

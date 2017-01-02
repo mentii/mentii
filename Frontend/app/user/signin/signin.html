@@ -19,7 +19,7 @@
         <label for="password">Password</label>
         <input type="password" placeholder="********" class="form-control" id="password" required minlength=8 [(ngModel)]="model.password" name="password" #password="ngModel">
       </div>
-      <button type="submit" class="btn btn-primary" [disabled]="!signinForm.form.valid" (click)="submit()">Sign In</button>
+      <button type="submit" class="btn btn-primary ladda-button" [disabled]="!signinForm.form.valid" (click)="submit()" [ladda]='isLoading'><span class="ladda-label">Sign in</span></button>
     </form>
     <br/>
     <a [routerLink]="['/register']">Register for an Account</a><br/>

@@ -12,7 +12,6 @@ import { UserService } from '../user.service';
 export class RegistrationComponent {
   model = new RegistrationModel('', '', '');
   mentiiConfig = new MentiiConfig();
-  submitInProgress = false;
   regSuccess = false;
   isLoading = false;
 
@@ -25,7 +24,6 @@ export class RegistrationComponent {
 
   submit() {
     this.isLoading = true;
-    this.submitInProgress = true;
     this.userService.register(this.model).subscribe(
       data => this.handleSuccess(),
       err => this.handleError(err)
@@ -40,7 +38,6 @@ export class RegistrationComponent {
   handleError(err) {
     this.isLoading = false;
     let data = err.json();
-    this.submitInProgress = false;
     this.newModel();
     let alertMessage = "Registation Failed:\n"
     for (let error of data['errors']) {

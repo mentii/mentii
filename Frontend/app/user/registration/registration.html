@@ -32,7 +32,7 @@
           Passwords do not match
         </span>
       </div>
-      <button type="submit" class="btn btn-primary" [disabled]="!registerForm.form.valid || submitInProgress" (click)="submit()" [ladda]='isLoading'><span class="ladda-label">Register Account</span></button>
+      <button type="submit" class="btn btn-primary" [disabled]="!registerForm.form.valid" (click)="submit()" [ladda]='isLoading'><span class="ladda-label">Register Account</span></button>
     </form>
     <br/>
     <a [routerLink]="['']">Back to Sign In</a>

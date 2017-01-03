@@ -1,3 +1,4 @@
+ENV/
 env/
 config/prodConfig.ini
 venv/

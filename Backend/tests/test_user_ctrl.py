@@ -3,15 +3,18 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from flask_mail import Mail
 import ConfigParser as cp
-
-import db_utils as db
-from botocore.exceptions import ClientError
+from utils.ResponseCreation import ControllerResponse
 
 import boto3
+
 import sys
 from os import path
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
+
 from mentii import user_ctrl as usr
+from utils import db_utils as db
+from botocore.exceptions import ClientError
+
 
 app = Flask(__name__)
 mail = Mail(app)
@@ -67,7 +70,7 @@ class UserControlTests(unittest.TestCase):
     print("Running register fail case Test")
     jsonData = {"email" : "mail@email.com"}
     dbInstance = "blah"
-    self.assertEqual(usr.register(jsonData,mail,dbInstance),"Failing Registration Validation")
+    self.assertNotEqual(usr.register(jsonData,mail,dbInstance), None)
 
 class UserControlDBTests(unittest.TestCase):
   @classmethod
@@ -76,12 +79,12 @@ class UserControlDBTests(unittest.TestCase):
     mockData = "mock_data.json"
 
     try:
-      table = db.createTableFromFile("./tests/"+settingsName, dynamodb)
+      table = db.createTableFromFile("./utils/"+settingsName, dynamodb)
     except ClientError:
       db.getTable('users', dynamodb).delete()
-      table = db.createTableFromFile("./tests/"+settingsName, dynamodb)
+      table = db.createTableFromFile("./utils/"+settingsName, dynamodb)
 
-    db.preloadData("./tests/"+mockData, table)
+    db.preloadDataFromFile("./utils/"+mockData, table)
 
   @classmethod
   def tearDownClass(self):
@@ -103,6 +106,7 @@ class UserControlDBTests(unittest.TestCase):
     response = usr.isEmailInSystem(email, dynamodb)
     self.assertFalse(response)
 
+#****
   def test_addUserAndSendEmail(self):
     print("Running addUserAndSendEmail Test")
 
@@ -124,15 +128,15 @@ class UserControlDBTests(unittest.TestCase):
     email = "email"
     password = "password8"
     activationId = usr.addUserAndSendEmail(email,password,mail,dynamodb)
-    self.assertEqual(activationId,"none")
-
+    self.assertIsNone(activationId)
+#*****
   def test_register(self):
     print("Running register Test")
 
     jsonData = {"email" : "mail@email.com"}
     activationId = usr.register(jsonData,mail,dynamodb)
     self.assertEqual(activationId, activationId)
-
+#******
   def test_hashPassword(self):
     print("Running hashPassword Test")
 
@@ -154,7 +158,7 @@ class UserControlDBTests(unittest.TestCase):
 
     activationId = "none"
     response = usr.activate(activationId, dynamodb)
-    self.assertEqual(response, "Error!! Could not find an item with that code.")
+    self.assertNotEqual(response, None)
 
 if __name__ == '__main__':
   if __package__ is None:

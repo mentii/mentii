@@ -20,9 +20,11 @@ import { SecureTestComponent } from './secureTest/secureTest.component';
 /* Directives */
 import { EqualValidator } from './directives/equal-validator.directive';
 import { DeleteValue } from './directives/delete-value-validator.directive';
+/* Vendor */
+import { LaddaModule } from 'angular2-ladda';
 
 @NgModule({
-  imports:      [ BrowserModule, FormsModule, HttpModule, ToastModule, routing],
+  imports:      [ BrowserModule, FormsModule, HttpModule, ToastModule, LaddaModule.forRoot({style: "zoom-in"}), routing],
   declarations: [ AppComponent, RegistrationComponent, RootComponent, PageNotFoundComponent, SecureTestComponent, EqualValidator, DeleteValue, SigninComponent],
   providers: [UserService,
     {

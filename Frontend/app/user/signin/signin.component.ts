@@ -15,11 +15,13 @@ import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 export class SigninComponent {
   model = new SigninModel('', '');
   mentiiConfig = new MentiiConfig();
+  isLoading = false;
 
   constructor(public userService: UserService, public authHttpService: AuthHttp , public router: Router, public toastr: ToastsManager){
   }
 
   handleSuccess(data) {
+    this.isLoading = false;
     if (data.payload.token) {
       this.authHttpService.saveAuthToken(data.payload.token);
       this.router.navigateByUrl('/secure-test');
@@ -30,9 +32,11 @@ export class SigninComponent {
 
   handleError(err) {
     this.toastr.error("Sign in failed");
+    this.isLoading = false;
   }
 
   submit() {
+    this.isLoading = true;
     this.userService.signIn(this.model)
     .subscribe(
       data => this.handleSuccess(data.json()),

@@ -4,6 +4,7 @@ import { SigninModel } from './signin.model';
 import { MentiiConfig } from '../../mentii.config';
 import { UserService } from '../user.service';
 import { AuthHttp } from '../../utils/AuthHttp.service';
+import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 
 @Component({
   moduleId: module.id,
@@ -15,7 +16,7 @@ export class SigninComponent {
   model = new SigninModel('', '');
   mentiiConfig = new MentiiConfig();
 
-  constructor(public userService: UserService, public authHttpService: AuthHttp , public router: Router){
+  constructor(public userService: UserService, public authHttpService: AuthHttp , public router: Router, public toastr: ToastsManager){
   }
 
   handleSuccess(data) {
@@ -28,7 +29,7 @@ export class SigninComponent {
   }
 
   handleError(err) {
-    alert("Sign in failed");
+    this.toastr.error("Sign in failed");
   }
 
   submit() {

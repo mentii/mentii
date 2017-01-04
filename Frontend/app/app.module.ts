@@ -17,6 +17,7 @@ import { SigninComponent } from './user/signin/signin.component';
 import { RootComponent } from './root/root.component';
 import { PageNotFoundComponent } from './pageNotFound/pageNotFound.component';
 import { SecureTestComponent } from './secureTest/secureTest.component';
+import { ClassListComponent } from './class/list/list.component';
 /* Directives */
 import { EqualValidator } from './directives/equal-validator.directive';
 import { DeleteValue } from './directives/delete-value-validator.directive';
@@ -25,7 +26,7 @@ import { LaddaModule } from 'angular2-ladda';
 
 @NgModule({
   imports:      [ BrowserModule, FormsModule, HttpModule, ToastModule, LaddaModule.forRoot({style: "zoom-in"}), routing],
-  declarations: [ AppComponent, RegistrationComponent, RootComponent, PageNotFoundComponent, SecureTestComponent, EqualValidator, DeleteValue, SigninComponent],
+  declarations: [ AppComponent, RegistrationComponent, RootComponent, PageNotFoundComponent, SecureTestComponent, EqualValidator, DeleteValue, SigninComponent, ClassListComponent],
   providers: [UserService,
     {
       provide: AuthHttp,

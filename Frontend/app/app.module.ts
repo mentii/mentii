@@ -9,6 +9,7 @@ import { routing } from './app.routes';
 /* Services */
 import { AuthHttp } from './utils/AuthHttp.service';
 import { UserService } from './user/user.service';
+import { ToastModule } from 'ng2-toastr/ng2-toastr';
 /* Components */
 import { AppComponent } from './app.component';
 import { RegistrationComponent } from './user/registration/registration.component';
@@ -23,7 +24,7 @@ import { DeleteValue } from './directives/delete-value-validator.directive';
 import { LaddaModule } from 'angular2-ladda';
 
 @NgModule({
-  imports:      [ BrowserModule, FormsModule, HttpModule, routing, LaddaModule.forRoot({style: "zoom-in"})],
+  imports:      [ BrowserModule, FormsModule, HttpModule, ToastModule, LaddaModule.forRoot({style: "zoom-in"}), routing],
   declarations: [ AppComponent, RegistrationComponent, RootComponent, PageNotFoundComponent, SecureTestComponent, EqualValidator, DeleteValue, SigninComponent],
   providers: [UserService,
     {

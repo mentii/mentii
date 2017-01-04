@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RegistrationModel } from './registration.model';
 import { MentiiConfig } from '../../mentii.config';
 import { UserService } from '../user.service';
+import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 
 @Component({
   moduleId: module.id,
@@ -15,7 +16,7 @@ export class RegistrationComponent {
   regSuccess = false;
   isLoading = false;
 
-  constructor(public userService: UserService){
+  constructor(public userService: UserService, public toastr: ToastsManager){
   }
 
   newModel() {
@@ -39,10 +40,8 @@ export class RegistrationComponent {
     this.isLoading = false;
     let data = err.json();
     this.newModel();
-    let alertMessage = "Registation Failed:\n"
     for (let error of data['errors']) {
-      alertMessage += "Title:" + error['title'] + ", Message:" + error['message'] + "\n";
+      this.toastr.error(error['message'], error['title']);
     }
-    alert(alertMessage);
   }
 }

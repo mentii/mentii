@@ -5,6 +5,9 @@ import {Router} from '@angular/router';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
+
+const AUTH_TOKEN_NAME = "auth_token";
+
 /**
 * Used in place of the Http Service so that authentication headers
 * and handling authenticaiton errors are not up to the component to handle.
@@ -19,7 +22,7 @@ export class AuthHttp extends Http {
   }
 
   request(url: string|Request, options?: RequestOptionsArgs): Observable<Response> {
-    let auth_token = localStorage.getItem("auth_token");
+    let auth_token = this.loadAuthToken();
     let password = ''; // this is unused but needed for 'faking' the basic auth header
     let authHeaderString = 'Basic ' + btoa(auth_token+":"+password);
     if (typeof url === 'string') {
@@ -43,5 +46,22 @@ export class AuthHttp extends Http {
       }
       return Observable.throw(res);
     };
+  }
+
+  /**
+  * Service method to save the auth token
+  * @param {String} token
+  */
+  saveAuthToken(token) {
+    // TODO: Should we store the auth token somewhere else?
+    localStorage.setItem(AUTH_TOKEN_NAME, token);
+  }
+
+  /**
+  * Service method to load the auth token
+  * @return {String} token
+  */
+  loadAuthToken() {
+    return localStorage.getItem(AUTH_TOKEN_NAME);
   }
 }

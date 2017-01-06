@@ -7,8 +7,9 @@ from flask.ext.httpauth import HTTPBasicAuth
 from flask import g
 from mentii import user_ctrl
 from utils import MentiiAuth
-import utils.ResponseCreation as cr
+import utils.ResponseCreation as ResponseCreation
 from utils.ResponseCreation import ControllerResponse
+import utils.MentiiLogging as MentiiLogging
 import ConfigParser as cp
 import boto3
 import sys
@@ -64,28 +65,28 @@ def verify_password(email_or_token, password):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-  return cr.createEmptyResponse(200)
+  return ResponseCreation.createEmptyResponse(200)
 
 @app.route('/register/', methods=['POST', 'OPTIONS'])
 def register():
   status = 200
   if request.method =='OPTIONS':
-    return cr.createEmptyResponse(status)
+    return ResponseCreation.createEmptyResponse(status)
   dynamoDBInstance = getDatabaseClient()
   res = user_ctrl.register(request.json, mail, dynamoDBInstance)
   status = 201
   if res.hasErrors():
     status = 400
-  return cr.createResponse(res, status)
+  return ResponseCreation.createResponse(res, status)
 
 @app.route('/activate/<activationid>', methods=['GET'])
 def activate(activationid):
   dynamoDBInstance = getDatabaseClient()
   res = user_ctrl.activate(activationid, dynamoDBInstance)
   if not res.hasErrors():
-    return cr.createResponse(res, 200)
+    return ResponseCreation.createResponse(res, 200)
   else:
-    return cr.createResponse(res, 400)
+    return ResponseCreation.createResponse(res, 400)
 
 @app.route('/signin/', methods=['POST', 'OPTIONS'])
 @auth.login_required
@@ -95,9 +96,9 @@ def signin():
     response = ControllerResponse()
     token = MentiiAuth.generate_auth_token(userCredentials, appSecret)
     response.addToPayload('token', token)
-    return cr.createResponse(response, 200)
+    return ResponseCreation.createResponse(response, 200)
   else:
-    return cr.createEmptyResponse(200)
+    return ResponseCreation.createEmptyResponse(200)
 
 @app.route('/secure/', methods=['POST', 'OPTIONS'])
 @auth.login_required
@@ -110,9 +111,15 @@ def secure():
     # testing function just returns data on the authenticated user
     response = ControllerResponse()
     response.addToPayload('user', g.authenticatedUser)
-    return cr.createResponse(response, 200)
+    return ResponseCreation.createResponse(response, 200)
   else:
-    return cr.createEmptyResponse(200)
+    return ResponseCreation.createEmptyResponse(200)
 
 if __name__ == '__main__':
+  logger = MentiiLogging.getLogger()
+  logger.info('mentii app starting')
+  logger.error('test')
   app.run(host='0.0.0.0', debug=False)
+  logger.error('test2')
+  logger.doRollover()
+  logger.warning('mentii app down')

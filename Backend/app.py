@@ -118,8 +118,5 @@ def secure():
 if __name__ == '__main__':
   logger = MentiiLogging.getLogger()
   logger.info('mentii app starting')
-  logger.error('test')
   app.run(host='0.0.0.0', debug=False)
-  logger.error('test2')
-  logger.doRollover()
   logger.warning('mentii app down')

@@ -5,7 +5,7 @@ from logging.handlers import TimedRotatingFileHandler
 
 PATH = '../logs/metniilog.log'
 
-def getLogger():
+def setupLogger():
   confirmLogDir()
 
   logger = logging.getLogger('Backend')
@@ -18,7 +18,7 @@ def getLogger():
     encoding=None,
     delay=False,
     utc=False)
-  formatter = logging.Formatter('%(levelname)s - %(name)s - %(asctime)s - %(message)s ')
+  formatter = logging.Formatter('[%(levelname)-8s][%(name)-8s][%(asctime)s] : %(message)s')
   handler.setFormatter(formatter)
   logger.addHandler(handler)
 

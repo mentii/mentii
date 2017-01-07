@@ -81,23 +81,28 @@ def register():
 
 @app.route('/activate/<activationid>', methods=['GET'])
 def activate(activationid):
+  logger.info('activate - GET')
   dynamoDBInstance = getDatabaseClient()
   res = user_ctrl.activate(activationid, dynamoDBInstance)
   if not res.hasErrors():
+    logger.error('activate : 200 :' + res.getResponseString() )
     return ResponseCreation.createResponse(res, 200)
   else:
+    logger.info('activate : 400 :' + activationId)
     return ResponseCreation.createResponse(res, 400)
 
 @app.route('/signin/', methods=['POST', 'OPTIONS'])
 @auth.login_required
 def signin():
   if request.method =='POST':
+    logger.info('signin - POST: ')
     userCredentials = {'email': request.authorization.username, 'password': request.authorization.password}
     response = ControllerResponse()
     token = MentiiAuth.generate_auth_token(userCredentials, appSecret)
     response.addToPayload('token', token)
     return ResponseCreation.createResponse(response, 200)
   else:
+    logger.info('signin - OPTIONS')
     return ResponseCreation.createEmptyResponse(200)
 
 @app.route('/secure/', methods=['POST', 'OPTIONS'])
@@ -116,7 +121,7 @@ def secure():
     return ResponseCreation.createEmptyResponse(200)
 
 if __name__ == '__main__':
-  logger = MentiiLogging.getLogger()
+  logger = MentiiLogging.setupLogger()
   logger.info('mentii app starting')
   app.run(host='0.0.0.0', debug=False)
   logger.warning('mentii app down')

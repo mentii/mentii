@@ -59,14 +59,18 @@ def preloadDataFromFile(fileName, table):
       data = json_file.read()
       items = json.loads(data)
       for item in items:
-        if "email" in item.keys() and "password" in item.keys():
+        if "email" in item.keys() and "password" in item.keys() and "activationId" in item.keys() and "active" in item.keys():
           email = item['email']
           password = item['password']
+          activationId = item['activationId']
+          active = item['active']
 
           table.put_item(
             Item={
                'email': email,
-               'password': password
+               'password': password,
+               'activationId': activationId,
+               'active': active
             }
           )
         else:
@@ -82,14 +86,18 @@ def preloadDataFromJson(jsonData, table):
     items = jsonData
   try:
     for item in items:
-      if "email" in item.keys() and "password" in item.keys():
+      if "email" in item.keys() and "password" in item.keys() and "activationId" in item.keys() and "active" in item.keys():
         email = item['email']
         password = item['password']
+        activationId = item['activationId']
+        active = item['active']
 
         table.put_item(
           Item={
-             'email': email,
-             'password': password
+            'email': email,
+            'password': password,
+            'activationId': activationId,
+            'active': active
           }
         )
       else:

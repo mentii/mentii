@@ -6,6 +6,7 @@ from flask_mail import Mail
 from flask.ext.httpauth import HTTPBasicAuth
 from flask import g
 from mentii import user_ctrl
+from mentii import class_ctrl
 from utils import MentiiAuth
 import utils.ResponseCreation as cr
 from utils.ResponseCreation import ControllerResponse
@@ -113,6 +114,18 @@ def secure():
     return cr.createResponse(response, 200)
   else:
     return cr.createEmptyResponse(200)
+
+@app.route('/class-list/', methods=['GET', 'OPTIONS'])
+@auth.login_required
+def class_list():
+  status = 200
+  if request.method =='OPTIONS':
+    return cr.createEmptyResponse(status)
+  dynamoDBInstance = getDatabaseClient()
+  res = class_ctrl.getActiveClassList(dynamoDBInstance)
+  if res.hasErrors():
+    status = 400
+  return cr.createResponse(res, status)
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', debug=False)

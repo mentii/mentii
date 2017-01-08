@@ -19,7 +19,7 @@ export class ClassService {
   }
 
   getClassList():Observable<any> {
-    let getClassListUrl = this.mentiiConfig.getRootUrl() + '/classes/';
+    let getClassListUrl = this.mentiiConfig.getRootUrl() + '/class-list/';
     let body = {}
     return this.authHttp.get(getClassListUrl, body)
     .map((res:Response) => res)

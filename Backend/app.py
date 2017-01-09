@@ -128,4 +128,6 @@ def class_list():
   return cr.createResponse(res, status)
 
 if __name__ == '__main__':
-  app.run(host='0.0.0.0', debug=False)
+  app.run(host='0.0.0.0', debug=False, threaded=True)
+  # threaded=true was added due to this: http://stackoverflow.com/questions/12591760/flask-broken-pipe-with-requests
+  # After adding this option, the backend seems to run a lot smoother and faster as well. Will have to verifiy that this works on aws

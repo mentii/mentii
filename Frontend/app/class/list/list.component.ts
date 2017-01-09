@@ -12,6 +12,7 @@ import { ClassService } from '../class.service';
 
 export class ClassListComponent implements OnInit {
   classes: ClassModel[];
+  isLoading = true;
 
   constructor(public classService: ClassService, public router: Router, public toastr: ToastsManager){
   }
@@ -25,11 +26,13 @@ export class ClassListComponent implements OnInit {
   }
 
   handleSuccess(data){
+    this.isLoading = false;
     this.classes = data.payload.classes;
   }
 
   handleError(err){
-    // TODO: Implement error handling here
+    this.isLoading = false;
+    this.toastr.error("The class list failed to load.");
   }
 
 }

@@ -1,5 +1,6 @@
 // ====== ./app/app.component.ts ======
-import { Component } from '@angular/core';
+import { Component, ViewContainerRef } from '@angular/core';
+import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 // Import router directives
 // Deprecated
 // import { ROUTER_DIRECTIVES } from '@angular/router';
@@ -15,4 +16,8 @@ import { Component } from '@angular/core';
 })
 
 // App Component class
-export class AppComponent {}
+export class AppComponent {
+  constructor(public toastr: ToastsManager, vRef: ViewContainerRef) {
+    this.toastr.setRootViewContainerRef(vRef);
+  }
+}

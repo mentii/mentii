@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import {Http, Response, Headers, RequestOptions} from "@angular/http";
-import {RegistrationModel} from './registration.model';
-import {MentiiConfig} from '../../mentii.config';
+import { RegistrationModel } from './registration.model';
+import { MentiiConfig } from '../../mentii.config';
+import { UserService } from '../user.service';
+import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 
 @Component({
   moduleId: module.id,
@@ -13,8 +14,9 @@ export class RegistrationComponent {
   model = new RegistrationModel('', '', '');
   mentiiConfig = new MentiiConfig();
   regSuccess = false;
+  isLoading = false;
 
-  constructor(public http: Http){
+  constructor(public userService: UserService, public toastr: ToastsManager){
   }
 
   newModel() {
@@ -22,26 +24,24 @@ export class RegistrationComponent {
   }
 
   submit() {
-    let url = this.mentiiConfig.getRootUrl() + '/register/';
-    let headers = new Headers({ 'Content-Type': 'application/json' });
-    let options = new RequestOptions({ headers: headers });
-    let body = {
-      "email": this.model.email,
-      "password": this.model.password
+    this.isLoading = true;
+    this.userService.register(this.model).subscribe(
+      data => this.handleSuccess(),
+      err => this.handleError(err)
+    );
+  }
+
+  handleSuccess() {
+    this.isLoading = false;
+    this.regSuccess = true;
+  }
+
+  handleError(err) {
+    this.isLoading = false;
+    let data = err.json();
+    this.newModel();
+    for (let error of data['errors']) {
+      this.toastr.error(error['message'], error['title']);
     }
-
-
-    /* TODO: Move this out to some sort of user.service.ts that will handle registration, signin, changing permissions, logout, etc. */
-    //this.http.post('http://api.mentii.me/register', this.model).subscribe(
-    this.http.post(url, body, options).subscribe(
-      // TODO: Handle failure or errors
-      (res:any)=>{
-        let data = res.json();
-        if (data !== 'Failing Registration Validation') {
-          this.regSuccess = true;
-        }
-      }
-      // TODO: Handle success better that current
-    )
   }
 }

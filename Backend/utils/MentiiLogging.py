@@ -22,7 +22,8 @@ def setupLogger():
   handler.setFormatter(formatter)
   logger.addHandler(handler)
 
-  return logger
+def getLogger():
+  return logging.getLogger('Backend')
 
 def confirmLogDir():
   if not os.path.exists(os.path.dirname(PATH)):

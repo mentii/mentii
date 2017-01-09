@@ -3,6 +3,7 @@ import re
 from flask_mail import Message
 from boto3.dynamodb.conditions import Key, Attr
 from utils.ResponseCreation import ControllerResponse
+import utils.MentiiLogging as MentiiLogging
 import uuid
 import hashlib
 
@@ -51,14 +52,16 @@ def parseEmail(jsonData):
   try:
     email = jsonData['email']
     return email
-  except Exception:
+  except Exception as e:
+    MentiiLogging.getLogger().exception(e)
     return None
 
 def parsePassword(jsonData):
   try:
     password = jsonData['password']
     return password
-  except Exception:
+  except Exception as e:
+    MentiiLogging.getLogger().exception(e)
     return None
 
 def isEmailValid(email):
@@ -89,7 +92,8 @@ def addUserAndSendEmail(email, password, mailer, dbInstance):
   )
   try:
     sendEmail(email, activationId, mailer)
-  except:
+  except Exception as e:
+    MentiiLogging.getLogger().exception(e)
     return None
 
   return activationId

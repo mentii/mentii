@@ -3,7 +3,7 @@ import time
 import logging
 from logging.handlers import TimedRotatingFileHandler
 
-FILE = '/metniilog.log'
+FILE = '/mentiilog.log'
 
 def setupLogger(path):
   path += FILE

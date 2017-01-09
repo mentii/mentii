@@ -24,7 +24,7 @@ def createTableFromFile(settings_file, dbInstance):
     logger = MentiiLogging.getLogger()
     logger.exception(e)
     message = "Unable to create table"
-    logger.error("Unable to create table")
+    logger.error(message)
     return message
 
 def createTableFromJson(settings_json, dbInstance):

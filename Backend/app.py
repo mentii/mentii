@@ -122,16 +122,6 @@ def signin():
   logger.info(str(flaskResponse))
   return flaskResponse
 
-def signin():
-  if request.method =='POST':
-    userCredentials = {'email': request.authorization.username, 'password': request.authorization.password}
-    response = ControllerResponse()
-    token = MentiiAuth.generate_auth_token(userCredentials, appSecret)
-    response.addToPayload('token', token)
-    return cr.createResponse(response, 200)
-  else:
-    return cr.createEmptyResponse(200)
-
 @app.route('/secure/', methods=['POST', 'OPTIONS'])
 @auth.login_required
 def secure():

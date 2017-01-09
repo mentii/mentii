@@ -1,6 +1,7 @@
 import json
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
+import utils.MentiiLogging as MentiiLogging
 
 def createTableFromFile(settings_file, dbInstance):
   try:
@@ -20,8 +21,9 @@ def createTableFromFile(settings_file, dbInstance):
       f.close()
       raise(IOError)
   except IOError as e:
-    print(e)
-    return "Unable to create table"
+    message = "Unable to create table from file"
+    MentiiLogging.getLogger().exception(message + ': ' + settings_file + '\n' + str(e))
+    return message
 
 def createTableFromJson(settings_json, dbInstance):
   if (type(settings_json) == str):
@@ -37,9 +39,9 @@ def createTableFromJson(settings_json, dbInstance):
         ProvisionedThroughput=settings["provisioned_throughput"]
       )
       return table
-  return "Unable to create table"
-
-
+  message = "Unable to create table"
+  logger.error(message)
+  return message
 
 def getTable(tableName, dbInstance):
   return dbInstance.Table(tableName)
@@ -64,8 +66,9 @@ def preloadData(jsonData, table):
           }
         )
   except IOError as e:
-    print("Unable to load data into table")
-    print(e)
+    message = "Unable to load data into table"
+    MentiiLogging.getLogger().exception(message + '\nJSON:\n' + jsonData + '\n' + str(e))
+    return message
 
 def addItem(jsonData, table):
   #check for primary key

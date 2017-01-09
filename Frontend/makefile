@@ -15,6 +15,9 @@ compile: clean
 	@ npm install
 	@ npm run-script tsc
 
+compile-prod:
+	@ npm install --production
+
 runtests: compile
 	@ ./node_modules/karma/bin/karma start
 

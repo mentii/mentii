@@ -4,6 +4,7 @@ from boto3.dynamodb.conditions import Key, Attr
 import hashlib
 import ConfigParser as cp
 from mentii import user_ctrl
+import utils.MentiiLogging as MentiiLogging
 
 def build_user_object(userData):
   '''
@@ -32,7 +33,8 @@ def generate_auth_token(userCredentials, appSecret=None, expiration = 86400):
       email = userCredentials['email']
       password = userCredentials['password']
       retval = s.dumps({ 'email': email, 'password': password })
-  except:
+  except Exception as e:
+    MentiiLogging.getLogger().exception(e)
     retval = None
   return retval
 
@@ -47,10 +49,9 @@ def verify_auth_token(token, appSecret=None):
   try:
     user = s.loads(token)
     retval = user # user from token
-  except SignatureExpired:
+  except (SignatureExpired, BadSignature) as e:
+    MentiiLogging.getLogger().exception(e)
     retval = None # valid token, but expired
-  except BadSignature:
-    retval = None # invalid token
   return retval
 
 def isPasswordValid(user, password):

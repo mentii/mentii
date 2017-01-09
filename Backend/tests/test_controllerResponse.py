@@ -9,7 +9,7 @@ class ControllerResponseTests(unittest.TestCase):
   @classmethod
   def setUp(self):
     self.response = ControllerResponse()
-  
+
   def test_addError(self):
     print("Running addError Test")
     response = self.response
@@ -22,7 +22,7 @@ class ControllerResponseTests(unittest.TestCase):
     self.assertEqual(len(response.errors), 1)
     self.assertEqual(response.errors[0]["title"], testTitle)
     self.assertEqual(response.errors[0]["message"], testMessage)
-  
+
   def test_addToPayload(self):
     print("Running addToPayload Test")
     response = self.response
@@ -47,10 +47,5 @@ class ControllerResponseTests(unittest.TestCase):
     response.addError("Error", "Error message")
     self.assertEqual(response.hasErrors(), True)
 
-
-
-
 if __name__ == '__main__':
   unittest.main()
-
-  

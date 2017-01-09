@@ -118,7 +118,6 @@ def signin():
   token = MentiiAuth.generate_auth_token(userCredentials, appSecret)
   response.addToPayload('token', token)
   flaskResponse = ResponseCreation.createResponse(response, status)
-  logger
   logger.info(str(flaskResponse))
   return flaskResponse
 

@@ -8,6 +8,9 @@ clean:
 	@ cd ./Backend; make clean -s
 	@ cd ./Frontend; make clean -s
 
+clean-hard: clean
+	@ cd ../LocalDB; make clean -s
+
 deploy:
 	@ cd ./Backend; make deploy -s
 

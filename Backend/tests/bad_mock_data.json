@@ -1,0 +1,22 @@
+[
+  {
+    "password" : "iameight",
+    "activationId" : "12345",
+    "active": "T"
+  },
+  {
+    "email" : "test2@mentii.me",
+    "activationId" : "abcde",
+    "active": "F"
+  },
+  {
+    "email" : "test3@mentii.me",
+    "password" : "6b7330782b2feb4924020cc4a57782a9",
+    "active": "T"
+  },
+  {
+    "email" : "test4@mentii.me",
+    "password" : "6b7330782b2feb4924020cc4a57782a9",
+    "activationId" : "abcde",
+  }
+]

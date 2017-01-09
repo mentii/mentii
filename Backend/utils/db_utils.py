@@ -1,6 +1,7 @@
 import json
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
+from botocore.exceptions import ClientError
 
 def createTableFromFile(settings_file, dbInstance):
   try:
@@ -74,10 +75,10 @@ def preloadDataFromFile(fileName, table):
             }
           )
         else:
-          print("Unable to add item to table " + table.describe_table + ". Missing email or password")
+          print("Unable to add item to table " + table.describe_table + ". Missing email, password, activationId, or active status")
   except IOError as e:
-    print("Unable to load data into table")
     print(e)
+    return "Unable to load data into table"
 
 def preloadDataFromJson(jsonData, table):
   if (type(jsonData) == str):
@@ -101,12 +102,17 @@ def preloadDataFromJson(jsonData, table):
           }
         )
       else:
-        print("Unable to add item to table " + table.describe_table + ". Missing email or password")
+        print("Unable to add item to table " + table.describe_table + ". Missing email or password, activationId, or active status")
   except:
-    print("Unable to load data into table")
+    return "Unable to load data into table"
 
 def getTable(tableName, dbInstance):
-  return dbInstance.Table(tableName)
+  try:
+    table = dbInstance.Table(tableName)
+    status = table.table_status
+    return table
+  except ClientError as e:
+    return "Unable to get table " + tableName + ". Table does not exist"
 
 def putItem(jsonData, table):
   if (type(jsonData) == str):
@@ -122,10 +128,14 @@ def getItem(jsonData, table):
   else:
     data = jsonData
 
+  print(data)
   attributes_to_get = data.get("AttributesToGet")
   key = data.get("Key")
 
-  response = table.get_item(Key=key,AttributesToGet=attributes_to_get)
+  if attributes_to_get is not None:
+    response = table.get_item(Key=key,AttributesToGet=attributes_to_get)
+  else:
+    response = table.get_item(Key=key)
   return response
 
 def updateItem(jsonData, table):

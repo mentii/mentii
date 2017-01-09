@@ -53,3 +53,8 @@ h6 {
 .hr-half {
   width: 50%;
 }
+
+.empty-state {
+  margin-top: 10%;
+  margin-bottom: 10%;
+}

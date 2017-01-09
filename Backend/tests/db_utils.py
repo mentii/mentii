@@ -21,10 +21,9 @@ def createTableFromFile(settings_file, dbInstance):
       f.close()
       raise(IOError)
   except IOError as e:
+    message = "Unable to create table from file"
     logger = MentiiLogging.getLogger()
-    logger.exception(e)
-    message = "Unable to create table"
-    logger.error(message)
+    logger.exception(message + ': ' + settings_file + '\n' + str(e))
     return message
 
 def createTableFromJson(settings_json, dbInstance):
@@ -68,9 +67,9 @@ def preloadData(jsonData, table):
           }
         )
   except IOError as e:
-    logger.exception(e)
     message = "Unable to load data into table"
-    logger.error(message)
+    logger = MentiiLogging.getLogger()
+    logger.exception(message + '\nJSON:\n' + jsonData + '\n' + str(e))
     return message
 
 def addItem(jsonData, table):

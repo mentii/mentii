@@ -3,15 +3,17 @@ import time
 import logging
 from logging.handlers import TimedRotatingFileHandler
 
-PATH = '../logs/metniilog.log'
+FILE = '/metniilog.log'
 
-def setupLogger():
-  confirmLogDir()
+def setupLogger(path):
+  path += FILE
+  confirmLogDir(path)
 
   logger = logging.getLogger('Backend')
   logger.setLevel(logging.DEBUG)
 
-  handler = TimedRotatingFileHandler(PATH,
+  handler = TimedRotatingFileHandler(
+    path,
     when='midnight',
     interval=1,
     backupCount=0,
@@ -25,6 +27,6 @@ def setupLogger():
 def getLogger():
   return logging.getLogger('Backend')
 
-def confirmLogDir():
-  if not os.path.exists(os.path.dirname(PATH)):
-    os.makedirs(os.path.dirname(PATH))
+def confirmLogDir(path):
+  if not os.path.exists(os.path.dirname(path)):
+    os.makedirs(os.path.dirname(path))

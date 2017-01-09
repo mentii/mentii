@@ -19,7 +19,6 @@ app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 mail = Mail(app)
 auth = HTTPBasicAuth()
-logger = MentiiLogging.getLogger()
 
 #Configuration setup
 configPath = "/config/prodConfig.ini"
@@ -29,6 +28,10 @@ if len(sys.argv) == 2:
 #Parse any external configuration options
 parser = cp.ConfigParser()
 parser.read(configPath)
+
+logPath = parser.get('MentiiData', 'path') + '/logs'
+MentiiLogging.setupLogger(logPath)
+logger = MentiiLogging.getLogger()
 
 #Email setup
 address = parser.get('EmailData', 'address')
@@ -65,7 +68,7 @@ def verify_password(email_or_token, password):
   logger.info(str(request))
   dynamoDBInstance = getDatabaseClient()
   response = MentiiAuth.verify_password(email_or_token, password, dynamoDBInstance, appSecret)
-  logger.info(str(response))
+  logger.info('Password Verified: ' + str(response))
   return response
 
 @app.route('/', methods=['GET', 'POST'])
@@ -142,8 +145,6 @@ def secure():
   return flaskResponse
 
 if __name__ == '__main__':
-  MentiiLogging.setupLogger()
-  logger = MentiiLogging.getLogger()
   logger.info('mentii app starting')
   try:
     app.run(host='0.0.0.0', debug=False)

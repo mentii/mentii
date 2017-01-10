@@ -1,2 +1,2 @@
-<signin-form [hidden]="isUserAuthenticated"></signin-form>
-<class-list [hidden]="!isUserAuthenticated"></class-list>
+<signin-form *ngIf="!isUserAuthenticated"></signin-form>
+<class-list *ngIf="isUserAuthenticated"></class-list>

@@ -150,12 +150,12 @@ def secure():
 def class_list():
   status = 200
   if request.method =='OPTIONS':
-    return cr.createEmptyResponse(status)
+    return ResponseCreation.createEmptyResponse(status)
   dynamoDBInstance = getDatabaseClient()
   res = class_ctrl.getActiveClassList(dynamoDBInstance)
   if res.hasErrors():
     status = 400
-  return cr.createResponse(res, status)
+  return ResponseCreation.createResponse(res, status)
 
 if __name__ == '__main__':
   logger.info('mentii app starting')

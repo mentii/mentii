@@ -4,6 +4,7 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 from utils import db_utils as db
 
+import utils.MentiiLogging as MentiiLogging
 import sys
 from os import path
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
@@ -130,14 +131,14 @@ class DbUtilsTest(unittest.TestCase):
   def test_create_table_from_file(self):
     print("Running create_table_from_file test")
     table = db.createTableFromFile(self.settingsName, self.dynamodb)
-    self.assertNotEqual(table,"Unable to create table")
+    self.assertNotEqual(table,"Unable to create table from file")
     self.assertEqual(table.table_status,"ACTIVE")
     self.assertEqual(table.table_name, "testusers")
 
   def test_create_table_from_file_fail(self):
     print("Running create_table_from_file test fail test case")
     table = db.createTableFromFile(self.badSettingsName, self.dynamodb)
-    self.assertEqual(table,"Unable to create table")
+    self.assertEqual(table,"Unable to create table from file")
 
   def test_create_table_from_string(self):
     print("Running create_table_from_string test")
@@ -162,7 +163,7 @@ class DbUtilsTest(unittest.TestCase):
     }'
 
     tableFromString = db.createTableFromJson(jsonDataString, self.dynamodb)
-    self.assertNotEqual(tableFromString, "Unable to create table")
+    self.assertNotEqual(tableFromString, "Unable to create table from json")
     self.assertEqual(tableFromString.table_status, "ACTIVE")
     self.assertEqual(tableFromString.table_name, "puppies")
 
@@ -182,7 +183,7 @@ class DbUtilsTest(unittest.TestCase):
     }'
 
     tableFromBadString = db.createTableFromJson(badJsonDataString, self.dynamodb)
-    self.assertEqual(tableFromBadString, "Unable to create table")
+    self.assertEqual(tableFromBadString, "Unable to create table from json")
 
   def test_create_table_from_json(self):
     print("Running create_table_from_json test")
@@ -207,7 +208,7 @@ class DbUtilsTest(unittest.TestCase):
     }
 
     tableFromJson = db.createTableFromJson(jsonData, self.dynamodb)
-    self.assertNotEqual(tableFromJson, "Unable to create table")
+    self.assertNotEqual(tableFromJson, "Unable to create table from json")
     self.assertEqual(tableFromJson.table_status, "ACTIVE")
     self.assertEqual(tableFromJson.table_name, "cats")
 
@@ -227,7 +228,7 @@ class DbUtilsTest(unittest.TestCase):
     }
 
     tableFromJsonBad = db.createTableFromJson(jsonBadData, self.dynamodb)
-    self.assertEqual(tableFromJsonBad, "Unable to create table")
+    self.assertEqual(tableFromJsonBad, "Unable to create table from json")
 
 #################### Preload Data Tests #################################
 

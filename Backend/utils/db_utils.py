@@ -1,7 +1,10 @@
 import json
 import boto3
+import MentiiLogging as MentiiLogging
 from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
+
+logger = MentiiLogging.getLogger()
 
 def createTableFromFile(settings_file, dbInstance):
   try:
@@ -28,8 +31,9 @@ def createTableFromFile(settings_file, dbInstance):
       f.close()
       raise(IOError)
   except IOError as e:
-    print(e)
-    return "Unable to create table"
+    message = "Unable to create table from file"
+    logger.exception(message + ': ' + settings_file + '\n' + str(e))
+    return message
 
 def createTableFromJson(settings_json, dbInstance):
   if (type(settings_json) == str):
@@ -52,7 +56,9 @@ def createTableFromJson(settings_json, dbInstance):
           TableName=table_name
         )
       return table
-  return "Unable to create table"
+  message = "Unable to create table from json"
+  logger.error(message)
+  return message
 
 def preloadDataFromFile(fileName, table):
   try:
@@ -75,10 +81,12 @@ def preloadDataFromFile(fileName, table):
             }
           )
         else:
-          print("Unable to add item to table " + table.describe_table + ". Missing email, password, activationId, or active status")
+          message = "Unable to add item to table " + table.describe_table + ". Missing email, password, activationId, or active status"
+          logger.error(message)
   except IOError as e:
-    print(e)
-    return "Unable to load data into table"
+    message = "Unable to load data into table"
+    logger.exception(message + '\nJSON:\n' + jsonData + '\n' + str(e))
+    return message
 
 def preloadDataFromJson(jsonData, table):
   if (type(jsonData) == str):
@@ -102,9 +110,12 @@ def preloadDataFromJson(jsonData, table):
           }
         )
       else:
-        print("Unable to add item to table " + table.describe_table + ". Missing email or password, activationId, or active status")
-  except:
-    return "Unable to load data into table"
+        message = "Unable to add item to table " + table.describe_table + ". Missing email, password, activationId, or active status"
+        logger.error(message)
+  except IOError as e:
+    message = "Unable to load data into table"
+    logger.exception(message + '\nJSON:\n' + jsonData + '\n' + str(e))
+    return message
 
 def getTable(tableName, dbInstance):
   try:
@@ -112,7 +123,9 @@ def getTable(tableName, dbInstance):
     status = table.table_status
     return table
   except ClientError as e:
-    return "Unable to get table " + tableName + ". Table does not exist"
+    message = "Unable to get table " + tableName + ". Table does not exist"
+    logger.exception(message + '\n' + str(e))
+    return message
 
 def putItem(jsonData, table):
   if (type(jsonData) == str):
@@ -121,7 +134,9 @@ def putItem(jsonData, table):
     item = jsonData
 
   if item is None:
-    return "Unable to put item. Missing Key"
+    message = "Unable to put item. Missing Key"
+    logger.error(message)
+    return message
 
   response = table.put_item(Item=item)
   return response
@@ -136,7 +151,9 @@ def getItem(jsonData, table):
   key = data.get("Key")
 
   if key is None:
-    return "Unable to get item. Missing Key"
+    message = "Unable to get item. Missing Key"
+    logger.error(message)
+    return message
 
   if attributes_to_get is not None:
     response = table.get_item(Key=key,AttributesToGet=attributes_to_get)
@@ -156,7 +173,9 @@ def updateItem(jsonData, table):
   return_values = data.get("ReturnValues")
 
   if key is None:
-    return "Unable to update item. Missing Key"
+    message = "Unable to update item. Missing Key"
+    logger.error(message)
+    return message
 
   if update_expression is not None and expression_attribute_values is not None and return_values is not None:
     response = table.update_item(
@@ -177,7 +196,9 @@ def deleteItem(keys, table):
     key = keys
 
   if key is None:
-    return "Unable to delete item. Missing Key"
+    message = "Unable to delete item. Missing Key"
+    logger.error(message)
+    return message
 
   response = table.delete_item(Key=key)
   return response
@@ -198,4 +219,6 @@ def deleteTable(tableName, dbInstance):
     status = table.table_status
     table.delete()
   except ClientError as e:
-    return "Unable to delete table " + tableName + ". Table does not exist"
+    message = "Unable to delete table " + tableName + ". Table does not exist"
+    logger.exception(message + '\n' + str(e))
+    return message

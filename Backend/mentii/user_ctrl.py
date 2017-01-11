@@ -3,6 +3,7 @@ import re
 from flask_mail import Message
 from boto3.dynamodb.conditions import Key, Attr
 from utils.ResponseCreation import ControllerResponse
+import utils.MentiiLogging as MentiiLogging
 import uuid
 import hashlib
 
@@ -55,14 +56,16 @@ def parseEmail(jsonData):
   try:
     email = jsonData['email']
     return email
-  except Exception:
+  except Exception as e:
+    MentiiLogging.getLogger().exception(e)
     return None
 
 def parsePassword(jsonData):
   try:
     password = jsonData['password']
     return password
-  except Exception:
+  except Exception as e:
+    MentiiLogging.getLogger().exception(e)
     return None
 
 def isEmailValid(email):
@@ -77,35 +80,31 @@ def isPasswordValid(password):
   return len(password) >= 8
 
 def addUserAndSendEmail(email, password, mailer, dbInstance):
-  if isEmailValid(email) and isPasswordValid(password) and not isEmailInSystem(email, dbInstance):
-    activationId = str(uuid.uuid4())
-    table = dbUtils.getTable('users', dbInstance)
+  activationId = str(uuid.uuid4())
+  table = dbUtils.getTable('users', dbInstance)
 
-    jsonData = {
-        'email': email,
-        'password': password,
-        'activationId': activationId,
-        'active': "F"
-    }
+  jsonData = {
+    'email': email,
+    'password': password,
+    'activationId': activationId,
+    'active': "F"
+  }
 
-    #This will change an existing user with the same email.
-    response = dbUtils.putItem(jsonData,table)
+  #This will change an existing user with the same email.
+  response = dbUtils.putItem(jsonData,table)
 
-    try:
-      sendEmail(email, activationId, mailer)
-    except:
-      print("Unable to send email")
-
-    return activationId
-  else:
+  try:
+    sendEmail(email, activationId, mailer)
+  except Exception as e:
+    MentiiLogging.getLogger().exception(e)
     return None
 
-def deleteUser(email, dbInstance):
-  table = dbInstance.Table('users')
-  response = table.delete_item(
-    Key={'email': email}
-  )
+  return activationId
 
+def deleteUser(email, dbInstance):
+  table = dbUtils.getTable('users', dbInstance)
+  key = {'email': email}
+  response = dbUtils.deleteItem(key, table)
   return response
 
 def sendEmail(email, activationId, mailer):
@@ -161,8 +160,9 @@ def isUserActive(user):
 def getUserByEmail(email, dbInstance):
   user = None
 
-  table = dbInstance.Table('users')
-  result = table.get_item(Key={'email': email})
+  table = dbUtils.getTable('users', dbInstance)
+  key = {"Key" : {"email": email}}
+  result = dbUtils.getItem(key, table)
 
   if 'Item' in result.keys():
     user = result['Item']

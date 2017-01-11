@@ -131,7 +131,7 @@ def activate(activationId, dbInstance):
   items = []
 
   #Scan for the email associated with this activationId
-  scanResponse = dbUtils.scan("activationId", activationId, table)
+  scanResponse = dbUtils.scanFilter("activationId", activationId, table)
 
   if scanResponse is not None:
     #scanResponse is a dictionary that has a list of 'Items'

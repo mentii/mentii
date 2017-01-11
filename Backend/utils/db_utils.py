@@ -119,6 +119,10 @@ def putItem(jsonData, table):
     item = json.loads(jsonData)
   else:
     item = jsonData
+
+  if item is None:
+    return "Unable to put item. Missing Key"
+
   response = table.put_item(Item=item)
   return response
 
@@ -131,6 +135,9 @@ def getItem(jsonData, table):
   print(data)
   attributes_to_get = data.get("AttributesToGet")
   key = data.get("Key")
+
+  if key is None:
+    return "Unable to get item. Missing Key"
 
   if attributes_to_get is not None:
     response = table.get_item(Key=key,AttributesToGet=attributes_to_get)
@@ -149,19 +156,30 @@ def updateItem(jsonData, table):
   expression_attribute_values = data.get("ExpressionAttributeValues")
   return_values = data.get("ReturnValues")
 
-  response = table.update_item(
-    Key=key,
-    UpdateExpression=update_expression,
-    ExpressionAttributeValues=expression_attribute_values,
-    ReturnValues=return_values
-  )
-  return response
+  if key is None:
+    return "Unable to update item. Missing Key"
+
+  if update_expression is not None and expression_attribute_values is not None and return_values is not None:
+    response = table.update_item(
+      Key=key,
+      UpdateExpression=update_expression,
+      ExpressionAttributeValues=expression_attribute_values,
+      ReturnValues=return_values
+    )
+    return response
+  else:
+    response = table.update_item(Key=key)
+    return response
 
 def deleteItem(keys, table):
   if (type(keys) == str):
     key = json.loads(keys)
   else:
     key = keys
+
+  if key is None:
+    return "Unable to delete item. Missing Key"
+
   response = table.delete_item(Key=key)
   return response
 
@@ -169,12 +187,19 @@ def query(key, query, table):
   response = table.query(KeyConditionExpression=Key(key).eq(query))
   return response
 
-def scan(attributeName, attribute, table):
-  #check for primary key
+def scan(table):
+  return table.scan()
+
+def scanFilter(attributeName, attribute, table):
   return table.scan(FilterExpression=Attr(attributeName).eq(attribute))
 
-def deleteTable(table):
-  return table.delete()
+def deleteTable(tableName, dbInstance):
+  try:
+    table = dbInstance.Table(tableName)
+    status = table.table_status
+    table.delete()
+  except ClientError as e:
+    return "Unable to delete table " + tableName + ". Table does not exist"
 
 if __name__ == '__main__':
   dynamodb = boto3.resource('dynamodb', endpoint_url='http://localhost:8000')

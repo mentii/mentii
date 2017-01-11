@@ -10,6 +10,9 @@ sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 
 
 class DbUtilsTest(unittest.TestCase):
+
+#################### Test Class Setup #################################
+
   @classmethod
   def setUpClass(self):
     self.settingsName = "./tests/table_settings.json"
@@ -25,14 +28,12 @@ class DbUtilsTest(unittest.TestCase):
     try:
       for name in tableNames:
         self.dynamodb.Table(name).delete()
-        print ("Go Alex 2")
     except:
       print("Error deleting tableNames")
 
   @classmethod
   def tearDownClass(self):
     #clean up local DB
-    print ("Go Alex")
     tables = self.dynamodbClient.list_tables()
     tableNames = tables.get("TableNames")
     try:
@@ -40,6 +41,8 @@ class DbUtilsTest(unittest.TestCase):
         self.dynamodb.Table(name).delete()
     except:
       print("Error deleting tableNames")
+
+#################### Table Creation Tests #################################
 
   def test_create_table_from_file(self):
     print("Running create_table_from_file test")
@@ -143,6 +146,8 @@ class DbUtilsTest(unittest.TestCase):
     tableFromJsonBad = db.createTableFromJson(jsonBadData, self.dynamodb)
     self.assertEqual(tableFromJsonBad, "Unable to create table")
 
+#################### Preload Data Tests #################################
+
   def test_preload_data_from_file(self):
     print("Running preload_data_from_file test")
     #get users table from dynamodb instance
@@ -184,6 +189,8 @@ class DbUtilsTest(unittest.TestCase):
 
     print (table.scan())
 
+#################### Get Table Tests #################################
+
   def test_getTable(self):
     print("Running getTable test")
     tableName = "users"
@@ -197,6 +204,8 @@ class DbUtilsTest(unittest.TestCase):
     table = db.getTable(tableName, self.dynamodb)
     self.assertEqual(table, "Unable to get table bananas. Table does not exist")
 
+#################### Item Tests #################################
+
   def test_putItem_json(self):
     print("Running putItem_json test")
     #check table instance
@@ -209,8 +218,6 @@ class DbUtilsTest(unittest.TestCase):
       "name": "tabby",
       "gender": "male"
     }
-
-    print (table.scan())
 
     db.putItem(jsonData, table)
     self.assertIsNotNone(table.get_item(Key={"name":"tabby"}).get("Item"))
@@ -246,8 +253,6 @@ class DbUtilsTest(unittest.TestCase):
 
     #print(db.getItem(jsonData, table))
     self.assertIsNotNone(table.get_item(Key={"email":"test3@mentii.me"}).get("Item"))
-    #check response
-    #check item is correct item
 
   def test_getItem_string(self):
     print("Running getItem_string test")
@@ -261,25 +266,25 @@ class DbUtilsTest(unittest.TestCase):
     }'
     db.getItem(jsonData, table)
     self.assertIsNotNone(table.get_item(Key={"email":"test2@mentii.me"}).get("Item"))
-    #check response
-    #check item is correct item
-'''
+
   def test_updateItem_json(self):
     print("Running updateItem_json test")
-    table = self.dynamodb.Table('cats')
+    table = self.dynamodb.Table('users')
     self.assertNotEqual(table,"Unable to create table")
     self.assertEqual(table.table_status,"ACTIVE")
 
     jsonData = {
-      'Key':'name',
-      'UpdateExpression':'',
-      'ExpressionAttributeValues':'',
-      'ReturnValues':''
+      "Key": {"email": "test4@mentii.me"},
+      "UpdateExpression": "SET active = :a",
+      "ExpressionAttributeValues": { ":a": "T" },
+      "ReturnValues" : "UPDATED_NEW"
     }
 
-    response = db.updateItem(jsonData, table)
-    #check response
-    #check item is updated in db
+    db.updateItem(jsonData, table)
+    item = table.get_item(Key={"email":"test4@mentii.me"}).get("Item")
+
+    self.assertIsNotNone(item)
+    self.assertEqual(item.get("active"), "T")
 
   def test_updateItem_string(self):
     print("Running updateItem_string test")
@@ -287,76 +292,102 @@ class DbUtilsTest(unittest.TestCase):
     self.assertNotEqual(table,"Unable to create table")
     self.assertEqual(table.table_status,"ACTIVE")
 
-    jsonData = "{\
-      'Key':'',\
-      'UpdateExpression':'',\
-      'ExpressionAttributeValues':'',\
-      'ReturnValues':''\
-    }"
+    jsonData = '{\
+      "Key": {"email": "test3@mentii.me"},\
+      "UpdateExpression": "SET active = :a",\
+      "ExpressionAttributeValues": { ":a": "F" },\
+      "ReturnValues" : "UPDATED_NEW"\
+    }'
 
-    response = db.updateItem(jsonData, table)
-    #check response
-    #check item is updated in db
+    db.updateItem(jsonData, table)
+    item = table.get_item(Key={"email":"test3@mentii.me"}).get("Item")
+
+    self.assertIsNotNone(item)
+    self.assertEqual(item.get("active"), "F")
 
   def test_deleteItem_string(self):
+    print("Running deleteItem_string test")
     table = self.dynamodb.Table('users')
     self.assertNotEqual(table,"Unable to create table")
     self.assertEqual(table.table_status,"ACTIVE")
 
-    jsonData = "{\
-      'Key':''\
-    }"
+    jsonData = '{\
+      "email" : "sharks@mentii.me"\
+    }'
 
-    response = db.deleteItem(jsonData, table)
-    #check response
-    #check item is deleted from db
+    db.deleteItem(jsonData, table)
+    self.assertIsNone(table.get_item(Key={"email":"sharks@mentii.me"}).get("Item"))
 
   def test_deleteItem_json(self):
+    print("Running deleteItem_json test")
     table = self.dynamodb.Table('users')
     self.assertNotEqual(table,"Unable to create table")
     self.assertEqual(table.table_status,"ACTIVE")
 
     jsonData = {
-      'Key':'' #not ethe same key as above
+      "email" : "lizards@mentii.me"
     }
 
-    response = db.deleteItem(jsonData, table)
+    db.deleteItem(jsonData, table)
+    self.assertIsNone(table.get_item(Key={"email":"lizards@mentii.me"}).get("Item"))
     #check response
     #check item is deleted from db
 
-  def test_query(self):
+  def test_deleteItem_fail(self):
+    print("Running deleteItem fail test case")
     table = self.dynamodb.Table('users')
     self.assertNotEqual(table,"Unable to create table")
     self.assertEqual(table.table_status,"ACTIVE")
 
     jsonData = {
-      'KeyConditionExpression':''
+      "email" : "lizards@mentii.me"
     }
 
-    query = ''
+    db.deleteItem(jsonData, table)
+    self.assertIsNone(table.get_item(Key={"email":"lizards@mentii.me"}).get("Item"))
 
-    response = db.query(jsonData, query, table)
+#################### Table Action Tests #################################
+
+  def test_query(self):
+    print("Running query test")
+    table = self.dynamodb.Table('users')
+    self.assertNotEqual(table,"Unable to create table")
+    self.assertEqual(table.table_status,"ACTIVE")
+
+    response = db.query("activationId", "abcde", table)
+    for i in response[u'Items']:
+      print(json.dumps(i, cls=DecimalEncoder))
     #check response
     #check query matches
 
   def test_scan(self):
+    print("Running scan test")
     table = self.dynamodb.Table('users')
     self.assertNotEqual(table,"Unable to create table")
     self.assertEqual(table.table_status,"ACTIVE")
 
-    attributeName = ''
+    response = db.scan(table)
+    print(response)
 
-    attribute = ''
+  def test_scanFilter(self):
+    print("Running scanFilter test")
+    table = self.dynamodb.Table('users')
+    self.assertNotEqual(table,"Unable to create table")
+    self.assertEqual(table.table_status,"ACTIVE")
 
-    response = db.scan(attributeName, attribute, table)
-    #check response
-    #check scan matches
+    attributeName = 'active'
+
+    attribute = 'T'
+
+    response = db.scanFilter(attributeName, attribute, table)
+    for i in response['Items']:
+      print(json.dumps(i, cls=DecimalEncoder))
 
   def test_deleteTable(self):
-
-    table = self.dynamodb.Table('users')
-    db.deleteTable(table)
+    print("Running deleteTable test")
+    db.deleteTable("users", self.dynamodb)
 
     tables = self.dynamodbClient.list_tables()
     tableNames = tables.get("TableNames")
-    self.assertEqual(tableNames.get(''), None)'''
+    for name in tableNames:
+      self.assertNotEqual(name, "users")

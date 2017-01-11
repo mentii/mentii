@@ -132,7 +132,6 @@ def getItem(jsonData, table):
   else:
     data = jsonData
 
-  print(data)
   attributes_to_get = data.get("AttributesToGet")
   key = data.get("Key")
 
@@ -200,38 +199,3 @@ def deleteTable(tableName, dbInstance):
     table.delete()
   except ClientError as e:
     return "Unable to delete table " + tableName + ". Table does not exist"
-
-if __name__ == '__main__':
-  dynamodb = boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
-  getTable('users', dynamodb).delete()
-
-  jsonData = '{\
-    "table_name" :"users",\
-    "key_schema":[\
-      {\
-        "AttributeName": "email",\
-        "KeyType": "HASH"\
-      }\
-    ],\
-    "attribute_definitions":[\
-      {\
-        "AttributeName": "email",\
-        "AttributeType": "S"\
-      }\
-    ],\
-    "provisioned_throughput":{\
-      "ReadCapacityUnits": 5,\
-      "WriteCapacityUnits": 5\
-    }\
-  }'
-
-  table = createTableFromJson(jsonData,dynamodb)
-  #table = createTableFromFile("table_settings.json", dynamodb)
-  print(table.table_status)
-  preloadData("mock_data.json", table)
-
-  d = '{ "email" : "fire@test.com", "password": "passwerd" }'
-  k = '{ "email" : "test2@mentii.com"}'
-  print(putItem(d, table))
-  response = getItem(k,table)
-  print(response['Item']['password'])

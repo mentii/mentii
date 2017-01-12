@@ -21,7 +21,6 @@ def getActiveClassList(dynamoDBInstance, email=None):
   if res is not None and 'Item' in res:# and len(res['Item']) > 0:
     classCodes = res['Item']['classCodes']
 
-
   #Use the class codes to get the class details for
   # each class.
   table = dbUtils.getTable('classes', dynamodb)

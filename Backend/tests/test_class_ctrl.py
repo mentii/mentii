@@ -5,7 +5,7 @@ import boto3
 import sys
 from os import path
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
-from mentii import class_ctrl 
+from mentii import class_ctrl
 from utils import db_utils as db
 
 
@@ -25,7 +25,7 @@ class ClassCtrlDBTests(unittest.TestCase):
         dynamodb.Table(name).delete()
     except:
       print("Error deleting tableNames")
-    
+
     classSettingsName = "classes_settings.json"
     classMockData = "mock_classes.json"
     settingsName = "table_settings.json"
@@ -44,6 +44,7 @@ class ClassCtrlDBTests(unittest.TestCase):
   def test_getActiveClassList(self):
     user =  "test@mentii.me"
     response = class_ctrl.getActiveClassList(dynamodb, user)
+    self.assertNotEqual(response, None)
     print(response)
 
 if __name__ == '__main__':

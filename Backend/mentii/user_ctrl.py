@@ -92,7 +92,7 @@ def addUserAndSendEmail(email, password, mailer, dbInstance):
 
   #This will change an existing user with the same email.
   response = dbUtils.putItem(jsonData,table)
-  
+
   if response is None:
     MentiiLogging.getLogger().error("Unable to add user to table users in addUserAndSendEmail")
     return None
@@ -132,7 +132,7 @@ def activate(activationId, dbInstance):
   response = ControllerResponse()
   table = dbUtils.getTable('users', dbInstance)
   items = []
-  
+
   if table is None:
     MentiiLogging.getLogger().error("Unable to get table users in activate")
     response.addError("Could not access table. Error", "The DB did not give us the table")
@@ -172,13 +172,13 @@ def getUserByEmail(email, dbInstance):
   table = dbUtils.getTable('users', dbInstance)
   if table is None:
     MentiiLogging.getLogger().error("Unable to get table users in getUserByEmail")
-    return user
+    return None
 
   key = {"Key" : {"email": email}}
   result = dbUtils.getItem(key, table)
   if result is None:
     MentiiLogging.getLogger().error("Unable to get the user with email: " + email + " in getUserByEmail ")
-    return user
+    return None
 
   if 'Item' in result.keys():
     user = result['Item']

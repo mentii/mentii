@@ -70,13 +70,15 @@ def preloadDataFromFile(fileName, table):
           password = item['password']
           activationId = item['activationId']
           active = item['active']
+          codes = item['codes']
 
           table.put_item(
             Item={
                'email': email,
                'password': password,
                'activationId': activationId,
-               'active': active
+               'active': active,
+               'codes': codes
             }
           )
         else:

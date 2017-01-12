@@ -2,7 +2,7 @@ import unittest
 from contextlib import contextmanager
 from flask import appcontext_pushed, g, Flask
 
-import db_utils as db
+from utils import db_utils as db
 from botocore.exceptions import ClientError
 
 import boto3
@@ -30,7 +30,7 @@ class MentiiAuthTests(unittest.TestCase):
       db.getTable('users', dynamodb).delete()
       table = db.createTableFromFile("./tests/"+settingsName, dynamodb)
 
-    db.preloadData("./tests/"+mockData, table)
+    db.preloadDataFromFile("./tests/"+mockData, table)
 
   @classmethod
   def tearDownClass(self):

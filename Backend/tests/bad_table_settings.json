@@ -1,5 +1,4 @@
 {
-  "TableName" :"users",
   "KeySchema":[
     {
       "AttributeName": "email",

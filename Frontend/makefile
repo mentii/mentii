@@ -17,6 +17,7 @@ compile: clean
 
 compile-prod:
 	@ npm install --production
+	@ npm run-script tsc
 
 runtests: compile
 	@ ./node_modules/karma/bin/karma start
@@ -27,5 +28,5 @@ runtests-nocompile:
 start: compile
 	@ $(TERMINALSPAWNER) "./runFrontend.sh dev" &
 
-run: compile
+run: compile-prod
 	@ $(TERMINALSPAWNER) "./runFrontend.sh prod" &

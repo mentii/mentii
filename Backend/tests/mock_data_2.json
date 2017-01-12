@@ -1,0 +1,26 @@
+[
+  {
+    "email" : "earth@mentii.me",
+    "password" : "iameight",
+    "activationId" : "12345",
+    "active": "T"
+  },
+  {
+    "email" : "wind@mentii.me",
+    "password" : "iameight2",
+    "activationId" : "abcde",
+    "active": "F"
+  },
+  {
+    "email" : "fire@mentii.me",
+    "password" : "6b7330782b2feb4924020cc4a57782a9",
+    "activationId" : "abcde",
+    "active": "T"
+  },
+  {
+    "email" : "air@mentii.me",
+    "password" : "6b7330782b2feb4924020cc4a57782a9",
+    "activationId" : "abcde",
+    "active": "F"
+  }
+]

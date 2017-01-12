@@ -5,14 +5,16 @@ from flask_mail import Mail
 import ConfigParser as cp
 from utils.ResponseCreation import ControllerResponse
 
-import db_utils as db
-from botocore.exceptions import ClientError
-
 import boto3
+
 import sys
 from os import path
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
+
 from mentii import user_ctrl as usr
+from utils import db_utils as db
+from botocore.exceptions import ClientError
+
 
 app = Flask(__name__)
 mail = Mail(app)
@@ -86,7 +88,7 @@ class UserControlDBTests(unittest.TestCase):
       db.getTable('users', dynamodb).delete()
       table = db.createTableFromFile("./tests/"+settingsName, dynamodb)
 
-    db.preloadData("./tests/"+mockData, table)
+    db.preloadDataFromFile("./tests/"+mockData, table)
 
   @classmethod
   def tearDownClass(self):

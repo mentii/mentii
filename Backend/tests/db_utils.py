@@ -70,6 +70,30 @@ def preloadData(jsonData, table):
     MentiiLogging.getLogger().exception(message + '\nJSON:\n' + jsonData + '\n' + str(e))
     return message
 
+def preloadClassData(jsonData, table):
+  try:
+    with open(jsonData) as json_file:
+      data = json_file.read()
+      items = json.loads(data)
+      for item in items:
+        code = item['code']
+        title = item['title']
+        subtitle = item['subtitle']
+        description = item['description']
+
+        table.put_item(
+          Item={
+            'code': code,
+            'title': title,
+            'subtitle' : subtitle,
+            'description' : description
+          }
+        )
+  except IOError as e:
+    message = "Unable to load data into table"
+    MentiiLogging.getLogger().exception(message + '\nJSON:\n' + jsonData + '\n' + str(e))
+    return message
+
 def addItem(jsonData, table):
   #check for primary key
   item = json.loads(jsonData)

@@ -1,0 +1,19 @@
+{
+  "table_name" :"classes",
+  "key_schema":[
+    {
+      "AttributeName": "code",
+      "KeyType": "HASH"
+    }
+  ],
+  "attribute_definitions":[
+    {
+      "AttributeName": "code",
+      "AttributeType": "S"
+    }
+  ],
+  "provisioned_throughput":{
+    "ReadCapacityUnits": 5,
+    "WriteCapacityUnits": 5
+  }
+}

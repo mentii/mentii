@@ -1,14 +1,9 @@
 import unittest
 import json
 import boto3
+import utils.MentiiLogging as MentiiLogging
 from boto3.dynamodb.conditions import Key, Attr
 from utils import db_utils as db
-
-import utils.MentiiLogging as MentiiLogging
-import sys
-from os import path
-sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
-
 
 class DbUtilsTest(unittest.TestCase):
 
@@ -131,14 +126,14 @@ class DbUtilsTest(unittest.TestCase):
   def test_create_table_from_file(self):
     print("Running create_table_from_file test")
     table = db.createTableFromFile(self.settingsName, self.dynamodb)
-    self.assertNotEqual(table,"Unable to create table from file")
+    self.assertIsNotNone(table)
     self.assertEqual(table.table_status,"ACTIVE")
     self.assertEqual(table.table_name, "testusers")
 
   def test_create_table_from_file_fail(self):
     print("Running create_table_from_file test fail test case")
     table = db.createTableFromFile(self.badSettingsName, self.dynamodb)
-    self.assertEqual(table,"Unable to create table from file")
+    self.assertIsNone(table)
 
   def test_create_table_from_string(self):
     print("Running create_table_from_string test")
@@ -163,7 +158,7 @@ class DbUtilsTest(unittest.TestCase):
     }'
 
     tableFromString = db.createTableFromJson(jsonDataString, self.dynamodb)
-    self.assertNotEqual(tableFromString, "Unable to create table from json")
+    self.assertIsNotNone(tableFromString)
     self.assertEqual(tableFromString.table_status, "ACTIVE")
     self.assertEqual(tableFromString.table_name, "puppies")
 
@@ -183,7 +178,7 @@ class DbUtilsTest(unittest.TestCase):
     }'
 
     tableFromBadString = db.createTableFromJson(badJsonDataString, self.dynamodb)
-    self.assertEqual(tableFromBadString, "Unable to create table from json")
+    self.assertIsNone(tableFromBadString)
 
   def test_create_table_from_json(self):
     print("Running create_table_from_json test")
@@ -208,7 +203,7 @@ class DbUtilsTest(unittest.TestCase):
     }
 
     tableFromJson = db.createTableFromJson(jsonData, self.dynamodb)
-    self.assertNotEqual(tableFromJson, "Unable to create table from json")
+    self.assertIsNotNone(tableFromJson)
     self.assertEqual(tableFromJson.table_status, "ACTIVE")
     self.assertEqual(tableFromJson.table_name, "cats")
 
@@ -228,13 +223,13 @@ class DbUtilsTest(unittest.TestCase):
     }
 
     tableFromJsonBad = db.createTableFromJson(jsonBadData, self.dynamodb)
-    self.assertEqual(tableFromJsonBad, "Unable to create table from json")
+    self.assertIsNone(tableFromJsonBad)
 
 #################### Preload Data Tests #################################
 
   def test_preload_data_from_file(self):
     print("Running preload_data_from_file test")
-    self.assertNotEqual(self.table,"Unable to create table")
+    self.assertIsNotNone(self.table)
     self.assertEqual(self.table.table_status,"ACTIVE")
 
     db.preloadDataFromFile(self.mockData, self.table)
@@ -245,7 +240,7 @@ class DbUtilsTest(unittest.TestCase):
 
   def test_preload_data_from_json(self):
     print("Running preload_data_from_json test")
-    self.assertNotEqual(self.table,"Unable to create table")
+    self.assertIsNotNone(self.table)
     self.assertEqual(self.table.table_status,"ACTIVE")
 
     jsonData = [
@@ -273,6 +268,7 @@ class DbUtilsTest(unittest.TestCase):
     print("Running getTable test")
     tableName = "users"
     returnedTable = db.getTable(tableName, self.dynamodb)
+    self.assertIsNotNone(returnedTable)
     self.assertEqual(returnedTable.table_name, tableName)
     self.assertEqual(returnedTable.table_status, "ACTIVE")
 
@@ -280,13 +276,13 @@ class DbUtilsTest(unittest.TestCase):
     print("Running getTable fail test case")
     tableName = "bananas"
     returnedTable = db.getTable(tableName, self.dynamodb)
-    self.assertEqual(returnedTable, "Unable to get table bananas. Table does not exist")
+    self.assertIsNone(returnedTable)
 
 #################### Item Tests #################################
 
   def test_putItem_json(self):
     print("Running putItem_json test")
-    self.assertNotEqual(self.table,"Unable to create table")
+    self.assertIsNotNone(self.table)
     self.assertEqual(self.table.table_status,"ACTIVE")
 
     jsonData = {
@@ -299,7 +295,7 @@ class DbUtilsTest(unittest.TestCase):
 
   def test_putItem_string(self):
     print("Running putItem_string test")
-    self.assertNotEqual(self.table,"Unable to create table")
+    self.assertIsNotNone(self.table)
     self.assertEqual(self.table.table_status,"ACTIVE")
 
     jsonData = '{\
@@ -312,7 +308,7 @@ class DbUtilsTest(unittest.TestCase):
 
   def test_getItem_json(self):
     print("Running getItem_json test")
-    self.assertNotEqual(self.table,"Unable to create table")
+    self.assertIsNotNone(self.table)
     self.assertEqual(self.table.table_status,"ACTIVE")
 
     jsonData = {
@@ -325,7 +321,7 @@ class DbUtilsTest(unittest.TestCase):
 
   def test_getItem_string(self):
     print("Running getItem_string test")
-    self.assertNotEqual(self.table,"Unable to create table")
+    self.assertIsNotNone(self.table)
     self.assertEqual(self.table.table_status,"ACTIVE")
 
     jsonData = '{\
@@ -339,7 +335,7 @@ class DbUtilsTest(unittest.TestCase):
 
   def test_getItem_fail(self):
     print("Running getItem_fail fail test case")
-    self.assertNotEqual(self.table,"Unable to create table")
+    self.assertIsNotNone(self.table)
     self.assertEqual(self.table.table_status,"ACTIVE")
 
     jsonData = '{\
@@ -352,7 +348,7 @@ class DbUtilsTest(unittest.TestCase):
 
   def test_updateItem_json(self):
     print("Running updateItem_json test")
-    self.assertNotEqual(self.table,"Unable to create table")
+    self.assertIsNotNone(self.table)
     self.assertEqual(self.table.table_status,"ACTIVE")
 
     jsonData = {
@@ -370,7 +366,7 @@ class DbUtilsTest(unittest.TestCase):
 
   def test_updateItem_string(self):
     print("Running updateItem_string test")
-    self.assertNotEqual(self.table,"Unable to create table")
+    self.assertIsNotNone(self.table)
     self.assertEqual(self.table.table_status,"ACTIVE")
 
     jsonData = '{\
@@ -388,8 +384,7 @@ class DbUtilsTest(unittest.TestCase):
 
   def test_updateItem_not_previously_existed(self):
     print("Running updateItem_not_previously_existed test")
-
-    self.assertNotEqual(self.table,"Unable to create table")
+    self.assertIsNotNone(self.table)
     self.assertEqual(self.table.table_status,"ACTIVE")
 
     jsonData = '{\
@@ -407,7 +402,7 @@ class DbUtilsTest(unittest.TestCase):
 
   def test_deleteItem_string(self):
     print("Running deleteItem_string test")
-    self.assertNotEqual(self.table,"Unable to create table")
+    self.assertIsNotNone(self.table)
     self.assertEqual(self.table.table_status,"ACTIVE")
 
     jsonData = '{\
@@ -419,7 +414,7 @@ class DbUtilsTest(unittest.TestCase):
 
   def test_deleteItem_json(self):
     print("Running deleteItem_json test")
-    self.assertNotEqual(self.table,"Unable to create table")
+    self.assertIsNotNone(self.table)
     self.assertEqual(self.table.table_status,"ACTIVE")
 
     jsonData = {
@@ -431,7 +426,7 @@ class DbUtilsTest(unittest.TestCase):
 
   def test_deleteItem_fail(self):
     print("Running deleteItem fail test case")
-    self.assertNotEqual(self.table,"Unable to create table")
+    self.assertIsNotNone(self.table)
     self.assertEqual(self.table.table_status,"ACTIVE")
 
     jsonData = {
@@ -445,7 +440,7 @@ class DbUtilsTest(unittest.TestCase):
 
   def test_query(self):
     print("Running query test")
-    self.assertNotEqual(self.table,"Unable to create table")
+    self.assertIsNotNone(self.table)
     self.assertEqual(self.table.table_status,"ACTIVE")
 
     response = db.query("email", "test2@mentii.me", self.table)
@@ -454,7 +449,7 @@ class DbUtilsTest(unittest.TestCase):
 
   def test_scan(self):
     print("Running scan test")
-    self.assertNotEqual(self.table,"Unable to create table")
+    self.assertIsNotNone(self.table)
     self.assertEqual(self.table.table_status,"ACTIVE")
 
     response = db.scan(self.table)
@@ -463,7 +458,7 @@ class DbUtilsTest(unittest.TestCase):
 
   def test_scanFilter(self):
     print("Running scanFilter test")
-    self.assertNotEqual(self.table,"Unable to create table")
+    self.assertIsNotNone(self.table)
     self.assertEqual(self.table.table_status,"ACTIVE")
 
     attributeName = 'active'
@@ -519,4 +514,4 @@ class DbUtilsTest(unittest.TestCase):
     print("Running deleteTable fail test case")
     tableName = "apples"
     returnedTable = db.deleteTable(tableName, self.dynamodb)
-    self.assertEqual(returnedTable, "Unable to delete table apples. Table does not exist")
+    self.assertIsNone(returnedTable)

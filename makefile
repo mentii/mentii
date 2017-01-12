@@ -25,7 +25,3 @@ runtests:
 runtests-nocompile:
 	@ cd ./Frontend; make runtests-nocompile -s
 	@ cd ./Backend; make runtests -s
-
-setup:
-	@ cd ./Backend; make -s
-	@ cd ./Frontend; make -s

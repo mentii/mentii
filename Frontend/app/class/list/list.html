@@ -9,15 +9,16 @@
     <i class="fa fa-spinner fa-spin"></i> Loading your class list...
   </div>
   <!-- Only show if classes are in the data payload and it is not currently loading -->
-  <div class="col-xs-12 col-sm-offset-1 col-sm-10" *ngIf="classes && !isLoading">
+  <div class="col-xs-12 col-sm-offset-1 col-sm-10" *ngIf="classes.length && !isLoading">
     <div class="row" *ngFor="let class of classes;">
       <div class="col-xs-12">
         <a [routerLink]="['/class/', class.code]">
           <h3>
-            {{class.title}} <small>{{class.subtitle}}</small>
+            {{class.title}}<small>{{class.subtitle}}</small>
           </h3>
         </a>
         <p>
+          <span *ngIf="class.section"><em>Section: {{class.section}}</em><br/></span>
           {{class.description}}
         </p>
       </div>
@@ -30,7 +31,7 @@
     </div>
   </div>
   <!-- Only show if no data returned and is not currently loading -->
-  <div class="col-xs-12 col-sm-offset-1 col-sm-10" *ngIf="!classes && !isLoading">
+  <div class="col-xs-12 col-sm-offset-1 col-sm-10" *ngIf="!classes.length && !isLoading">
     <div class="row">
       <div class="col-xs-12">
         <div class="empty-state text-center">

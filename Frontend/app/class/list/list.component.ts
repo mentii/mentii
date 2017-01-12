@@ -11,7 +11,7 @@ import { ClassService } from '../class.service';
 })
 
 export class ClassListComponent implements OnInit {
-  classes: ClassModel[];
+  classes: ClassModel[] = [];
   isLoading = true;
 
   constructor(public classService: ClassService, public router: Router, public toastr: ToastsManager){

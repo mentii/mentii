@@ -6,33 +6,32 @@ from flask import g
 
 def getActiveClassList(dynamoDBInstance, email=None):
   response = ControllerResponse()
-  user = email
   if email is None:
-    user = g.authenticatedUser
+    email = g.authenticatedUser['email']
   dynamodb = dynamoDBInstance
   table = dynamodb.Table('users')
   classCodes = []
   classes = []
   #An active class list is the list of class codes that
-  # a user has in the user table. 
-  res = table.get_item( 
+  # a user has in the user table.
+  res = table.get_item(
           Key={
             'email': email,
           },
           ProjectedExpression='class_codes'
           )
-  #Get the class codes for the user. 
+  #Get the class codes for the user.
   if res is not None and 'Item' in res:
     classCodes = res['Item']['class_codes']
 
 
 
 
-  #Use the class codes to get the class details for 
-  # each class. 
+  #Use the class codes to get the class details for
+  # each class.
   table = dynamodb.Table('classes')
   for code in classCodes:
-    res = table.get_item( 
+    res = table.get_item(
             Key={
               'code': code,
             },

@@ -4,7 +4,6 @@ from os import path
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 from utils.ResponseCreation import *
 
-
 class ControllerResponseTests(unittest.TestCase):
   @classmethod
   def setUp(self):

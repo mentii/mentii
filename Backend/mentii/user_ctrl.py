@@ -3,14 +3,11 @@ import re
 from flask_mail import Message
 from boto3.dynamodb.conditions import Key, Attr
 from utils.ResponseCreation import ControllerResponse
+from utils import db_utils as dbUtils
 import utils.MentiiLogging as MentiiLogging
 import uuid
 import hashlib
 
-import sys
-from os import path
-sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
-from utils import db_utils as dbUtils
 
 def register(jsonData, mailer, dbInstance):
   response = ControllerResponse()
@@ -89,9 +86,16 @@ def addUserAndSendEmail(email, password, mailer, dbInstance):
     'activationId': activationId,
     'active': "F"
   }
+  if table is None:
+    MentiiLogging.getLogger().error("Unable to get table users in addUserAndSendEmail")
+    return None
 
   #This will change an existing user with the same email.
   response = dbUtils.putItem(jsonData,table)
+  
+  if response is None:
+    MentiiLogging.getLogger().error("Unable to add user to table users in addUserAndSendEmail")
+    return None
 
   try:
     sendEmail(email, activationId, mailer)
@@ -128,6 +132,11 @@ def activate(activationId, dbInstance):
   response = ControllerResponse()
   table = dbUtils.getTable('users', dbInstance)
   items = []
+  
+  if table is None:
+    MentiiLogging.getLogger().error("Unable to get table users in activate")
+    response.addError("Could not access table. Error", "The DB did not give us the table")
+    return response
 
   #Scan for the email associated with this activationId
   scanResponse = dbUtils.scanFilter("activationId", activationId, table)
@@ -161,8 +170,15 @@ def getUserByEmail(email, dbInstance):
   user = None
 
   table = dbUtils.getTable('users', dbInstance)
+  if table is None:
+    MentiiLogging.getLogger().error("Unable to get table users in getUserByEmail")
+    return user
+
   key = {"Key" : {"email": email}}
   result = dbUtils.getItem(key, table)
+  if result is None:
+    MentiiLogging.getLogger().error("Unable to get the user with email: " + email + " in getUserByEmail ")
+    return user
 
   if 'Item' in result.keys():
     user = result['Item']

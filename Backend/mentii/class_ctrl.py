@@ -4,6 +4,7 @@ from utils.ResponseCreation import ControllerResponse
 from utils import db_utils as dbUtils
 import uuid
 from flask import g
+import utils.MentiiLogging as MentiiLogging
 
 def getActiveClassList(dynamoDBInstance, email=None):
   response = ControllerResponse()
@@ -11,6 +12,9 @@ def getActiveClassList(dynamoDBInstance, email=None):
     email = g.authenticatedUser['email']
   dynamodb = dynamoDBInstance
   table = dbUtils.getTable('users', dynamodb)
+  if table is None:
+    MentiiLogging.getLogger().error("Unable to get users table in getActiveClassList")
+    return None
   classCodes = []
   classes = []
   #An active class list is the list of class codes that
@@ -18,12 +22,15 @@ def getActiveClassList(dynamoDBInstance, email=None):
   request = {"Key" : {"email": email}, "AttributesToGet": ["classCodes"]}
   res = dbUtils.getItem(request, table)
   #Get the class codes for the user.
-  if res is not None and 'Item' in res:# and len(res['Item']) > 0:
+  if res is not None and 'Item' in res:
     classCodes = res['Item']['classCodes']
 
   #Use the class codes to get the class details for
   # each class.
   table = dbUtils.getTable('classes', dynamodb)
+  if table is None:
+    MentiiLogging.getLogger().error("Unable to get classes table in getActiveClassList")
+    return None
   for code in classCodes:
     request = {"Key": {"code": code}}
     res = dbUtils.getItem(request, table)

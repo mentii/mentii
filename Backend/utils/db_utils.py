@@ -112,7 +112,7 @@ def preloadClassData(jsonData, table):
   except IOError as e:
     message = "Unable to load data into table"
     MentiiLogging.getLogger().exception(message + '\nJSON:\n' + jsonData + '\n' + str(e))
-    return message
+    return
 
 def preloadDataFromJson(jsonData, table):
   if (type(jsonData) == str):

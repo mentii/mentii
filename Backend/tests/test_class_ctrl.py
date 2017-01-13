@@ -39,7 +39,7 @@ class ClassCtrlDBTests(unittest.TestCase):
 
   @classmethod
   def tearDownClass(self):
-    table = db.getTable('classes', dynamodb).delete()
+    db.getTable('classes', dynamodb).delete()
 
   def test_getActiveClassList(self):
     user =  "test@mentii.me"

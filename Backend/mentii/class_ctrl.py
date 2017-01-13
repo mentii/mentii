@@ -39,3 +39,34 @@ def getActiveClassList(dynamoDBInstance, email=None):
 
   response.addToPayload('classes', classes)
   return response
+
+def checkClassData(classData):
+  return 'code' in classData.keys() and 'title' in classData.keys() and 'subtitle' in classData.keys() and 'description' in classData.keys()
+
+def createClass(dynamoDBInstance, classData):
+  response = ControllerResponse()
+  if classData is not None and checkClassData(classData):
+    item = {'code': classData['code'],
+            'title': classData['title'],
+            'subtitle': classData['subtitle'],
+            'description': classData['description']}
+    table = dbUtils.getTable('classes', dynamoDBInstance)
+    if table is not None:
+      res = dbUtils.putItem(item, table)
+      if res is not None:
+        response.addToPayload('success', 'Successfully added classs')
+      else:
+        response.addError("Unable to add clsas", "unable to add class to the table")
+        MentiiLogging.getLogger().error("Unable to add class! Could not add class in createClass")
+    else:
+      response.addError("Unable to access DB", "unable to access the db table classes")
+      MentiiLogging.getLogger().error("Unable to access the DB! Could not access table classes in createClass")
+  else:
+    response.addError("Class data none or invalid.", "json passed class data is none or invalid")
+    MentiiLogging.getLogger().error("Class data was invalid in createClass!")
+
+  return response
+    
+
+    
+

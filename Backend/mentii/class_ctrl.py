@@ -1,18 +1,18 @@
 import boto3
+import uuid
+import utils.MentiiLogging as MentiiLogging
 from boto3.dynamodb.conditions import Key, Attr
 from utils.ResponseCreation import ControllerResponse
 from utils import db_utils as dbUtils
-import uuid
 from flask import g
-import utils.MentiiLogging as MentiiLogging
 
 def getActiveClassList(dynamoDBInstance, email=None):
   response = ControllerResponse()
+  usersTable = dbUtils.getTable('users', dynamoDBInstance)
+
   if email is None:
     email = g.authenticatedUser['email']
-  dynamodb = dynamoDBInstance
-  table = dbUtils.getTable('users', dynamodb)
-  if table is None:
+  if usersTable is None:
     MentiiLogging.getLogger().error("Unable to get users table in getActiveClassList")
     return None
   classCodes = []
@@ -20,20 +20,20 @@ def getActiveClassList(dynamoDBInstance, email=None):
   #An active class list is the list of class codes that
   # a user has in the user table.
   request = {"Key" : {"email": email}, "AttributesToGet": ["classCodes"]}
-  res = dbUtils.getItem(request, table)
+  res = dbUtils.getItem(request, usersTable)
   #Get the class codes for the user.
   if res is not None and 'Item' in res:
     classCodes = res['Item']['classCodes']
 
   #Use the class codes to get the class details for
   # each class.
-  table = dbUtils.getTable('classes', dynamodb)
-  if table is None:
+  classesTable = dbUtils.getTable('classes', dynamoDBInstance)
+  if classesTable is None:
     MentiiLogging.getLogger().error("Unable to get classes table in getActiveClassList")
     return None
   for code in classCodes:
     request = {"Key": {"code": code}}
-    res = dbUtils.getItem(request, table)
+    res = dbUtils.getItem(request, classesTable)
     if res is not None and 'Item' in res:
       classes.append(res['Item'])
 
@@ -45,28 +45,29 @@ def checkClassData(classData):
 
 def createClass(dynamoDBInstance, classData):
   response = ControllerResponse()
+
   if classData is not None and checkClassData(classData):
     item = {'code': classData['code'],
             'title': classData['title'],
             'subtitle': classData['subtitle'],
             'description': classData['description']}
     table = dbUtils.getTable('classes', dynamoDBInstance)
+
     if table is not None:
-      res = dbUtils.putItem(item, table)
-      if res is not None:
-        response.addToPayload('success', 'Successfully added classs')
+      result = dbUtils.putItem(item, table)
+      if result is not None:
+        response.addToPayload('success', 'Successfully created class')
       else:
-        response.addError("Unable to add clsas", "unable to add class to the table")
-        MentiiLogging.getLogger().error("Unable to add class! Could not add class in createClass")
+        error_message = "Unable to create class in classes table."
+        response.addError("createClass call Failed.", error_message)
+        MentiiLogging.getLogger().error(error_message)
     else:
-      response.addError("Unable to access DB", "unable to access the db table classes")
-      MentiiLogging.getLogger().error("Unable to access the DB! Could not access table classes in createClass")
+      error_message = "Unable to locate classes table."
+      response.addError("createClass call Failed.", error_message)
+      MentiiLogging.getLogger().error(error_message)
   else:
-    response.addError("Class data none or invalid.", "json passed class data is none or invalid")
-    MentiiLogging.getLogger().error("Class data was invalid in createClass!")
+    error_message = "Invalid class data given."
+    response.addError("createClass call Failed.", error_message)
+    MentiiLogging.getLogger().error(error_message)
 
   return response
-    
-
-    
-

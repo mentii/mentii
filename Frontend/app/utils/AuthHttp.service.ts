@@ -42,11 +42,22 @@ export class AuthHttp extends Http {
     return (res: Response) => {
       if (res.status === 401 || res.status === 403) {
         // If not authenticated return to signin
+        this.removeAuthToken();
         this.router.navigateByUrl('');
       }
       return Observable.throw(res);
     };
   }
+
+
+  /**
+  * Service method to remove the auth token
+  */
+  removeAuthToken() {
+    // TODO: Should we store the auth token somewhere else?
+    localStorage.removeItem(AUTH_TOKEN_NAME);
+  }
+
 
   /**
   * Service method to save the auth token

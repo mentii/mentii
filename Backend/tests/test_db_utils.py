@@ -81,25 +81,29 @@ class DbUtilsTest(unittest.TestCase):
         "email" : "test@mentii.me",
         "password" : "iameight",
         "activationId" : "12345",
-        "active": "T"
+        "active": "T",
+        "classCodes": []
       },
       {
         "email" : "test2@mentii.me",
         "password" : "iameight2",
         "activationId" : "abcde",
-        "active": "F"
+        "active": "F",
+        "classCodes": []
       },
       {
         "email" : "test3@mentii.me",
         "password" : "6b7330782b2feb4924020cc4a57782a9",
         "activationId" : "abcde",
-        "active": "T"
+        "active": "T",
+        "classCodes": []
       },
       {
         "email" : "test4@mentii.me",
         "password" : "6b7330782b2feb4924020cc4a57782a9",
         "activationId" : "abcde",
-        "active": "F"
+        "active": "F",
+        "classCodes": []
       }
     ]
 
@@ -108,13 +112,15 @@ class DbUtilsTest(unittest.TestCase):
       password = item['password']
       activationId = item['activationId']
       active = item['active']
+      classCodes = item['classCodes']
 
       self.table.put_item(
         Item={
            'email': email,
            'password': password,
            'activationId': activationId,
-           'active': active
+           'active': active,
+           'classCodes': classCodes
         }
       )
 
@@ -248,13 +254,15 @@ class DbUtilsTest(unittest.TestCase):
         "email" : "sharks@mentii.me",
         "password" : "fisharefriends",
         "activationId" : "12222",
-        "active": "F"
+        "active": "F",
+        "classCodes": []
       },
       {
         "email" : "lizards@mentii.me",
         "password" : "lizzzard",
         "activationId" : "asd544",
-        "active": "F"
+        "active": "F",
+        "classCodes": []
       }
     ]
 

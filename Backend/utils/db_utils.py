@@ -70,13 +70,15 @@ def preloadDataFromFile(fileName, table):
           password = item['password']
           activationId = item['activationId']
           active = item['active']
+          codes = item['classCodes']
 
           table.put_item(
             Item={
                'email': email,
                'password': password,
                'activationId': activationId,
-               'active': active
+               'active': active,
+               'classCodes': codes
             }
           )
         else:
@@ -87,6 +89,30 @@ def preloadDataFromFile(fileName, table):
     message = "Unable to open file"
     logger.exception(message + ': ' + settings_file + '\n' + str(e))
     return None
+
+def preloadClassData(jsonData, table):
+  try:
+    with open(jsonData) as json_file:
+      data = json_file.read()
+      items = json.loads(data)
+      for item in items:
+        code = item['code']
+        title = item['title']
+        subtitle = item['subtitle']
+        description = item['description']
+
+        table.put_item(
+          Item={
+            'code': code,
+            'title': title,
+            'subtitle' : subtitle,
+            'description' : description
+          }
+        )
+  except IOError as e:
+    message = "Unable to load data into table"
+    MentiiLogging.getLogger().exception(message + '\nJSON:\n' + jsonData + '\n' + str(e))
+    return
 
 def preloadDataFromJson(jsonData, table):
   if (type(jsonData) == str):
@@ -100,13 +126,15 @@ def preloadDataFromJson(jsonData, table):
       password = item['password']
       activationId = item['activationId']
       active = item['active']
+      classCodes = item['classCodes']
 
       table.put_item(
         Item={
           'email': email,
           'password': password,
           'activationId': activationId,
-          'active': active
+          'active': active,
+          'classCodes': classCodes
         }
       )
     else:

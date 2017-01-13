@@ -126,13 +126,15 @@ def preloadDataFromJson(jsonData, table):
       password = item['password']
       activationId = item['activationId']
       active = item['active']
+      classCodes = item['classCodes']
 
       table.put_item(
         Item={
           'email': email,
           'password': password,
           'activationId': activationId,
-          'active': active
+          'active': active,
+          'classCodes': classCodes
         }
       )
     else:

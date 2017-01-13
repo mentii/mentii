@@ -84,7 +84,8 @@ def addUserAndSendEmail(email, password, mailer, dbInstance):
     'email': email,
     'password': password,
     'activationId': activationId,
-    'active': "F"
+    'active': "F",
+    'classCodes' : []
   }
   if table is None:
     MentiiLogging.getLogger().error("Unable to get table users in addUserAndSendEmail")

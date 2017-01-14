@@ -53,12 +53,12 @@ class ClassCtrlDBTests(unittest.TestCase):
     self.assertNotEqual(response, None)
     print(response)
 
-def test_getClassCodesFromUser(self):
-  user =  "test@mentii.me"
-  response = class_ctrl.getClassCodesFromUser(dynamodb, user)
-  self.assertNotEqual(response, None)
-  self.assertTrue(len(response) == 3)
-  print(response)
+  def test_getClassCodesFromUser(self):
+    user =  "test@mentii.me"
+    response = class_ctrl.getClassCodesFromUser(dynamodb, user)
+    self.assertNotEqual(response, None)
+    self.assertTrue(len(response) == 3)
+    print(response)
 
 if __name__ == '__main__':
   if __package__ is None:

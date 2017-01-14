@@ -15,13 +15,14 @@ def getActiveClassList(dynamoDBInstance, email=None):
   table = dbUtils.getTable('classes', dynamoDBInstance)
   if table is None:
     MentiiLogging.getLogger().error("Unable to get classes table in getActiveClassList")
-    return None
-  for code in classCodes:
-    request = {"Key": {"code": code}}
-    res = dbUtils.getItem(request, table)
-    if res is not None and 'Item' in res:
-      classes.append(res['Item'])
-  response.addToPayload('classes', classes)
+    response.addError("Failed to get class list", "A database error occured");
+  else:
+    for code in classCodes:
+      request = {"Key": {"code": code}}
+      res = dbUtils.getItem(request, table)
+      if res is not None and 'Item' in res:
+        classes.append(res['Item'])
+    response.addToPayload('classes', classes)
   return response
 
 def getClassCodesFromUser(dynamoDBInstance, email=None):
@@ -31,14 +32,14 @@ def getClassCodesFromUser(dynamoDBInstance, email=None):
   usersTable = dbUtils.getTable('users', dynamoDBInstance)
   if usersTable is None:
     MentiiLogging.getLogger().error("Unable to get users table in getClassCodesFromUser")
-    return None
-  #An active class list is the list of class codes that
-  # a user has in the user table.
-  request = {"Key" : {"email": email}, "AttributesToGet": ["classCodes"]}
-  res = dbUtils.getItem(request, usersTable)
-  #Get the class codes for the user.
-  if res is not None and 'Item' in res:
-    classCodes = res['Item']['classCodes']
+  else:
+    #An active class list is the list of class codes that
+    # a user has in the user table.
+    request = {"Key" : {"email": email}, "AttributesToGet": ["classCodes"]}
+    res = dbUtils.getItem(request, usersTable)
+    #Get the class codes for the user.
+    if res is not None and 'Item' in res:
+      classCodes = res['Item']['classCodes']
   return classCodes
 
 def getPublicClassList(dynamodb, email=None):
@@ -48,10 +49,11 @@ def getPublicClassList(dynamodb, email=None):
   classesTable = dbUtils.getTable('classes', dynamodb)
   if classesTable is None:
     MentiiLogging.getLogger().error("Unable to get classes table in getPublicClassList")
-    return None
-  res = classesTable.scan()
-  for pclass in res['Items']:
-    if pclass['code'] not in classCodes and 'private' not in pclass and pclass.get('private') != True:
-      classes.append(pclass)
-  response.addToPayload('classes', classes)
+    response.addError("Failed to get class list", "A database error occured");
+  else:
+    res = classesTable.scan()
+    for pclass in res.get('Items', []):
+      if pclass['code'] not in classCodes and 'private' not in pclass and pclass.get('private') != True:
+        classes.append(pclass)
+    response.addToPayload('classes', classes)
   return response

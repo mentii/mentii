@@ -145,7 +145,7 @@ def secure():
   logger.info(str(flaskResponse))
   return flaskResponse
 
-@app.route('/user/class/', methods=['GET', 'OPTIONS'])
+@app.route('/user/classes/', methods=['GET', 'OPTIONS'])
 @auth.login_required
 def class_list():
   status = 200
@@ -157,7 +157,7 @@ def class_list():
     status = 400
   return ResponseCreation.createResponse(res, status)
 
-@app.route('/class/', methods=['GET', 'OPTIONS'])
+@app.route('/classes/', methods=['GET', 'OPTIONS'])
 @auth.login_required
 def public_class_list():
   status = 200

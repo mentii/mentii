@@ -19,7 +19,7 @@ export class ClassService {
   }
 
   getClassList():Observable<any> {
-    let getClassListUrl = this.mentiiConfig.getRootUrl() + '/user/class/';
+    let getClassListUrl = this.mentiiConfig.getRootUrl() + '/user/classes/';
     let body = {}
     return this.authHttp.get(getClassListUrl, body)
     .map((res:Response) => res)
@@ -27,10 +27,10 @@ export class ClassService {
   }
 
   getPublicClassList(): Observable<any> {
-      let getClassListUrl = this.mentiiConfig.getRootUrl() + '/class/';
-      let body = {}
-      return this.authHttp.get(getClassListUrl, body)
-      .map((res:Response) => res)
-      .catch((error:any) => Observable.throw(error));
+    let getClassListUrl = this.mentiiConfig.getRootUrl() + '/classes/';
+    let body = {}
+    return this.authHttp.get(getClassListUrl, body)
+    .map((res:Response) => res)
+    .catch((error:any) => Observable.throw(error));
   }
 }

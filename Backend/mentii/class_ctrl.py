@@ -40,34 +40,38 @@ def getActiveClassList(dynamoDBInstance, email=None):
   response.addToPayload('classes', classes)
   return response
 
-def checkClassData(classData):
-  return 'code' in classData.keys() and 'title' in classData.keys() and 'subtitle' in classData.keys() and 'description' in classData.keys()
+def checkClassDataValid(classData):
+  return 'title' in classData.keys() and 'subtitle' in classData.keys() and 'description' in classData.keys() and 'section' in classData.keys()
 
 def createClass(dynamoDBInstance, classData):
   response = ControllerResponse()
-
-  if classData is not None and checkClassData(classData):
-    item = {'code': classData['code'],
-            'title': classData['title'],
-            'subtitle': classData['subtitle'],
-            'description': classData['description']}
-    table = dbUtils.getTable('classes', dynamoDBInstance)
-
-    if table is not None:
-      result = dbUtils.putItem(item, table)
-      if result is not None:
-        response.addToPayload('success', 'Successfully created class')
-      else:
-        error_message = "Unable to create class in classes table."
-        response.addError("createClass call Failed.", error_message)
-        MentiiLogging.getLogger().error(error_message)
-    else:
-      error_message = "Unable to locate classes table."
-      response.addError("createClass call Failed.", error_message)
-      MentiiLogging.getLogger().error(error_message)
-  else:
+  if classData is None or not checkClassDataValid(classData):
+    #invalid state
     error_message = "Invalid class data given."
     response.addError("createClass call Failed.", error_message)
     MentiiLogging.getLogger().error(error_message)
+ 
+  else:
+   
+    class_code = str(uuid.uuid4())
+    item = {'code': class_code,
+            'title': classData['title'],
+            'subtitle': classData['subtitle'],
+            'description': classData['description'], 
+            'section': classData['section']}
+    table = dbUtils.getTable('classes', dynamoDBInstance)
+
+    if table is None:
+      error_message = "Unable to locate classes table."
+      response.addError("createClass call Failed.", error_message)
+      MentiiLogging.getLogger().error(error_message)
+    else:
+      result = dbUtils.putItem(item, table)
+      if result is None:
+        error_message = "Unable to create class in classes table."
+        response.addError("createClass call Failed.", error_message)
+        MentiiLogging.getLogger().error(error_message)
+      else:
+        response.addToPayload('success', 'Successfully created class')
 
   return response

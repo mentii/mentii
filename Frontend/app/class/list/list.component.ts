@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { ClassModel } from '../class.model';
 import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 import { ClassService } from '../class.service';
@@ -14,7 +13,7 @@ export class ClassListComponent implements OnInit {
   classes: ClassModel[] = [];
   isLoading = true;
 
-  constructor(public classService: ClassService, public router: Router, public toastr: ToastsManager){
+  constructor(public classService: ClassService, public toastr: ToastsManager){
   }
 
   ngOnInit() {

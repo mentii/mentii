@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ClassModel } from '../class.model';
 import { ClassService } from '../class.service';
 import { ToastsManager } from 'ng2-toastr/ng2-toastr';
@@ -9,11 +9,14 @@ import { ToastsManager } from 'ng2-toastr/ng2-toastr';
   templateUrl: 'browse.html'
 })
 
-export class ClassBrowseComponent {
+export class ClassBrowseComponent implements OnInit {
   isLoading = true;
   classes: ClassModel[] = [];
 
   constructor(public classService: ClassService, public toastr: ToastsManager){
+  }
+
+  ngOnInit() {
     this.classService.getPublicClassList()
     .subscribe(
       data => this.handleSuccess(data.json()),
@@ -28,11 +31,10 @@ export class ClassBrowseComponent {
 
   handleError(err){
     this.isLoading = false;
-    this.toastr.error("The class list failed to load.");
+    this.toastr.error("The public class list failed to load.");
   }
 
   joinClass() {
     alert("not implemented");
   }
-
 }

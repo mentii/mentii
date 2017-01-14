@@ -6,10 +6,10 @@ import uuid
 from flask import g
 import utils.MentiiLogging as MentiiLogging
 
-def getActiveClassList(dynamoDBInstance):
+def getActiveClassList(dynamoDBInstance, email=None):
   response = ControllerResponse()
   classes = []
-  classCodes = getClassCodesFromUser(dynamoDBInstance)
+  classCodes = getClassCodesFromUser(dynamoDBInstance, email)
   #Use the class codes to get the class details for
   # each class.
   table = dbUtils.getTable('classes', dynamoDBInstance)
@@ -41,9 +41,9 @@ def getClassCodesFromUser(dynamoDBInstance, email=None):
     classCodes = res['Item']['classCodes']
   return classCodes
 
-def getPublicClassList(dynamodb):
+def getPublicClassList(dynamodb, email=None):
   response = ControllerResponse()
-  classCodes = getClassCodesFromUser(dynamodb)
+  classCodes = getClassCodesFromUser(dynamodb, email)
   classes = []
   classesTable = dbUtils.getTable('classes', dynamodb)
   res = classesTable.scan()

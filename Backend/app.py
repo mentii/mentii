@@ -3,7 +3,7 @@
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS, cross_origin
 from flask_mail import Mail
-from flask.ext.httpauth import HTTPBasicAuth
+from flask_httpauth import HTTPBasicAuth
 from flask import g
 from mentii import user_ctrl
 from mentii import class_ctrl

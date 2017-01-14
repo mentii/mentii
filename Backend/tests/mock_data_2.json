@@ -4,27 +4,31 @@
     "password" : "iameight",
     "activationId" : "12345",
     "active": "T",
-    "classCodes": ["d93cd63f-6eda-4644-b603-60f51142749e"]
+    "classCodes": ["d93cd63f-6eda-4644-b603-60f51142749e"],
+    "userRole": "student"
   },
   {
     "email" : "wind@mentii.me",
     "password" : "iameight2",
     "activationId" : "abcde",
     "active": "F",
-    "classCodes": ["d93cd63f-6eda-4644-b603-60f51142749e"]
+    "classCodes": ["d93cd63f-6eda-4644-b603-60f51142749e"],
+    "userRole": "student"
   },
   {
     "email" : "fire@mentii.me",
     "password" : "6b7330782b2feb4924020cc4a57782a9",
     "activationId" : "abcde",
     "active": "T",
-    "classCodes": ["d93cd63f-6eda-4644-b603-60f51142749e"]
+    "classCodes": ["d93cd63f-6eda-4644-b603-60f51142749e"],
+    "userRole": "student"
   },
   {
     "email" : "air@mentii.me",
     "password" : "6b7330782b2feb4924020cc4a57782a9",
     "activationId" : "abcde",
     "active": "F",
-    "classCodes": ["d93cd63f-6eda-4644-b603-60f51142749e"]
+    "classCodes": ["d93cd63f-6eda-4644-b603-60f51142749e"],
+    "userRole": "student"
   }
 ]

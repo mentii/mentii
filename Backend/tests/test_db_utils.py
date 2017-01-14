@@ -255,14 +255,16 @@ class DbUtilsTest(unittest.TestCase):
         "password" : "fisharefriends",
         "activationId" : "12222",
         "active": "F",
-        "classCodes": []
+        "classCodes": [],
+        "userRole": "admin"
       },
       {
         "email" : "lizards@mentii.me",
         "password" : "lizzzard",
         "activationId" : "asd544",
         "active": "F",
-        "classCodes": []
+        "classCodes": [],
+        "userRole": "student"
       }
     ]
 
@@ -334,7 +336,7 @@ class DbUtilsTest(unittest.TestCase):
 
     jsonData = '{\
       "Key": {"email":"test2@mentii.me"},\
-      "AttributesToGet": ["password"]\
+      "ProjectionExpression": "password"\
     }'
 
     response = db.getItem(jsonData, self.table)
@@ -348,7 +350,7 @@ class DbUtilsTest(unittest.TestCase):
 
     jsonData = '{\
       "Key": {"email":"potato@mentii.me"},\
-      "AttributesToGet": ["password"]\
+      "ProjectionExpression": "password"\
     }'
 
     response = db.getItem(jsonData, self.table)

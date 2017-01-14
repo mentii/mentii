@@ -85,7 +85,8 @@ def addUserAndSendEmail(email, password, mailer, dbInstance):
     'password': password,
     'activationId': activationId,
     'active': "F",
-    'classCodes' : []
+    'classCodes' : [],
+    'userRole': "student"
   }
   if table is None:
     MentiiLogging.getLogger().error("Unable to get table users in addUserAndSendEmail")
@@ -185,3 +186,58 @@ def getUserByEmail(email, dbInstance):
     user = result['Item']
 
   return user
+
+def getUserRole(email, dbInstance):
+  role = None
+
+  userTable = dbUtils.getTable('users', dbInstance)
+  if userTable is None:
+    MentiiLogging.getLogger().error("Unable to get table users in getUserRole")
+    return None
+
+  data = {
+    "Key" : {"email": email},
+    "ProjectionExpression" : "userRole"
+  }
+  result = dbUtils.getItem(data, userTable)
+
+  if result is None:
+    MentiiLogging.getLogger().error("Unable to get the user with email: " + email + " in getUserRole ")
+    return None
+
+  print(result)
+  role = result['Item']['userRole']
+
+  return role
+
+def changeUserRole(email, role, dbInstance):
+  userTable = dbUtils.getTable('users', dbInstance)
+  if userTable is None:
+    MentiiLogging.getLogger().error("Unable to get table users in changeUserRole")
+    return None
+
+  if role == "S":
+    ur = "student"
+  elif role == "T":
+    ur = "teacher"
+  elif role == "A":
+    ur = "admin"
+  else:
+    MentiiLogging.getLogger().error("Invalid role: " + role + " specified. Unable to change user role")
+    return None
+
+  data = {
+      "Key": {"email": email},
+      "UpdateExpression": "SET userRole = :ur",
+      "ExpressionAttributeValues": { ":ur": ur },
+      "ReturnValues" : "UPDATED_NEW"
+  }
+
+  result = dbUtils.updateItem(data, userTable)
+
+  if result is None:
+    MentiiLogging.getLogger().error("Unable to update the user with email: " + email + " in changeUserRole")
+    return None
+
+  return result
+

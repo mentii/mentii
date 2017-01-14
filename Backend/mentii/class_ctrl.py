@@ -19,7 +19,7 @@ def getActiveClassList(dynamoDBInstance, email=None):
   classes = []
   #An active class list is the list of class codes that
   # a user has in the user table.
-  request = {"Key" : {"email": email}, "AttributesToGet": ["classCodes"]}
+  request = {"Key" : {"email": email}, "ProjectionExpression": "classCodes"}
   res = dbUtils.getItem(request, table)
   #Get the class codes for the user.
   if res is not None and 'Item' in res:

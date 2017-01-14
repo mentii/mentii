@@ -71,6 +71,7 @@ def preloadDataFromFile(fileName, table):
           activationId = item['activationId']
           active = item['active']
           codes = item['classCodes']
+          userRole = item['userRole']
 
           table.put_item(
             Item={
@@ -78,7 +79,8 @@ def preloadDataFromFile(fileName, table):
                'password': password,
                'activationId': activationId,
                'active': active,
-               'classCodes': codes
+               'classCodes': codes,
+               'userRole': userRole
             }
           )
         else:
@@ -127,6 +129,7 @@ def preloadDataFromJson(jsonData, table):
       activationId = item['activationId']
       active = item['active']
       classCodes = item['classCodes']
+      userRole = item['userRole']
 
       table.put_item(
         Item={
@@ -134,7 +137,8 @@ def preloadDataFromJson(jsonData, table):
           'password': password,
           'activationId': activationId,
           'active': active,
-          'classCodes': classCodes
+          'classCodes': classCodes,
+          'userRole': userRole
         }
       )
     else:
@@ -172,7 +176,7 @@ def getItem(jsonData, table):
   else:
     data = jsonData
 
-  attributes_to_get = data.get("AttributesToGet")
+  projection_expression = data.get("ProjectionExpression")
   key = data.get("Key")
 
   if key is None:
@@ -180,8 +184,8 @@ def getItem(jsonData, table):
     logger.error(message)
     return None
 
-  if attributes_to_get is not None:
-    response = table.get_item(Key=key,AttributesToGet=attributes_to_get)
+  if projection_expression is not None:
+    response = table.get_item(Key=key,ProjectionExpression=projection_expression)
   else:
     response = table.get_item(Key=key)
   return response

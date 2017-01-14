@@ -3,14 +3,13 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from flask_mail import Mail
 import ConfigParser as cp
-from utils.ResponseCreation import ControllerResponse
 
 import boto3
-
+import time
 import sys
 from os import path
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
-
+from utils.ResponseCreation import ControllerResponse
 from mentii import user_ctrl as usr
 from utils import db_utils as db
 from botocore.exceptions import ClientError
@@ -90,9 +89,9 @@ class UserControlDBTests(unittest.TestCase):
 
     db.preloadDataFromFile("./tests/"+mockData, table)
 
-  @classmethod
+  '''@classmethod
   def tearDownClass(self):
-    table = db.getTable('users', dynamodb).delete()
+    table = db.getTable('users', dynamodb).delete()'''
 
   def test_isEmailInSystem(self):
     print("Running isEmailInSystem Test")
@@ -164,6 +163,35 @@ class UserControlDBTests(unittest.TestCase):
 
     isUserActive = 'status' in response.payload.keys() and response.payload['status'] == 'Success'
     self.assertTrue(isUserActive)
+
+  def test_getUserRole(self):
+    print("Running getUserRole test")
+    role = usr.getUserRole("test4@mentii.me", dynamodb)
+    self.assertEqual(role, "admin")
+
+  def test_changeUserRole(self):
+    print("Running changeUserRole test")
+    time.sleep(5)
+    beforeRole = usr.getUserRole("test@mentti.me", dynamodb)
+    self.assertEqual(beforeRole, "student")
+    # change user role to teacher
+  '''usr.changeUserRole("test@mentii.me", "T", dynamodb)
+    afterRole = usr.getUserRole("test@mentti.me", dynamodb)
+    self.assertEqual(afterRole, "teacher")
+    # change user role to admin
+    usr.changeUserRole("test@mentii.me", "A", dynamodb)
+    afterRole = usr.getUserRole("test@mentti.me", dynamodb)
+    self.assertEqual(afterRole, "admin")
+
+  def test_changeUserRole_fail(self):
+    print("Running changeUserRole fail test case")
+
+    beforeRole = usr.getUserRole("test@mentti.me", dynamodb)
+    self.assertEqual(beforeRole, "student")
+    # change user role to not defined
+    usr.changeUserRole("test@mentii.me", "Z", dynamodb)
+    afterRole = usr.getUserRole("test@mentti.me", dynamodb)
+    self.assertIsNone(afterRole)'''
 
 if __name__ == '__main__':
   if __package__ is None:

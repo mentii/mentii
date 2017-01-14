@@ -46,6 +46,9 @@ def getPublicClassList(dynamodb, email=None):
   classCodes = getClassCodesFromUser(dynamodb, email)
   classes = []
   classesTable = dbUtils.getTable('classes', dynamodb)
+  if classesTable is None:
+    MentiiLogging.getLogger().error("Unable to get classes table in getPublicClassList")
+    return None
   res = classesTable.scan()
   for pclass in res['Items']:
     if pclass['code'] not in classCodes and 'private' not in pclass and pclass.get('private') != True:

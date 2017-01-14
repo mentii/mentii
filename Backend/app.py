@@ -157,7 +157,7 @@ def class_list():
     status = 400
   return ResponseCreation.createResponse(res, status)
 
-@app.route('/create-class/', methods=['POST', 'OPTIONS'])
+@app.route('/class', methods=['POST', 'OPTIONS'])
 def create_class():
   status = 200
   if request.method =='OPTIONS':

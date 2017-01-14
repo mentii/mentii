@@ -25,4 +25,19 @@ export class ClassService {
     .map((res:Response) => res)
     .catch((error:any) => Observable.throw(error));
   }
+
+  addClass(classModel: ClassModel):Observable<any> {
+    let createClassListUrl = this.mentiiConfig.getRootUrl() + '/class';
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let options = new RequestOptions({ headers: headers })
+    let body = {
+      "title": classModel.title,
+      "subtitle": classModel.subtitle,
+      "description": classModel.description,
+      "section": classModel.section
+    }
+    return this.authHttp.post(createClassListUrl, body)
+    .map((res:Response) => res)
+    .catch((error:any) => Observable.throw(error));
+  }
 }

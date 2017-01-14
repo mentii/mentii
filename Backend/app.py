@@ -157,6 +157,18 @@ def class_list():
     status = 400
   return ResponseCreation.createResponse(res, status)
 
+@app.route('/classes/', methods=['GET', 'OPTIONS'])
+@auth.login_required
+def public_class_list():
+  status = 200
+  if request.method =='OPTIONS':
+    return ResponseCreation.createEmptyResponse(status)
+  dynamoDBInstance = getDatabaseClient()
+  res = class_ctrl.getPublicClassList(dynamoDBInstance)
+  if res.hasErrors():
+    status = 400
+  return ResponseCreation.createResponse(res, status)
+
 if __name__ == '__main__':
   logger.info('mentii app starting')
   try:

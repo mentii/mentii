@@ -25,4 +25,12 @@ export class ClassService {
     .map((res:Response) => res)
     .catch((error:any) => Observable.throw(error));
   }
+
+  getPublicClassList(): Observable<any> {
+      let getClassListUrl = this.mentiiConfig.getRootUrl() + '/classes/';
+      let body = {}
+      return this.authHttp.get(getClassListUrl, body)
+      .map((res:Response) => res)
+      .catch((error:any) => Observable.throw(error));
+  }
 }

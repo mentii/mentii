@@ -8,26 +8,11 @@ import utils.MentiiLogging as MentiiLogging
 
 def getActiveClassList(dynamoDBInstance, email=None):
   response = ControllerResponse()
-  if email is None:
-    email = g.authenticatedUser['email']
-  dynamodb = dynamoDBInstance
-  table = dbUtils.getTable('users', dynamodb)
-  if table is None:
-    MentiiLogging.getLogger().error("Unable to get users table in getActiveClassList")
-    return None
-  classCodes = []
   classes = []
-  #An active class list is the list of class codes that
-  # a user has in the user table.
-  request = {"Key" : {"email": email}, "AttributesToGet": ["classCodes"]}
-  res = dbUtils.getItem(request, table)
-  #Get the class codes for the user.
-  if res is not None and 'Item' in res:
-    classCodes = res['Item']['classCodes']
-
+  classCodes = getClassCodesFromUser(dynamoDBInstance)
   #Use the class codes to get the class details for
   # each class.
-  table = dbUtils.getTable('classes', dynamodb)
+  table = dbUtils.getTable('classes', dynamoDBInstance)
   if table is None:
     MentiiLogging.getLogger().error("Unable to get classes table in getActiveClassList")
     return None
@@ -36,6 +21,34 @@ def getActiveClassList(dynamoDBInstance, email=None):
     res = dbUtils.getItem(request, table)
     if res is not None and 'Item' in res:
       classes.append(res['Item'])
+  response.addToPayload('classes', classes)
+  return response
 
+def getClassCodesFromUser(dynamoDBInstance, email=None):
+  classCodes = []
+  if email is None:
+    email = g.authenticatedUser['email']
+  usersTable = dbUtils.getTable('users', dynamoDBInstance)
+  if usersTable is None:
+    MentiiLogging.getLogger().error("Unable to get users table in getClassCodesFromUser")
+    return None
+  #An active class list is the list of class codes that
+  # a user has in the user table.
+  request = {"Key" : {"email": email}, "AttributesToGet": ["classCodes"]}
+  res = dbUtils.getItem(request, usersTable)
+  #Get the class codes for the user.
+  if res is not None and 'Item' in res:
+    classCodes = res['Item']['classCodes']
+  return classCodes
+
+def getPublicClassList(dynamodb, email=None):
+  response = ControllerResponse()
+  classCodes = getClassCodesFromUser(dynamodb)
+  classes = []
+  classesTable = dbUtils.getTable('classes', dynamodb)
+  res = classesTable.scan()
+  for pclass in res['Items']:
+    if pclass['code'] not in classCodes and 'private' not in pclass and pclass.get('private') != True:
+      classes.append(pclass)
   response.addToPayload('classes', classes)
   return response

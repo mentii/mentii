@@ -19,10 +19,11 @@ export class RootComponent {
   }
 
   checkAuthToken() {
-    if (this.authHttp.loadAuthToken() == null) {
+    let token = this.authHttp.loadAuthToken();
+    if (token == null) {
       this.isUserAuthenticated = false;
     } else {
-      this.authHttp.login();
+      this.authHttp.login(token);
       this.isUserAuthenticated = true;
       this.router.navigate(['/dashboard'])
     }

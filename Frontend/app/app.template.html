@@ -16,11 +16,14 @@
         <li><a href="#">Team</a></li>
       -->
       </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <!--
-        <li><a [routerLink]="['/register']">Register</a></li>
+      <!-- Right side nav items for unauthenticated users -->
+      <ul class="nav navbar-nav navbar-right" *ngIf="!isAuthenticated">
         <li><a [routerLink]="['']">Sign In</a></li>
-      -->
+        <li><a [routerLink]="['/register']">Register</a></li>
+      </ul>
+      <!-- Right side nav items for authenticated users -->
+      <ul class="nav navbar-nav navbar-right" *ngIf="isAuthenticated">
+        <li><a (click)="logout()"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
       </ul>
     </div>
   </div>

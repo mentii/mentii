@@ -1,5 +1,7 @@
 /* Angular Builtins */
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { CoreModule } from './core.module';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpModule, RequestOptions, XHRBackend } from '@angular/http';
@@ -7,7 +9,6 @@ import { Router } from '@angular/router';
 /* App Config */
 import { routing } from './app.routes';
 /* Services */
-import { AuthHttp } from './utils/AuthHttp.service';
 import { UserService } from './user/user.service';
 import { ClassService } from './class/class.service';
 import { ToastModule } from 'ng2-toastr/ng2-toastr';
@@ -28,17 +29,9 @@ import { DeleteValue } from './directives/delete-value-validator.directive';
 import { LaddaModule } from 'angular2-ladda';
 
 @NgModule({
-  imports:      [ BrowserModule, FormsModule, HttpModule, ToastModule, LaddaModule.forRoot({style: "zoom-in"}), routing],
+  imports:      [ BrowserModule, FormsModule, HttpModule, ToastModule, LaddaModule.forRoot({style: "zoom-in"}), routing, CommonModule, CoreModule],
   declarations: [ AppComponent, RegistrationComponent, RootComponent, PageNotFoundComponent, SecureTestComponent, EqualValidator, DeleteValue, SigninComponent, ClassListComponent, ClassDetailComponent, ClassBrowseComponent],
-  providers: [UserService, ClassService,
-    {
-      provide: AuthHttp,
-      useFactory: (backend: XHRBackend, options: RequestOptions, router: Router) => {
-        return new AuthHttp(backend, options, router);
-      },
-      deps: [XHRBackend, RequestOptions, Router]
-    }
-  ],
+  providers: [UserService, ClassService],
   bootstrap:    [ AppComponent ]
 })
 export class AppModule { }

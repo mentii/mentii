@@ -1,9 +1,10 @@
-import {Injectable} from '@angular/core';
-import {Http, XHRBackend, RequestOptions, Request, RequestOptionsArgs, Response, Headers} from '@angular/http';
-import {Observable} from 'rxjs/Observable';
-import {Router} from '@angular/router';
+import { Injectable } from '@angular/core';
+import { Http, XHRBackend, RequestOptions, Request, RequestOptionsArgs, Response, Headers } from '@angular/http';
+import { Observable } from 'rxjs/Observable';
+import { Router } from '@angular/router';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 
 const AUTH_TOKEN_NAME = "auth_token";
@@ -16,6 +17,9 @@ const AUTH_TOKEN_NAME = "auth_token";
 */
 @Injectable()
 export class AuthHttp extends Http {
+
+  private _isAuthenticated = new BehaviorSubject<boolean>(false);
+  isAuthenticated$ = this._isAuthenticated.asObservable();
 
   constructor (backend: XHRBackend, options: RequestOptions, private router: Router) {
     super(backend, options);
@@ -42,7 +46,7 @@ export class AuthHttp extends Http {
     return (res: Response) => {
       if (res.status === 401 || res.status === 403) {
         // If not authenticated return to signin
-        this.removeAuthToken();
+        this.logout();
         this.router.navigateByUrl('');
       }
       return Observable.throw(res);
@@ -66,6 +70,7 @@ export class AuthHttp extends Http {
   saveAuthToken(token) {
     // TODO: Should we store the auth token somewhere else?
     localStorage.setItem(AUTH_TOKEN_NAME, token);
+    this.login(); //update isAuthenticated flag
   }
 
   /**
@@ -74,5 +79,14 @@ export class AuthHttp extends Http {
   */
   loadAuthToken() {
     return localStorage.getItem(AUTH_TOKEN_NAME);
+  }
+
+  logout() {
+    this.removeAuthToken();
+    this._isAuthenticated.next(false);
+  }
+
+  login() {
+    this._isAuthenticated.next(true);
   }
 }

@@ -8,7 +8,7 @@
     "lint": "tslint ./app/**/*.ts -t verbose",
     "lite": "lite-server",
     "pree2e": "webdriver-manager update",
-    "test": "tsc && concurrently \"tsc -w\" \"karma start karma.conf.js\"",
+    "test": "karma start karma.conf.js",
     "test2": "\"karma start karma.conf.js --single-run\"",
     "tsc": "tsc",
     "tsc:w": "tsc -w"
@@ -48,6 +48,7 @@
     "karma-firefox-launcher": "^1.0.0",
     "karma-jasmine": "^1.0.2",
     "karma-jasmine-html-reporter": "^0.2.2",
+    "karma-phantomjs-launcher": "^1.0.2",
     "lite-server": "^2.2.2",
     "lodash": "^4.16.4",
     "minifier": "^0.8.0",

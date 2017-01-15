@@ -26,11 +26,15 @@ export class AppComponent implements OnInit {
         // data is true/false
         this.isAuthenticated = data;
       });
+
+      // Initialize the check on authentication.
+      // Used mostly when opening the app to a weird page such as /class directly
+      this.authHttpService.checkAuthStatus();
   }
 
   logout() {
     this.authHttpService.logout();
-    // Return to sign in
+    // Return to sign in page
     this.router.navigateByUrl('');
   }
 }

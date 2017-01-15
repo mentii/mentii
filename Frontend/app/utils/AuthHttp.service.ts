@@ -53,7 +53,6 @@ export class AuthHttp extends Http {
     };
   }
 
-
   /**
   * Service method to remove the auth token
   */
@@ -62,7 +61,6 @@ export class AuthHttp extends Http {
     localStorage.removeItem(AUTH_TOKEN_NAME);
   }
 
-
   /**
   * Service method to save the auth token
   * @param {String} token
@@ -70,7 +68,6 @@ export class AuthHttp extends Http {
   saveAuthToken(token) {
     // TODO: Should we store the auth token somewhere else?
     localStorage.setItem(AUTH_TOKEN_NAME, token);
-    this.login(); //update isAuthenticated flag
   }
 
   /**
@@ -81,12 +78,34 @@ export class AuthHttp extends Http {
     return localStorage.getItem(AUTH_TOKEN_NAME);
   }
 
+  /**
+   * Removes auth token from local storage
+   * Updates the isAuthenticated flag throughout app to false
+   */
   logout() {
     this.removeAuthToken();
     this._isAuthenticated.next(false);
   }
 
-  login() {
+  /**
+   * Saves the auth token to local storage
+   * Updates the isAuthenticated flag throughout app to true
+   * @param  {String} token
+   */
+  login(token) {
+    this.saveAuthToken(token);
     this._isAuthenticated.next(true);
+  }
+
+  /**
+   * Checks the current authentication status and
+   * updates the isAuthenticated flag accordingly
+   */
+  checkAuthStatus() {
+    if (this.loadAuthToken() != null){
+      this._isAuthenticated.next(true);
+    } else {
+      this._isAuthenticated.next(false);
+    }
   }
 }

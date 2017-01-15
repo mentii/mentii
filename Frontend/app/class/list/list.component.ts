@@ -18,7 +18,6 @@ export class ClassListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.authHttp.login();
     this.classService.getClassList()
     .subscribe(
       data => this.handleSuccess(data.json()),

@@ -170,10 +170,9 @@ class UserControlDBTests(unittest.TestCase):
     self.assertEqual(role, "admin")
 
   def test_changeUserRole(self):
-    print("Running changeUserRole test")
-    time.sleep(5)
-    beforeRole = usr.getUserRole("test@mentti.me", dynamodb)
-    self.assertEqual(beforeRole, "student")
+    print("Running test_changeUserRole test")
+    role = usr.getUserRole("test@mentii.me", dynamodb)
+    self.assertEqual(role, "student")
     # change user role to teacher
   '''usr.changeUserRole("test@mentii.me", "T", dynamodb)
     afterRole = usr.getUserRole("test@mentti.me", dynamodb)

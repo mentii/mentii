@@ -20,10 +20,10 @@ compile-prod:
 	@ npm run-script tsc
 
 runtests: compile
-	@ ./node_modules/karma/bin/karma start
+	@ npm run-script test
 
 runtests-nocompile:
-	@ ./node_modules/karma/bin/karma start
+	@ npm run-script test
 
 start: compile
 	@ $(TERMINALSPAWNER) "./runFrontend.sh dev" &

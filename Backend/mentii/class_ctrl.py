@@ -41,36 +41,31 @@ def getActiveClassList(dynamoDBInstance, email=None):
   return response
 
 def checkClassDataValid(classData):
-  return 'title' in classData.keys() and 'subtitle' in classData.keys() and 'description' in classData.keys() and 'section' in classData.keys()
+  return 'title' in classData.keys() and 'description' in classData.keys()
 
 def createClass(dynamoDBInstance, classData):
   response = ControllerResponse()
   if classData is None or not checkClassDataValid(classData):
-    #invalid state
     error_message = "Invalid class data given."
     response.addError("createClass call Failed.", error_message)
-    MentiiLogging.getLogger().error(error_message)
- 
   else:
-   
-    class_code = str(uuid.uuid4())
-    item = {'code': class_code,
-            'title': classData['title'],
-            'subtitle': classData['subtitle'],
-            'description': classData['description'], 
-            'section': classData['section']}
     table = dbUtils.getTable('classes', dynamoDBInstance)
-
     if table is None:
       error_message = "Unable to locate classes table."
       response.addError("createClass call Failed.", error_message)
-      MentiiLogging.getLogger().error(error_message)
     else:
+      class_code = str(uuid.uuid4())
+      item = {'code': class_code,
+              'title': classData['title'],
+              'description': classData['description']}
+      if 'subtitle' in classData.keys() and classData['subtitle']:
+        item['subtitle'] = classData['subtitle']
+      if 'section' in classData.keys() and classData['section']:
+        item['section'] = classData['section']
       result = dbUtils.putItem(item, table)
       if result is None:
         error_message = "Unable to create class in classes table."
         response.addError("createClass call Failed.", error_message)
-        MentiiLogging.getLogger().error(error_message)
       else:
         response.addToPayload('success', 'Successfully created class')
 

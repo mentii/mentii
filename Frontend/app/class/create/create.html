@@ -33,6 +33,10 @@
         </span>
       </div>
       <button type="submit" class="btn btn-primary" [disabled]="!registerForm.form.valid" (click)="submit()" [ladda]='isLoading'><span class="ladda-label">Create Class</span></button>
+      <div [hidden]="!classCreated">
+        <br/>
+        <a [routerLink]="['taught']">View the classes you teach</a>
+      </div>
     </form>
     <br/>
     <a [routerLink]="['']">Return to Dashboard</a>

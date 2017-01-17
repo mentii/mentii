@@ -4,6 +4,9 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthHttp } from './utils/AuthHttp.service';
 
+/*
+Things imported in this module are singletons for the entire app
+ */
 @NgModule({
   imports: [
     CommonModule

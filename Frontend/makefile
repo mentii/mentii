@@ -15,7 +15,7 @@ compile: clean
 	@ npm install
 	@ npm run-script tsc
 
-compile-prod:
+compile-prod: clean
 	@ npm install --production
 	@ npm run-script tsc
 

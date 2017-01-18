@@ -117,11 +117,17 @@ def signin():
     flaskResponse = ResponseCreation.createEmptyResponse(status)
     logger.info(str(flaskResponse))
     return flaskResponse
-  userCredentials = {'email': request.authorization.username, 'password': request.authorization.password}
+  
+  dynamoDBInstance = getDatabaseClient()
+  userEmail = request.authorization.username
+  userPrivilege = user_ctrl.getUserPrivilege(userEmail, dynamoDBInstance)
+  userCredentials = {'email': userEmail, 'password': request.authorization.password, 'privilege': userPrivilege}
+
   response = ControllerResponse()
   token = MentiiAuth.generate_auth_token(userCredentials, appSecret)
   response.addToPayload('token', token)
   flaskResponse = ResponseCreation.createResponse(response, status)
+ 
   logger.info(str(flaskResponse))
   return flaskResponse
 
@@ -158,10 +164,17 @@ def class_list():
   return ResponseCreation.createResponse(res, status)
 
 @app.route('/class', methods=['POST', 'OPTIONS'])
+@auth.login_required
 def create_class():
   status = 200
   if request.method =='OPTIONS':
     return ResponseCreation.createEmptyResponse(status)
+
+  if g.authenticatedUser['privilege'] == "U":
+    res = ResponseCreation.ControllerResponse()
+    res.addError("Privilege error", "User is incorrect privilege level.")
+    return ResponseCreation.createResponse(res, 403)
+
   dynamoDBInstance = getDatabaseClient()
   res = class_ctrl.createClass(dynamoDBInstance, request.json)
   if res.hasErrors():

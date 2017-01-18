@@ -10,8 +10,8 @@ def build_user_object(userData):
   '''
   Builds a standard user object to return to the client for all authenticated calls
   '''
-  if 'email' in userData:
-    return {'email': userData['email']}
+  if 'email' in userData and 'privilege' in userData:
+    return {'email': userData['email'], 'privilege': userData['privilege']}
   else:
     # Anything other than raising an exception here would be a security flaw.
     # If the code executes to this point and userData does not contain an email
@@ -29,10 +29,11 @@ def generate_auth_token(userCredentials, appSecret=None, expiration = 86400):
   retval = None
   try:
     s = Serializer(appSecret, expires_in = expiration)
-    if 'email' in userCredentials and 'password' in userCredentials:
+    if 'email' in userCredentials and 'password' in userCredentials and 'privilege' in userCredentials:
       email = userCredentials['email']
       password = userCredentials['password']
-      retval = s.dumps({ 'email': email, 'password': password })
+      privilege = userCredentials['privilege']
+      retval = s.dumps({ 'email': email, 'password': password, 'privilege': privilege})
   except Exception as e:
     MentiiLogging.getLogger().exception(e)
     retval = None

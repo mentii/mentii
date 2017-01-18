@@ -108,10 +108,14 @@ export class AuthHttp extends Http {
    * updates the isAuthenticated flag accordingly
    */
   checkAuthStatus() {
+    let authStatus = false; // default to false. Would rather reject an authenticated user than allow anyone
     if (this.loadAuthToken() != null){
       this._isAuthenticated.next(true);
+      authStatus = true;
     } else {
       this._isAuthenticated.next(false);
+      authStatus = false;
     }
+    return authStatus;
   }
 }

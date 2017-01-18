@@ -25,13 +25,15 @@ import { ClassBrowseComponent } from './class/browse/browse.component';
 /* Directives */
 import { EqualValidator } from './directives/equal-validator.directive';
 import { DeleteValue } from './directives/delete-value-validator.directive';
+/* Route Guards */
+import { AuthRouteGuard } from './utils/AuthRouteGuard.service';
 /* Vendor */
 import { LaddaModule } from 'angular2-ladda';
 
 @NgModule({
   imports:      [ BrowserModule, FormsModule, HttpModule, ToastModule, LaddaModule.forRoot({style: "zoom-in"}), routing, CommonModule, CoreModule],
   declarations: [ AppComponent, RegistrationComponent, RootComponent, PageNotFoundComponent, SecureTestComponent, EqualValidator, DeleteValue, SigninComponent, ClassListComponent, ClassDetailComponent, ClassBrowseComponent],
-  providers: [UserService, ClassService],
+  providers: [UserService, ClassService, AuthRouteGuard],
   bootstrap:    [ AppComponent ]
 })
 export class AppModule { }

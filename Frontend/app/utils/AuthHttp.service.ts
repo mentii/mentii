@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 
 
 const AUTH_TOKEN_NAME = "auth_token";
@@ -21,7 +22,7 @@ export class AuthHttp extends Http {
   private _isAuthenticated = new BehaviorSubject<boolean>(false);
   isAuthenticated$ = this._isAuthenticated.asObservable();
 
-  constructor (backend: XHRBackend, options: RequestOptions, private router: Router) {
+  constructor (backend: XHRBackend, options: RequestOptions, private router: Router, public toastr: ToastsManager ) {
     super(backend, options);
   }
 
@@ -44,10 +45,15 @@ export class AuthHttp extends Http {
 
   private catchAuthError (self: AuthHttp) {
     return (res: Response) => {
-      if (res.status === 401 || res.status === 403) {
-        // If not authenticated return to signin
-        this.logout();
-        this.router.navigateByUrl('');
+      if (res.status === 401) {
+        this.toastr.error("You must sign in to view this page", "Authentication Error");
+        this.logout(); //remove bad auth token from local storage
+        this.router.navigateByUrl(''); // return to signin
+        res["isAuthenticationError"] = true;
+      } else if (res.status === 403) {
+        this.toastr.error("You do not have permission to view this page", "Insufficient Privileges");
+        this.router.navigateByUrl(''); // return to sign in or dashboard
+        res["isAuthenticationError"] = true;
       }
       return Observable.throw(res);
     };

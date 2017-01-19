@@ -31,7 +31,9 @@ export class ClassBrowseComponent implements OnInit {
 
   handleError(err){
     this.isLoading = false;
-    this.toastr.error("The public class list failed to load.");
+    if (!err.isAuthenticationError) {
+      this.toastr.error("The public class list failed to load.");
+    }
   }
 
   joinClass() {

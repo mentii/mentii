@@ -1,23 +1,40 @@
 // ====== ./app/app.component.ts ======
-import { Component, ViewContainerRef } from '@angular/core';
+import { Component, ViewContainerRef, OnInit } from '@angular/core';
 import { ToastsManager } from 'ng2-toastr/ng2-toastr';
-// Import router directives
-// Deprecated
-// import { ROUTER_DIRECTIVES } from '@angular/router';
+import { AuthHttp } from './utils/AuthHttp.service';
+import { Router } from '@angular/router';
 
 @Component({
   moduleId: module.id,
   selector: 'my-app',
   templateUrl: 'app.template.html',
-  // Not necessary as we have provided directives using
-  // `RouterModule` to root module
-  // Tell component to use router directives
-  // directives: [ROUTER_DIRECTIVES]
 })
 
 // App Component class
-export class AppComponent {
-  constructor(public toastr: ToastsManager, vRef: ViewContainerRef) {
+export class AppComponent implements OnInit {
+  // Default to false
+  isAuthenticated = false;
+
+  constructor(public toastr: ToastsManager, public authHttpService: AuthHttp, public router: Router, vRef: ViewContainerRef) {
     this.toastr.setRootViewContainerRef(vRef);
+  }
+
+  ngOnInit() {
+    // Check for updates on the isAuthenticated property of AuthHttp
+    this.authHttpService.isAuthenticated$.subscribe(
+      data => {
+        // data is true/false
+        this.isAuthenticated = data;
+      });
+
+      // Initialize the check on authentication.
+      // Used mostly when opening the app to a weird page such as /class directly
+      this.authHttpService.checkAuthStatus();
+  }
+
+  logout() {
+    this.authHttpService.logout();
+    // Return to sign in page
+    this.router.navigateByUrl('');
   }
 }

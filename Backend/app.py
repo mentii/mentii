@@ -3,7 +3,7 @@
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS, cross_origin
 from flask_mail import Mail
-from flask.ext.httpauth import HTTPBasicAuth
+from flask_httpauth import HTTPBasicAuth
 from flask import g
 from mentii import user_ctrl
 from mentii import class_ctrl
@@ -145,7 +145,7 @@ def secure():
   logger.info(str(flaskResponse))
   return flaskResponse
 
-@app.route('/class-list/', methods=['GET', 'OPTIONS'])
+@app.route('/user/classes/', methods=['GET', 'OPTIONS'])
 @auth.login_required
 def class_list():
   status = 200
@@ -153,6 +153,18 @@ def class_list():
     return ResponseCreation.createEmptyResponse(status)
   dynamoDBInstance = getDatabaseClient()
   res = class_ctrl.getActiveClassList(dynamoDBInstance)
+  if res.hasErrors():
+    status = 400
+  return ResponseCreation.createResponse(res, status)
+
+@app.route('/classes/', methods=['GET', 'OPTIONS'])
+@auth.login_required
+def public_class_list():
+  status = 200
+  if request.method =='OPTIONS':
+    return ResponseCreation.createEmptyResponse(status)
+  dynamoDBInstance = getDatabaseClient()
+  res = class_ctrl.getPublicClassList(dynamoDBInstance)
   if res.hasErrors():
     status = 400
   return ResponseCreation.createResponse(res, status)

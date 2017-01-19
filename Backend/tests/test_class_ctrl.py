@@ -45,7 +45,17 @@ class ClassCtrlDBTests(unittest.TestCase):
     user =  "test@mentii.me"
     response = class_ctrl.getActiveClassList(dynamodb, user)
     self.assertNotEqual(response, None)
-    print(response)
+
+  def test_getPublicClassList(self):
+    user =  "test@mentii.me"
+    response = class_ctrl.getPublicClassList(dynamodb, user)
+    self.assertNotEqual(response, None)
+
+  def test_getClassCodesFromUser(self):
+    user =  "test@mentii.me"
+    response = class_ctrl.getClassCodesFromUser(dynamodb, user)
+    self.assertNotEqual(response, None)
+    self.assertTrue(len(response) == 3)
 
 if __name__ == '__main__':
   if __package__ is None:

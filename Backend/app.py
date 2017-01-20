@@ -68,7 +68,7 @@ def getDatabaseClient():
 def verify_password(email_or_token, password):
   logger.info(str(request))
   dynamoDBInstance = getDatabaseClient()
-  response = MentiiAuth.verify_password(email_or_token, password, dynamoDBInstance, appSecret)
+  response = MentiiAuth.verifyPassword(email_or_token, password, dynamoDBInstance, appSecret)
   logger.info('Password Verified: ' + str(response))
   return response
 
@@ -117,17 +117,21 @@ def signin():
     flaskResponse = ResponseCreation.createEmptyResponse(status)
     logger.info(str(flaskResponse))
     return flaskResponse
-  
+
+  email = request.authorization.username
   dynamoDBInstance = getDatabaseClient()
-  userEmail = request.authorization.username
-  userPrivilege = user_ctrl.getUserPrivilege(userEmail, dynamoDBInstance)
-  userCredentials = {'email': userEmail, 'password': request.authorization.password, 'privilege': userPrivilege}
+  role = user_ctrl.getRole(email, dynamoDBInstance)
+  userCredentials = {
+    'email': email,
+    'password': request.authorization.password,
+    'role': role
+  }
 
   response = ControllerResponse()
-  token = MentiiAuth.generate_auth_token(userCredentials, appSecret)
+  token = MentiiAuth.generateAuthToken(userCredentials, appSecret)
   response.addToPayload('token', token)
   flaskResponse = ResponseCreation.createResponse(response, status)
- 
+
   logger.info(str(flaskResponse))
   return flaskResponse
 
@@ -170,9 +174,9 @@ def create_class():
   if request.method =='OPTIONS':
     return ResponseCreation.createEmptyResponse(status)
 
-  if g.authenticatedUser['privilege'] == "U":
+  if g.authenticatedUser['role'] == "S":
     res = ResponseCreation.ControllerResponse()
-    res.addError("Privilege error", "User is incorrect privilege level.")
+    res.addError("Role error", "Students cannot create classes")
     return ResponseCreation.createResponse(res, 403)
 
   dynamoDBInstance = getDatabaseClient()

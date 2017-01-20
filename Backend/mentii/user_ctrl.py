@@ -86,7 +86,7 @@ def addUserAndSendEmail(email, password, mailer, dbInstance):
     'activationId': activationId,
     'active': "F",
     'classCodes' : [],
-    'privilege' : "U"
+    'role' : "S"
   }
   if table is None:
     MentiiLogging.getLogger().error("Unable to get table users in addUserAndSendEmail")
@@ -187,30 +187,22 @@ def getUserByEmail(email, dbInstance):
 
   return user
 
-def getUserPrivilege(userEmail, dynamoDBInstance):
+def getRole(userEmail, dynamoDBInstance):
   '''
-  We should talk about this but this seemed like a simple solution. 
-
-  In the case of an error what should we return? I would say the lowest 
-  privilege user, user. This isn't a method that is checking if a user 
-  is in the system and for that it shouldn't be given a userEmail that 
-  isn't in the system. 
+  Returns the role of the user whose email is pased. If we are unable to get
+  this information from the DB the role 'S' for student is returned
   '''
 
-  userPrivilege = "U"
+  role = 'S'
   table = dbUtils.getTable('users', dynamoDBInstance)
   if table is None:
-    MentiiLogging.getLogger().error("Could not get user table in getUserPrivilege!!")
+    MentiiLogging.getLogger().error('Could not get user table in getUserRole')
   else:
-    request = {"Key" : {"email": userEmail}, "AttributesToGet": ["privilege"]}
+    request = {"Key" : {"email": userEmail}, "AttributesToGet": ["role"]}
     res = dbUtils.getItem(request, table)
     if res is None or 'Item' not in res:
-      MentiiLogging.getLogger().error("Could not get privilege for user " + userEmail)
+      MentiiLogging.getLogger().error('Could not get role for user ' + userEmail + ':\n' + res)
     else:
-      userPrivilege = res['Item']['privilege']
+      role = res['Item']['role']
 
-  return userPrivilege
-
-  
-
-
+  return role

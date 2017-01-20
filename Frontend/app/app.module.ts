@@ -43,17 +43,9 @@ import { LaddaModule } from 'angular2-ladda';
                   SigninComponent,
                   ClassListComponent,
                   ClassDetailComponent,
-                  CreateClassComponent, 
+                  CreateClassComponent,
                   ClassBrowseComponent],
-  providers: [UserService, ClassService,AuthRouteGuard,
-    {
-      provide: AuthHttp,
-      useFactory: (backend: XHRBackend, options: RequestOptions, router: Router) => {
-        return new AuthHttp(backend, options, router);
-      },
-      deps: [XHRBackend, RequestOptions, Router]
-    }
-  ],
+  providers: [UserService, ClassService,AuthRouteGuard],
   bootstrap:    [ AppComponent ]
 })
 export class AppModule { }

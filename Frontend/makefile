@@ -15,15 +15,15 @@ compile: clean
 	@ npm install
 	@ npm run-script tsc
 
-compile-prod:
+compile-prod: clean
 	@ npm install --production
 	@ npm run-script tsc
 
 runtests: compile
-	@ ./node_modules/karma/bin/karma start
+	@ npm run-script test
 
 runtests-nocompile:
-	@ ./node_modules/karma/bin/karma start
+	@ npm run-script test
 
 start: compile
 	@ $(TERMINALSPAWNER) "./runFrontend.sh dev" &

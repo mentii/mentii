@@ -155,7 +155,7 @@ def secure():
   logger.info(str(flaskResponse))
   return flaskResponse
 
-@app.route('/class-list/', methods=['GET', 'OPTIONS'])
+@app.route('/user/classes/', methods=['GET', 'OPTIONS'])
 @auth.login_required
 def class_list():
   status = 200
@@ -181,6 +181,18 @@ def create_class():
 
   dynamoDBInstance = getDatabaseClient()
   res = class_ctrl.createClass(dynamoDBInstance, request.json)
+  if res.hasErrors():
+    status = 400
+  return ResponseCreation.createResponse(res, status)
+
+@app.route('/classes/', methods=['GET', 'OPTIONS'])
+@auth.login_required
+def public_class_list():
+  status = 200
+  if request.method =='OPTIONS':
+    return ResponseCreation.createEmptyResponse(status)
+  dynamoDBInstance = getDatabaseClient()
+  res = class_ctrl.getPublicClassList(dynamoDBInstance)
   if res.hasErrors():
     status = 400
   return ResponseCreation.createResponse(res, status)

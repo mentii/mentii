@@ -237,7 +237,7 @@ def getRole(userEmail, dynamoDBInstance):
     request = {"Key" : {"email": userEmail}, "ProjectionExpression": "userRole"}
     res = dbUtils.getItem(request, table)
     if res is None or 'Item' not in res:
-      MentiiLogging.getLogger().error('Could not get role for user ' + userEmail + ':\n' + res)
+      MentiiLogging.getLogger().error('Could not get role for user ' + userEmail)
     else:
       userRole = res['Item']['userRole']
 

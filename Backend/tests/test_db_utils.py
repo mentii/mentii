@@ -413,8 +413,7 @@ class DbUtilsTest(unittest.TestCase):
     db.updateItem(jsonData, self.table)
     item = self.table.get_item(Key={"email":"crab@mentii.me"}).get("Item")
 
-    self.assertIsNotNone(item)
-    self.assertEqual(item.get("active"), "F")
+    self.assertIsNone(item)
 
   def test_deleteItem_string(self):
     print("Running deleteItem_string test")

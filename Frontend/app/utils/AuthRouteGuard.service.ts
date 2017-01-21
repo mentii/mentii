@@ -9,7 +9,7 @@ export class AuthRouteGuard implements CanActivate {
   constructor(private authHttpService: AuthHttp, private router: Router) {}
 
   canActivate() {
-    let authStatus: boolean = this.authHttpService.checkAuthStatus();
+    let authStatus: boolean = this.authHttpService.propagateAuthStatus();
     if (authStatus === false) {
       // Return to sign in if not authenticated
       this.router.navigateByUrl('/sign-in');

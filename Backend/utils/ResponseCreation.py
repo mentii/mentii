@@ -13,10 +13,9 @@ class ControllerResponse:
     self.errors = []
     self.payload = {}
     self.hasError = False
-    self.user = g.get('authenticatedUser', {})
-
-  # def addUser(self):
-  #   self.user = g.authenticatedUser
+    self.user = {}
+    if g:
+      self.user = g.get('authenticatedUser', {})
 
   def addError(self, title, message):
     MentiiLogging.getLogger().error('%s : %s', title, message)

@@ -17,10 +17,6 @@ export class CreateClassComponent {
   constructor(public classService: ClassService, public toastr: ToastsManager, public router: Router){
   }
 
-  newModel() {
-    this.model = new ClassModel('', '', '', '', '');
-  }
-
   submit() {
     this.isLoading = true;
     this.classService.addClass(this.model).subscribe(
@@ -30,16 +26,13 @@ export class CreateClassComponent {
   }
 
   handleSuccess() {
-    this.isLoading = false;
     var message = this.model.title + ' Class Created'
     this.toastr.success(message);
-    this.newModel();
     this.router.navigateByUrl('/dashboard');
   }
 
   handleError(err) {
     this.isLoading = false;
-    this.newModel();
     let data = err.json();
     for (let error of data['errors']) {
       this.toastr.error(error['message'], error['title']);

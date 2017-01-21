@@ -98,7 +98,6 @@ export class AuthHttp extends Http {
   */
 
   saveAuthToken(token) {
-    // TODO: Should we store the auth token somewhere else?
     localStorage.setItem(AUTH_TOKEN_NAME, token);
   }
 
@@ -130,7 +129,6 @@ export class AuthHttp extends Http {
   * @param {String} role
   */
   saveRole(role) {
-    // TODO: Should we store the auth token somewhere else?
     localStorage.setItem(ROLE_LOCAL_STORAGE_KEY, role);
   }
 
@@ -159,7 +157,7 @@ export class AuthHttp extends Http {
    * Checks the current authentication status and
    * updates the isAuthenticated flag accordingly
    */
-  checkAuthStatus() {
+  propagateAuthStatus() {
     let authStatus = false; // default to false. Would rather reject an authenticated user than allow anyone
     if (this.loadAuthToken() != null){
       this._isAuthenticated.next(true);
@@ -175,7 +173,7 @@ export class AuthHttp extends Http {
    * Checks the current user role and
    * updates the _role flag accordingly
    */
-  checkRole() {
+  propagateRole() {
     let role = this.loadRole();
     this._role.next(role);
     return role;

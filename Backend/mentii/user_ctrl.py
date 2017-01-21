@@ -12,28 +12,28 @@ import hashlib
 def register(jsonData, mailer, dbInstance):
   response = ControllerResponse()
   if not validateRegistrationJSON(jsonData):
-    response.addError("Register Validation Error", "The json data did not have an email or did not have a password")
+    response.addError('Register Validation Error', 'The json data did not have an email or did not have a password')
     return response
 
   email = parseEmail(jsonData)
   password = parsePassword(jsonData)
 
   if not isEmailValid(email):
-    response.addError("Email invalid", "The email is invalid")
+    response.addError('Email invalid', 'The email is invalid')
 
   if not isPasswordValid(password):
-    response.addError("Password Invalid", "The password is invalid")
+    response.addError('Password Invalid', 'The password is invalid')
 
   if isEmailInSystem(email, dbInstance) and isUserActive(getUserByEmail(email, dbInstance)):
-    response.addError("Email Already Active in System", "The email is in the system already")
+    response.addError('Email Already Active in System', 'The email is in the system already')
 
   if not response.hasErrors():
     hashedPassword = hashPassword(parsePassword(jsonData))
     activationId = addUserAndSendEmail(email, hashedPassword, mailer, dbInstance)
     if activationId is not None:
-      response.addToPayload("activationId", activationId)
+      response.addToPayload('activationId', activationId)
     else:
-      response.addError("Activation Id is None", "Could not create an activation Id")
+      response.addError('Activation Id is None', 'Could not create an activation Id')
 
   return response
 
@@ -84,19 +84,19 @@ def addUserAndSendEmail(email, password, mailer, dbInstance):
     'email': email,
     'password': password,
     'activationId': activationId,
-    'active': "F",
+    'active': 'F',
     'classCodes' : [],
-    'role' : "student"
+    'role' : 'student'
   }
   if table is None:
-    MentiiLogging.getLogger().error("Unable to get table users in addUserAndSendEmail")
+    MentiiLogging.getLogger().error('Unable to get table users in addUserAndSendEmail')
     return None
 
   #This will change an existing user with the same email.
   response = dbUtils.putItem(jsonData,table)
 
   if response is None:
-    MentiiLogging.getLogger().error("Unable to add user to table users in addUserAndSendEmail")
+    MentiiLogging.getLogger().error('Unable to add user to table users in addUserAndSendEmail')
     return None
 
   try:
@@ -121,7 +121,7 @@ def sendEmail(email, activationId, mailer):
   '''
   #Build Message
   msg = Message('Mentii: Thank You for Creating an Account!', recipients=[email])
-  msg.body = "Here is your activationId link: api.mentii.me/activate/{0}".format(activationId)
+  msg.body = 'Here is your activationId link: api.mentii.me/activate/{0}'.format(activationId)
 
   #Send Email
   mailer.send(msg)
@@ -136,32 +136,32 @@ def activate(activationId, dbInstance):
   items = []
 
   if table is None:
-    MentiiLogging.getLogger().error("Unable to get table users in activate")
-    response.addError("Could not access table. Error", "The DB did not give us the table")
+    MentiiLogging.getLogger().error('Unable to get table users in activate')
+    response.addError('Could not access table. Error', 'The DB did not give us the table')
     return response
 
   #Scan for the email associated with this activationId
-  scanResponse = dbUtils.scanFilter("activationId", activationId, table)
+  scanResponse = dbUtils.scanFilter('activationId', activationId, table)
 
   if scanResponse is not None:
     #scanResponse is a dictionary that has a list of 'Items'
     items = scanResponse['Items']
 
   if not items or 'email' not in items[0].keys():
-    response.addError("No user with activationid", "The DB did not return a user with the passed in activationId")
+    response.addError('No user with activationid', 'The DB did not return a user with the passed in activationId')
   else:
     email = items[0]['email']
 
     jsonData = {
-      "Key": {"email": email},
-      "UpdateExpression": "SET active = :a",
-      "ExpressionAttributeValues": { ":a": "T" },
-      "ReturnValues" : "UPDATED_NEW"
+      'Key': {'email': email},
+      'UpdateExpression': 'SET active = :a',
+      'ExpressionAttributeValues': { ':a': 'T' },
+      'ReturnValues' : 'UPDATED_NEW'
     }
 
     #Update using the email we have
     res = dbUtils.updateItem(jsonData, table)
-    response.addToPayload("status", "Success")
+    response.addToPayload('status', 'Success')
 
   return response
 
@@ -173,13 +173,13 @@ def getUserByEmail(email, dbInstance):
 
   table = dbUtils.getTable('users', dbInstance)
   if table is None:
-    MentiiLogging.getLogger().error("Unable to get table users in getUserByEmail")
+    MentiiLogging.getLogger().error('Unable to get table users in getUserByEmail')
     return None
 
-  key = {"Key" : {"email": email}}
+  key = {'Key' : {'email': email}}
   result = dbUtils.getItem(key, table)
   if result is None:
-    MentiiLogging.getLogger().error("Unable to get the user with email: " + email + " in getUserByEmail ")
+    MentiiLogging.getLogger().error('Unable to get the user with email: ' + email + ' in getUserByEmail ')
     return None
 
   if 'Item' in result.keys():
@@ -198,7 +198,7 @@ def getRole(userEmail, dynamoDBInstance):
   if table is None:
     MentiiLogging.getLogger().error('Could not get user table in getUserRole')
   else:
-    request = {"Key" : {"email": userEmail}, "AttributesToGet": ["role"]}
+    request = {'Key' : {'email': userEmail}, 'AttributesToGet': ['role']}
     res = dbUtils.getItem(request, table)
     if res is None or 'Item' not in res:
       MentiiLogging.getLogger().error('Could not get role for user ' + userEmail + ':\n' + res)

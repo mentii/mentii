@@ -39,8 +39,8 @@ export class AppComponent implements OnInit {
     
     // Initialize the check on the role and authentication
     // Used mostly when opening the app to a weird page such as /create/class directly
-    this.authHttpService.checkRole();
-    this.authHttpService.checkAuthStatus();
+    this.authHttpService.propagateRole();
+    this.authHttpService.propagateAuthStatus();
   }
 
   logout() {

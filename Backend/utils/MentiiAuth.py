@@ -15,6 +15,7 @@ def buildUserObject(userData):
     # If the code executes to this point and userData does not contain an email
     # then something is very bad. If only "None" was returned then the faulty
     # user would still be given access to resources that they shouldnt be allowed
+    MentiiLogging.getLogger().error("Invalid User Data for buildUserObject:" + str(userData))
     raise ValueError('This should not be called anywhere other than within MentiiAuthentication. If email is not an attribute of userData then somehow the user has managed to bypass authentication without an email and should be stopped.')
   else:
     return {'email': userData['email'], 'role': userData['role']}

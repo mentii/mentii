@@ -70,6 +70,7 @@ def preloadDataFromFile(fileName, table):
           password = item['password']
           activationId = item['activationId']
           active = item['active']
+          role = item['role']
           codes = item['classCodes']
 
           table.put_item(
@@ -78,6 +79,7 @@ def preloadDataFromFile(fileName, table):
                'password': password,
                'activationId': activationId,
                'active': active,
+               'role': role,
                'classCodes': codes
             }
           )

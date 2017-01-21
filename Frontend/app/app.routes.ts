@@ -26,7 +26,7 @@ export const routes: Routes = [
   { path: 'dashboard', component: ClassListComponent, canActivate: [AuthRouteGuard] },
   { path: 'class', component: ClassBrowseComponent, canActivate: [AuthRouteGuard] },
   { path: 'class/:id', component: ClassDetailComponent, canActivate: [AuthRouteGuard] },
-  { path: 'create/class', component: CreateClassComponent },
+  { path: 'create/class', component: CreateClassComponent, canActivate: [AuthRouteGuard] },
 
   // The PageNotFound route MUST be last in this list
   { path: '**', component: PageNotFoundComponent } // Page Not Found

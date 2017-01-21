@@ -41,7 +41,7 @@ def createClass(dynamoDBInstance, classData, email=None, role=None):
 
   email = g.authenticatedUser['email']
   role = g.authenticatedUser['role']
-  #Why are we doing this check a second time? 
+  #Why are we doing this check a second time?
   if role == "S":
     response.addError("Role error", "Students cannot create classes")
   elif classData is None or not checkClassDataValid(classData):
@@ -57,12 +57,12 @@ def createClass(dynamoDBInstance, classData, email=None, role=None):
       newClass = {'code': classCode,
               'title': classData['title'],
               'description': classData['description']}
-      
+
       if 'subtitle' in classData.keys() and classData['subtitle']:
         newClass['subtitle'] = classData['subtitle']
       if 'section' in classData.keys() and classData['section']:
         newClass['section'] = classData['section']
-      
+
       result = dbUtils.putItem(newClass, classTable)
 
       if result is None:
@@ -78,6 +78,7 @@ def createClass(dynamoDBInstance, classData, email=None, role=None):
         res = dbUtils.updateItem(jsonData, userTable)
         #TODO: handle bad update?
         response.addToPayload('Success', 'Class Created')
+  return response
 
 def getClassCodesFromUser(dynamoDBInstance, email=None):
   classCodes = []

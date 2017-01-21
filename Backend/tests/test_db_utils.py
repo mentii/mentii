@@ -82,6 +82,7 @@ class DbUtilsTest(unittest.TestCase):
         "password" : "iameight",
         "activationId" : "12345",
         "active": "T",
+        "role": "S",
         "classCodes": []
       },
       {
@@ -89,6 +90,7 @@ class DbUtilsTest(unittest.TestCase):
         "password" : "iameight2",
         "activationId" : "abcde",
         "active": "F",
+        "role": "S",
         "classCodes": []
       },
       {
@@ -96,6 +98,7 @@ class DbUtilsTest(unittest.TestCase):
         "password" : "6b7330782b2feb4924020cc4a57782a9",
         "activationId" : "abcde",
         "active": "T",
+        "role": "S",
         "classCodes": []
       },
       {
@@ -103,6 +106,7 @@ class DbUtilsTest(unittest.TestCase):
         "password" : "6b7330782b2feb4924020cc4a57782a9",
         "activationId" : "abcde",
         "active": "F",
+        "role": "S",
         "classCodes": []
       }
     ]

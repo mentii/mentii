@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ClassModel } from '../class.model';
+import { Router } from '@angular/router';
 import { ClassService } from '../class.service';
 import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 
@@ -12,9 +13,8 @@ import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 export class CreateClassComponent {
   model = new ClassModel('', '', '', '', '');
   isLoading = false;
-  classCreated = false;
 
-  constructor(public classService: ClassService, public toastr: ToastsManager){
+  constructor(public classService: ClassService, public toastr: ToastsManager, public router: Router){
   }
 
   newModel() {
@@ -31,10 +31,10 @@ export class CreateClassComponent {
 
   handleSuccess() {
     this.isLoading = false;
-    this.classCreated = true;
     var message = this.model.title + ' Class Created'
     this.toastr.success(message);
     this.newModel();
+    this.router.navigateByUrl('/dashboard');
   }
 
   handleError(err) {

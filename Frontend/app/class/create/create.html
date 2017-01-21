@@ -1,15 +1,14 @@
 
 <div class="row">
   <div class="col-xs-12">
-    <h2>Create a New Class</h2>
-    <p>
-      To create a new class please fill in the following information
-    </p>
+    <h2>Create a New Class<br/>
+      <small>Please Enter Required Information</small>
+    </h2>
   </div>
 </div>
 <div class="row">
   <div class="col-xs-12 col-sm-10 col-md-8">
-    <form #registerForm="ngForm" autocomplete="off">
+    <form #createClassForm="ngForm" autocomplete="off">
       <div class="form-group">
         <label for="title"><span class="text-danger">*</span> Title</label>
         <input type="text" placeholder="Algebra 1" class="form-control" id="title" required minlength=3 [(ngModel)]="model.title" name="title" #title="ngModel">
@@ -32,14 +31,12 @@
           Class description is required.
         </span>
       </div>
-      <p class="text-danger">* Required Fields</p>
-      <button type="submit" class="btn btn-primary" [disabled]="!registerForm.form.valid" (click)="submit()" [ladda]='isLoading'><span class="ladda-label">Create Class</span></button>
-      <div [hidden]="!classCreated">
-        <br/>
-        <a [routerLink]="['taught']">View the classes you teach</a>
-      </div>
+      <p class="text-danger" *ngIf="!createClassForm.form.valid">* Required Fields</p>
+      <button type="submit" class="btn btn-primary" [disabled]="!createClassForm.form.valid" (click)="submit()" [ladda]='isLoading'>
+        <span class="ladda-label">Create Class</span>
+      </button>
     </form>
     <br/>
-    <a [routerLink]="['']">Return to Dashboard</a>
+    <a [routerLink]="['/dashboard']">Return to Dashboard</a>
   </div>
 </div>

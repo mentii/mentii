@@ -36,14 +36,14 @@ def getActiveClassList(dynamoDBInstance, email=None):
 def checkClassDataValid(classData):
   return 'title' in classData.keys() and 'description' in classData.keys()
 
-def createClass(dynamoDBInstance, classData, email=None, role=None):
+def createClass(dynamoDBInstance, classData, email=None, userRole=None):
   response = ControllerResponse()
 
   email = g.authenticatedUser['email']
-  role = g.authenticatedUser['role']
+  userRole = g.authenticatedUser['userRole']
   #role is confirmed here incase createClass is called from somewhere other
   #than app.py create_class()
-  if role == "student":
+  if userRole == "student":
     response.addError("Role error", "Students cannot create classes")
   elif classData is None or not checkClassDataValid(classData):
     response.addError("createClass call Failed.", "Invalid class data given.")

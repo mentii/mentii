@@ -68,7 +68,7 @@ export class UserService {
     let options = new RequestOptions({ headers: headers });
     let body = {
       "email": roleModel.email,
-      "role": roleModel.role
+      "userRole": roleModel.role
     }
     return this.authHttp.post(roleUrl, body, options)
     .map((res:Response) => res)

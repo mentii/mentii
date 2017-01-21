@@ -82,7 +82,7 @@ class DbUtilsTest(unittest.TestCase):
         "password" : "iameight",
         "activationId" : "12345",
         "active": "T",
-        "role": "student",
+        "userRole": "student",
         "classCodes": []
       },
       {
@@ -90,7 +90,7 @@ class DbUtilsTest(unittest.TestCase):
         "password" : "iameight2",
         "activationId" : "abcde",
         "active": "F",
-        "role": "student",
+        "userRole": "student",
         "classCodes": []
       },
       {
@@ -98,7 +98,7 @@ class DbUtilsTest(unittest.TestCase):
         "password" : "6b7330782b2feb4924020cc4a57782a9",
         "activationId" : "abcde",
         "active": "T",
-        "role": "student",
+        "userRole": "student",
         "classCodes": []
       },
       {
@@ -106,7 +106,7 @@ class DbUtilsTest(unittest.TestCase):
         "password" : "6b7330782b2feb4924020cc4a57782a9",
         "activationId" : "abcde",
         "active": "F",
-        "role": "student",
+        "userRole": "student",
         "classCodes": []
       }
     ]
@@ -116,7 +116,7 @@ class DbUtilsTest(unittest.TestCase):
       password = item['password']
       activationId = item['activationId']
       active = item['active']
-      role = item['role']
+      userRole = item['userRole']
       classCodes = item['classCodes']
 
       self.table.put_item(
@@ -125,7 +125,7 @@ class DbUtilsTest(unittest.TestCase):
           'password': password,
           'activationId': activationId,
           'active': active,
-          'role' : role,
+          'userRole' : userRole,
           'classCodes': classCodes
         }
       )

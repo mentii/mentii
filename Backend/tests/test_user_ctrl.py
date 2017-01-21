@@ -174,26 +174,26 @@ class UserControlDBTests(unittest.TestCase):
     }
 
 
-    role = db.getItem('test@mentii.me',usersTable)
-    self.assertEqual(role, "student")
+    userRole = db.getItem('test@mentii.me',usersTable)
+    self.assertEqual(userRole, "student")
     # change user role to teacher
     usr.changeUserRole("test@mentii.me", "T", dynamodb)
-    role = usr.getUserRole("test@mentii.me", dynamodb)
-    self.assertEqual(role, "teacher")
+    userRole = usr.getUserRole("test@mentii.me", dynamodb)
+    self.assertEqual(userRole, "teacher")
     # change user role to admin
     usr.changeUserRole("test@mentii.me", "A", dynamodb)
-    role = usr.getUserRole("test@mentii.me", dynamodb)
-    self.assertEqual(role, "admin")
+    userRole = usr.getUserRole("test@mentii.me", dynamodb)
+    self.assertEqual(userRole, "admin")
 
   def test_changeUserRole_fail(self):
     print("Running test_changeUserRole_fail test")
-    role = usr.getUserRole("test5@mentii.me", dynamodb)
-    self.assertEqual(role, "student")
+    userRole = usr.getUserRole("test5@mentii.me", dynamodb)
+    self.assertEqual(userRole, "student")
     # change user role to not defined
     usr.changeUserRole("test5@mentii.me", "Z", dynamodb)
-    role = usr.getUserRole("test5@mentii.me", dynamodb)
+    userRole = usr.getUserRole("test5@mentii.me", dynamodb)
     #role remains same as it was before failed attempt
-    self.assertEqual(role, "student")
+    self.assertEqual(userRole, "student")
 
 if __name__ == '__main__':
   if __package__ is None:

@@ -86,7 +86,7 @@ def addUserAndSendEmail(email, password, mailer, dbInstance):
     'activationId': activationId,
     'active': "F",
     'classCodes' : [],
-    'role' : "student"
+    'userRole' : "student"
   }
   if table is None:
     MentiiLogging.getLogger().error("Unable to get table users in addUserAndSendEmail")
@@ -189,26 +189,26 @@ def getUserByEmail(email, dbInstance):
 
 def changeUserRole(jsonData, dbInstance):
   response = ControllerResponse()
-  if 'email' not in jsonData.keys() or 'role' not in jsonData.keys():
+  if 'email' not in jsonData.keys() or 'userRole' not in jsonData.keys():
     response.addError('Key Missing Error', 'Email or role missing from json data')
   else:
     email = jsonData['email']
-    role = jsonData['role']
+    userRole = jsonData['userRole']
 
     userTable = dbUtils.getTable('users', dbInstance)
     if userTable is None:
       MentiiLogging.getLogger().error('Unable to get table "users" in changeUserRole')
       response.addError('No Access to Data', 'Unable to get data from database')
     else:
-      if role != 'student' and role != 'teacher' and role != 'admin':
-        MentiiLogging.getLogger().error('Invalid role: ' + role + ' specified. Unable to change user role')
+      if userRole != 'student' and userRole != 'teacher' and userRole != 'admin':
+        MentiiLogging.getLogger().error('Invalid role: ' + userRole + ' specified. Unable to change user role')
         response.addError('Invalid Role Type', 'Invaid role specified')
       else:
 
         data = {
             'Key': {'email': email},
             'UpdateExpression': 'SET userRole = :ur',
-            'ExpressionAttributeValues': { ':ur': role },
+            'ExpressionAttributeValues': { ':ur': userRole },
             'ReturnValues' : 'UPDATED_NEW'
         }
 
@@ -229,16 +229,16 @@ def getRole(userEmail, dynamoDBInstance):
   this information from the DB the role 'student' is returned
   '''
 
-  role = 'student'
+  userRole = 'student'
   table = dbUtils.getTable('users', dynamoDBInstance)
   if table is None:
     MentiiLogging.getLogger().error('Could not get user table in getUserRole')
   else:
-    request = {"Key" : {"email": userEmail}, "ProjectionExpression": "role"}
+    request = {"Key" : {"email": userEmail}, "ProjectionExpression": "userRole"}
     res = dbUtils.getItem(request, table)
     if res is None or 'Item' not in res:
       MentiiLogging.getLogger().error('Could not get role for user ' + userEmail + ':\n' + res)
     else:
-      role = res['Item']['role']
+      userRole = res['Item']['userRole']
 
-  return role
+  return userRole

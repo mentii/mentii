@@ -120,11 +120,11 @@ def signin():
 
   email = request.authorization.username
   dynamoDBInstance = getDatabaseClient()
-  role = user_ctrl.getRole(email, dynamoDBInstance)
+  userRole = user_ctrl.getRole(email, dynamoDBInstance)
   userCredentials = {
     'email': email,
     'password': request.authorization.password,
-    'role': role
+    'userRole': userRole
   }
 
   response = ControllerResponse()
@@ -174,7 +174,7 @@ def create_class():
   if request.method =='OPTIONS':
     return ResponseCreation.createEmptyResponse(status)
 
-  if g.authenticatedUser['role'] == "student":
+  if g.authenticatedUser['userRole'] == "student":
     res = ResponseCreation.ControllerResponse()
     res.addError("Role error", "Students cannot create classes")
     status = 403
@@ -204,7 +204,7 @@ def changeUserRole():
   if request.method =='OPTIONS':
     return ResponseCreation.createEmptyResponse(status)
 
-  if g.authenticatedUser['role'] != "admin":
+  if g.authenticatedUser['userRole'] != "admin":
     res = ResponseCreation.ControllerResponse()
     res.addError('Role Error', 'Only admins can change user roles')
     status = 403

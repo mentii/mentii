@@ -18,12 +18,12 @@ def buildUserObject(userData):
     MentiiLogging.getLogger().error("Invalid User Data for buildUserObject:" + str(userData))
     raise ValueError('This should not be called anywhere other than within MentiiAuthentication. If email is not an attribute of userData then somehow the user has managed to bypass authentication without an email and should be stopped.')
   else:
-    return {'email': userData['email'], 'role': userData['role']}
+    return {'email': userData['email'], 'userRole': userData['userRole']}
 
 def userDataValid(userData):
   valid = False
   if (  'email' in userData.keys() and userData['email'] and
-        'role' in userData.keys() and userData['role']
+        'userRole' in userData.keys() and userData['userRole']
   ):
     valid = True
   return valid
@@ -43,7 +43,7 @@ def generateAuthToken(userCredentials, appSecret=None, expiration = 86400):
       s = Serializer(appSecret, expires_in = expiration)
       retval = s.dumps({    'email': userCredentials['email'],
                             'password': userCredentials['password'],
-                            'role': userCredentials['role']})
+                            'userRole': userCredentials['userRole']})
     except Exception as e:
       MentiiLogging.getLogger().exception(e)
       retval = None

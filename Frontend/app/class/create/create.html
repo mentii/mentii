@@ -11,7 +11,7 @@
   <div class="col-xs-12 col-sm-10 col-md-8">
     <form #registerForm="ngForm" autocomplete="off">
       <div class="form-group">
-        <label for="title">Title</label>
+        <label for="title"><span class="text-danger">*</span> Title</label>
         <input type="text" placeholder="Algebra 1" class="form-control" id="title" required minlength=3 [(ngModel)]="model.title" name="title" #title="ngModel">
         <span [hidden]="title.pristine || title.valid" class="text-danger">
           Class title must be at least 3 characters long.
@@ -26,12 +26,13 @@
         <input type="text" placeholder="001" class="form-control" id="section" [(ngModel)]="model.section" name="section" #section="ngModel">
       </div>
       <div class="form-group">
-        <label for="description">Description</label>
+        <label for="description"><span class="text-danger">*</span> Description</label>
         <textarea placeholder="Describe your class here" class="form-control" rows="3" id="description" required [(ngModel)]="model.description" name="description" #description="ngModel"></textarea>
         <span [hidden]="description.pristine || description.valid" class="text-danger">
           Class description is required.
         </span>
       </div>
+      <p class="text-danger">* Required Fields</p>
       <button type="submit" class="btn btn-primary" [disabled]="!registerForm.form.valid" (click)="submit()" [ladda]='isLoading'><span class="ladda-label">Create Class</span></button>
       <div [hidden]="!classCreated">
         <br/>

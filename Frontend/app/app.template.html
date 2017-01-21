@@ -11,10 +11,7 @@
     </div>
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <!--
-        <li><a href="#">About <span class="sr-only">(current)</span></a></li>
-        <li><a href="#">Team</a></li>
-      -->
+        <li *ngIf="role == 'teacher'"><a [routerLink]="['/create/class']">Create a Class</a></li>
       </ul>
       <!-- Right side nav items for unauthenticated users -->
       <ul class="nav navbar-nav navbar-right" *ngIf="!isAuthenticated">

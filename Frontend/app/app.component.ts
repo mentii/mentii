@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 export class AppComponent implements OnInit {
   // Default to false
   isAuthenticated = false;
+  role;
 
   constructor(public toastr: ToastsManager, public authHttpService: AuthHttp, public router: Router, vRef: ViewContainerRef) {
     this.toastr.setRootViewContainerRef(vRef);
@@ -25,11 +26,21 @@ export class AppComponent implements OnInit {
       data => {
         // data is true/false
         this.isAuthenticated = data;
-      });
+      }
+    );
 
-      // Initialize the check on authentication.
-      // Used mostly when opening the app to a weird page such as /class directly
-      this.authHttpService.checkAuthStatus();
+    // Check for updates on the role of the user from AuthHttp
+    this.authHttpService.role$.subscribe(
+      data => {
+        // data is a string of the users role
+        this.role = data;
+      }
+    );
+    
+    // Initialize the check on the role and authentication
+    // Used mostly when opening the app to a weird page such as /create/class directly
+    this.authHttpService.checkRole();
+    this.authHttpService.checkAuthStatus();
   }
 
   logout() {

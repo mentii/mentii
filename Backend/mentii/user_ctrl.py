@@ -3,6 +3,7 @@ import re
 from flask_mail import Message
 from boto3.dynamodb.conditions import Key, Attr
 from utils.ResponseCreation import ControllerResponse
+from utils import db_utils as dbUtils
 import utils.MentiiLogging as MentiiLogging
 import uuid
 import hashlib
@@ -76,20 +77,27 @@ def isPasswordValid(password):
   return len(password) >= 8
 
 def addUserAndSendEmail(email, password, mailer, dbInstance):
-
   activationId = str(uuid.uuid4())
-  dynamodb = dbInstance
-  table = dynamodb.Table('users')
+  table = dbUtils.getTable('users', dbInstance)
+
+  jsonData = {
+    'email': email,
+    'password': password,
+    'activationId': activationId,
+    'active': "F",
+    'classCodes' : []
+  }
+  if table is None:
+    MentiiLogging.getLogger().error("Unable to get table users in addUserAndSendEmail")
+    return None
 
   #This will change an existing user with the same email.
-  response = table.put_item(
-    Item={
-      'email': email,
-      'password': password,
-      'activationId': activationId,
-      'active': "F"
-    }
-  )
+  response = dbUtils.putItem(jsonData,table)
+
+  if response is None:
+    MentiiLogging.getLogger().error("Unable to add user to table users in addUserAndSendEmail")
+    return None
+
   try:
     sendEmail(email, activationId, mailer)
   except Exception as e:
@@ -99,11 +107,9 @@ def addUserAndSendEmail(email, password, mailer, dbInstance):
   return activationId
 
 def deleteUser(email, dbInstance):
-  table = dbInstance.Table('users')
-  response = table.delete_item(
-    Key={'email': email}
-  )
-
+  table = dbUtils.getTable('users', dbInstance)
+  key = {'email': email}
+  response = dbUtils.deleteItem(key, table)
   return response
 
 def sendEmail(email, activationId, mailer):
@@ -125,12 +131,16 @@ def isEmailInSystem(email, dbInstance):
 
 def activate(activationId, dbInstance):
   response = ControllerResponse()
-  dynamodb = dbInstance
-  table = dynamodb.Table('users')
+  table = dbUtils.getTable('users', dbInstance)
   items = []
 
+  if table is None:
+    MentiiLogging.getLogger().error("Unable to get table users in activate")
+    response.addError("Could not access table. Error", "The DB did not give us the table")
+    return response
+
   #Scan for the email associated with this activationId
-  scanResponse = table.scan(FilterExpression=Attr('activationId').eq(activationId))
+  scanResponse = dbUtils.scanFilter("activationId", activationId, table)
 
   if scanResponse is not None:
     #scanResponse is a dictionary that has a list of 'Items'
@@ -141,17 +151,15 @@ def activate(activationId, dbInstance):
   else:
     email = items[0]['email']
 
+    jsonData = {
+      "Key": {"email": email},
+      "UpdateExpression": "SET active = :a",
+      "ExpressionAttributeValues": { ":a": "T" },
+      "ReturnValues" : "UPDATED_NEW"
+    }
+
     #Update using the email we have
-    res = table.update_item(
-    Key={
-        'email': email,
-      },
-      UpdateExpression="SET active = :a",
-      ExpressionAttributeValues={
-        ':a': 'T'
-      },
-      ReturnValues='UPDATED_NEW'
-    )
+    res = dbUtils.updateItem(jsonData, table)
     response.addToPayload("status", "Success")
 
   return response
@@ -162,8 +170,16 @@ def isUserActive(user):
 def getUserByEmail(email, dbInstance):
   user = None
 
-  table = dbInstance.Table('users')
-  result = table.get_item(Key={'email': email})
+  table = dbUtils.getTable('users', dbInstance)
+  if table is None:
+    MentiiLogging.getLogger().error("Unable to get table users in getUserByEmail")
+    return None
+
+  key = {"Key" : {"email": email}}
+  result = dbUtils.getItem(key, table)
+  if result is None:
+    MentiiLogging.getLogger().error("Unable to get the user with email: " + email + " in getUserByEmail ")
+    return None
 
   if 'Item' in result.keys():
     user = result['Item']

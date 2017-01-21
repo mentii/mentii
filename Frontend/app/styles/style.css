@@ -1,5 +1,6 @@
 body {
   padding-top: 70px;
+  padding-bottom: 50px;
 }
 
 .navbar-default .navbar-brand {
@@ -52,4 +53,9 @@ h6 {
 
 .hr-half {
   width: 50%;
+}
+
+.empty-state {
+  margin-top: 10%;
+  margin-bottom: 10%;
 }

@@ -1,14 +1,14 @@
 {
-  "TableName" :"users",
+  "TableName" :"classes",
   "KeySchema":[
     {
-      "AttributeName": "email",
+      "AttributeName": "code",
       "KeyType": "HASH"
     }
   ],
   "AttributeDefinitions":[
     {
-      "AttributeName": "email",
+      "AttributeName": "code",
       "AttributeType": "S"
     }
   ],

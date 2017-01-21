@@ -23,8 +23,8 @@ export class SigninComponent {
   handleSuccess(data) {
     this.isLoading = false;
     if (data.payload.token) {
-      this.authHttpService.saveAuthToken(data.payload.token);
-      this.router.navigateByUrl('/secure-test');
+      this.authHttpService.login(data.payload.token);
+      this.router.navigateByUrl('/dashboard');
     } else {
       alert("Success but no token. False authentication");
     }

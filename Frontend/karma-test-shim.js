@@ -4,7 +4,7 @@ Error.stackTraceLimit = 0; // "No stacktrace"" is usually best for app testing.
 // Uncomment to get full stacktrace output. Sometimes helpful, usually not.
 // Error.stackTraceLimit = Infinity; //
 
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000; // 10 seconds
 
 // builtPaths: root paths for output ("built") files
 // get from karma.config.js, then prefix with '/base/' (default is 'app/')
@@ -81,7 +81,7 @@ function initTestBed(){
     coreTesting.TestBed.initTestEnvironment(
       browserTesting.BrowserDynamicTestingModule,
       browserTesting.platformBrowserDynamicTesting());
-  })
+  });
 }
 
 // Import all spec files and start karma

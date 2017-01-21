@@ -1,2 +1,1 @@
-<!-- Once a dashboard exists, add logic here to check if user is logged in or not and auto show them the dashboard here in place of signin-->
-<signin-form></signin-form>
+<signin-form *ngIf="!isUserAuthenticated"></signin-form>

@@ -14,7 +14,7 @@ module.exports = function(config) {
 
     plugins: [
       require('karma-jasmine'),
-      require('karma-firefox-launcher'),
+      require('karma-phantomjs-launcher'),
       require('karma-jasmine-html-reporter')
     ],
 
@@ -24,6 +24,7 @@ module.exports = function(config) {
     },
 
     files: [
+      'node_modules/systemjs/dist/system-polyfills.src.js',
       // System.js for module loading
       'node_modules/systemjs/dist/system.src.js',
 
@@ -84,7 +85,12 @@ module.exports = function(config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['Firefox'],
-    singleRun: true
-  })
-}
+    browsers: ['PhantomJS'],
+    singleRun: true,
+
+    phantomjsLauncher: {
+      // Have phantomjs exit if a ResourceError is encountered (useful if karma exits without killing phantom)
+      exitOnResourceError: true
+    }
+  });
+};

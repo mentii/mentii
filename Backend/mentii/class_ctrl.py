@@ -41,7 +41,8 @@ def createClass(dynamoDBInstance, classData, email=None, role=None):
 
   email = g.authenticatedUser['email']
   role = g.authenticatedUser['role']
-  #Why are we doing this check a second time?
+  #role is confirmed here incase createClass is called from somewhere other
+  #than app.py create_class()
   if role == "S":
     response.addError("Role error", "Students cannot create classes")
   elif classData is None or not checkClassDataValid(classData):
@@ -76,8 +77,11 @@ def createClass(dynamoDBInstance, classData, email=None, role=None):
           "ReturnValues" : "UPDATED_NEW"
         }
         res = dbUtils.updateItem(jsonData, userTable)
-        #TODO: handle bad update?
-        response.addToPayload('Success', 'Class Created')
+        if res is None:
+          response.addError("createClass call Failed.",
+                            "Unable to update user table")
+        else:
+          response.addToPayload('Success', 'Class Created')
   return response
 
 def getClassCodesFromUser(dynamoDBInstance, email=None):

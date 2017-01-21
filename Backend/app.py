@@ -177,12 +177,12 @@ def create_class():
   if g.authenticatedUser['role'] == "S":
     res = ResponseCreation.ControllerResponse()
     res.addError("Role error", "Students cannot create classes")
-    return ResponseCreation.createResponse(res, 403)
-
-  dynamoDBInstance = getDatabaseClient()
-  res = class_ctrl.createClass(dynamoDBInstance, request.json)
-  if res.hasErrors():
-    status = 400
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    res = class_ctrl.createClass(dynamoDBInstance, request.json)
+    if res.hasErrors():
+      status = 400
   return ResponseCreation.createResponse(res, status)
 
 @app.route('/classes/', methods=['GET', 'OPTIONS'])

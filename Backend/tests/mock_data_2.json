@@ -4,7 +4,7 @@
     "password" : "iameight",
     "activationId" : "12345",
     "active": "T",
-    "role": "S",
+    "role": "student",
     "classCodes": ["d93cd63f-6eda-4644-b603-60f51142749e"]
   },
   {
@@ -12,7 +12,7 @@
     "password" : "iameight2",
     "activationId" : "abcde",
     "active": "F",
-    "role": "S",
+    "role": "student",
     "classCodes": ["d93cd63f-6eda-4644-b603-60f51142749e"]
   },
   {
@@ -20,7 +20,7 @@
     "password" : "6b7330782b2feb4924020cc4a57782a9",
     "activationId" : "abcde",
     "active": "T",
-    "role": "S",
+    "role": "student",
     "classCodes": ["d93cd63f-6eda-4644-b603-60f51142749e"]
   },
   {
@@ -28,7 +28,7 @@
     "password" : "6b7330782b2feb4924020cc4a57782a9",
     "activationId" : "abcde",
     "active": "F",
-    "role": "S",
+    "role": "student",
     "classCodes": ["d93cd63f-6eda-4644-b603-60f51142749e"]
   }
 ]

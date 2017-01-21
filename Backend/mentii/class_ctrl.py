@@ -43,7 +43,7 @@ def createClass(dynamoDBInstance, classData, email=None, role=None):
   role = g.authenticatedUser['role']
   #role is confirmed here incase createClass is called from somewhere other
   #than app.py create_class()
-  if role == "S":
+  if role == "student":
     response.addError("Role error", "Students cannot create classes")
   elif classData is None or not checkClassDataValid(classData):
     response.addError("createClass call Failed.", "Invalid class data given.")

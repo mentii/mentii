@@ -174,7 +174,7 @@ def create_class():
   if request.method =='OPTIONS':
     return ResponseCreation.createEmptyResponse(status)
 
-  if g.authenticatedUser['role'] == "S":
+  if g.authenticatedUser['role'] == "student":
     res = ResponseCreation.ControllerResponse()
     res.addError("Role error", "Students cannot create classes")
     status = 403

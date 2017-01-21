@@ -86,7 +86,7 @@ def addUserAndSendEmail(email, password, mailer, dbInstance):
     'activationId': activationId,
     'active': "F",
     'classCodes' : [],
-    'role' : "S"
+    'role' : "student"
   }
   if table is None:
     MentiiLogging.getLogger().error("Unable to get table users in addUserAndSendEmail")
@@ -190,10 +190,10 @@ def getUserByEmail(email, dbInstance):
 def getRole(userEmail, dynamoDBInstance):
   '''
   Returns the role of the user whose email is pased. If we are unable to get
-  this information from the DB the role 'S' for student is returned
+  this information from the DB the role 'student' is returned
   '''
 
-  role = 'S'
+  role = 'student'
   table = dbUtils.getTable('users', dynamoDBInstance)
   if table is None:
     MentiiLogging.getLogger().error('Could not get user table in getUserRole')

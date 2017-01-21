@@ -28,6 +28,7 @@ import { EqualValidator } from './directives/equal-validator.directive';
 import { DeleteValue } from './directives/delete-value-validator.directive';
 /* Route Guards */
 import { AuthRouteGuard } from './utils/AuthRouteGuard.service';
+import { TeacherRouteGuard } from './utils/TeacherRouteGuard.service';
 /* Vendor */
 import { LaddaModule } from 'angular2-ladda';
 
@@ -44,8 +45,13 @@ import { LaddaModule } from 'angular2-ladda';
                   ClassListComponent,
                   ClassDetailComponent,
                   CreateClassComponent,
-                  ClassBrowseComponent],
-  providers: [UserService, ClassService,AuthRouteGuard],
+                  ClassBrowseComponent
+                ],
+  providers:  [ UserService,
+                ClassService,
+                AuthRouteGuard,
+                TeacherRouteGuard
+              ],
   bootstrap:    [ AppComponent ]
 })
 export class AppModule { }

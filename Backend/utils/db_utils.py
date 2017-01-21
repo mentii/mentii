@@ -100,14 +100,14 @@ def preloadClassData(jsonData, table):
       for item in items:
         code = item['code']
         title = item['title']
-        subtitle = item['subtitle']
+        department = item['department']
         description = item['description']
 
         table.put_item(
           Item={
             'code': code,
             'title': title,
-            'subtitle' : subtitle,
+            'department' : department,
             'description' : description
           }
         )

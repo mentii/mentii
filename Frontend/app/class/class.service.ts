@@ -40,7 +40,7 @@ export class ClassService {
     let options = new RequestOptions({ headers: headers })
     let body = {
       "title": classModel.title,
-      "subtitle": classModel.subtitle,
+      "department": classModel.department,
       "description": classModel.description,
       "section": classModel.section
     }

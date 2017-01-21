@@ -59,8 +59,8 @@ def createClass(dynamoDBInstance, classData, email=None, role=None):
               'title': classData['title'],
               'description': classData['description']}
 
-      if 'subtitle' in classData.keys() and classData['subtitle']:
-        newClass['subtitle'] = classData['subtitle']
+      if 'department' in classData.keys() and classData['department']:
+        newClass['department'] = classData['department']
       if 'section' in classData.keys() and classData['section']:
         newClass['section'] = classData['section']
 

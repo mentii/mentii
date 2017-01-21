@@ -3,6 +3,7 @@
 // Imports
 import { ModuleWithProviders }  from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { AdminComponent } from './admin/admin.component';
 import { AppComponent } from './app.component';
 import { RootComponent } from './root/root.component';
 import { RegistrationComponent } from './user/registration/registration.component';
@@ -25,7 +26,7 @@ export const routes: Routes = [
   { path: 'dashboard', component: ClassListComponent, canActivate: [AuthRouteGuard] },
   { path: 'class', component: ClassBrowseComponent, canActivate: [AuthRouteGuard] },
   { path: 'class/:id', component: ClassDetailComponent, canActivate: [AuthRouteGuard] },
-
+  { path: 'admin', component: AdminComponent },
 
   // The PageNotFound route MUST be last in this list
   { path: '**', component: PageNotFoundComponent } // Page Not Found

@@ -187,57 +187,38 @@ def getUserByEmail(email, dbInstance):
 
   return user
 
-def getUserRole(email, dbInstance):
-  role = None
-
-  userTable = dbUtils.getTable('users', dbInstance)
-  if userTable is None:
-    MentiiLogging.getLogger().error("Unable to get table users in getUserRole")
-    return None
-
-  data = {
-    "Key" : {"email": email},
-    "ProjectionExpression" : "userRole"
-  }
-  result = dbUtils.getItem(data, userTable)
-
-  if result is None:
-    MentiiLogging.getLogger().error("Unable to get the user with email: " + email + " in getUserRole ")
-    return None
-
-  print(result)
-  role = result['Item']['userRole']
-
-  return role
-
-def changeUserRole(email, role, dbInstance):
-  userTable = dbUtils.getTable('users', dbInstance)
-  if userTable is None:
-    MentiiLogging.getLogger().error("Unable to get table users in changeUserRole")
-    return None
-
-  if role == "S":
-    ur = "student"
-  elif role == "T":
-    ur = "teacher"
-  elif role == "A":
-    ur = "admin"
+def changeUserRole(jsonData, dbInstance):
+  response = ControllerResponse()
+  if 'email' not in jsonData.keys() or 'role' not in jsonData.keys():
+    response.addError('Key Missing Error', 'Email or role missing from json data')
   else:
-    MentiiLogging.getLogger().error("Invalid role: " + role + " specified. Unable to change user role")
-    return None
+    email = jsonData['email']
+    role = jsonData['role']
 
-  data = {
-      "Key": {"email": email},
-      "UpdateExpression": "SET userRole = :ur",
-      "ExpressionAttributeValues": { ":ur": ur },
-      "ReturnValues" : "UPDATED_NEW"
-  }
+    userTable = dbUtils.getTable('users', dbInstance)
+    if userTable is None:
+      MentiiLogging.getLogger().error('Unable to get table "users" in changeUserRole')
+      response.addError('No Access to Data', 'Unable to get data from database')
+    else:
+      if role != 'student' and role != 'teacher' and role != 'admin':
+        MentiiLogging.getLogger().error('Invalid role: ' + role + ' specified. Unable to change user role')
+        response.addError('Invalid Role Type', 'Invaid role specified')
+      else:
 
-  result = dbUtils.updateItem(data, userTable)
+        data = {
+            'Key': {'email': email},
+            'UpdateExpression': 'SET userRole = :ur',
+            'ExpressionAttributeValues': { ':ur': role },
+            'ReturnValues' : 'UPDATED_NEW'
+        }
 
-  if result is None:
-    MentiiLogging.getLogger().error("Unable to update the user with email: " + email + " in changeUserRole")
-    return None
+        result = dbUtils.updateItem(data, userTable)
 
-  return result
+        if result is None:
+          MentiiLogging.getLogger().error('Unable to update the user with email: ' + email + ' in changeUserRole')
+          response.addError('Result Update Error', 'Could not update the user role in database')
+        else:
+          response.addToPayload('Result:', result)
+          response.addToPayload('success', 'true')
 
+  return response

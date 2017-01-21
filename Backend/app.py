@@ -169,6 +169,24 @@ def public_class_list():
     status = 400
   return ResponseCreation.createResponse(res, status)
 
+@app.route('/admin/changerole/', methods=['POST', 'OPTIONS'])
+@auth.login_required
+def changeUserRole():
+  status = 200
+  if request.method =='OPTIONS':
+    return ResponseCreation.createEmptyResponse(status)
+
+  if g.authenticatedUser['role'] != "admin":
+    res = ResponseCreation.ControllerResponse()
+    res.addError('Role Error', 'Only admins can change user roles')
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    res = user_ctrl.changeUserRole(request.json, dynamoDBInstance)
+    if res.hasErrors():
+      status = 400
+  return ResponseCreation.createResponse(res,status)
+
 if __name__ == '__main__':
   logger.info('mentii app starting')
   try:

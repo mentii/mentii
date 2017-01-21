@@ -164,14 +164,17 @@ class UserControlDBTests(unittest.TestCase):
     isUserActive = 'status' in response.payload.keys() and response.payload['status'] == 'Success'
     self.assertTrue(isUserActive)
 
-  def test_getUserRole(self):
-    print("Running getUserRole test")
-    role = usr.getUserRole("test4@mentii.me", dynamodb)
-    self.assertEqual(role, "admin")
-
   def test_changeUserRole(self):
     print("Running test_changeUserRole test")
-    role = usr.getUserRole("test@mentii.me", dynamodb)
+
+    usersTable = db.getTable('users', dynamodb)
+
+    data = {
+      'Key': {'email': ''},
+    }
+
+
+    role = db.getItem('test@mentii.me',usersTable)
     self.assertEqual(role, "student")
     # change user role to teacher
     usr.changeUserRole("test@mentii.me", "T", dynamodb)

@@ -13,6 +13,7 @@ import { UserService } from './user/user.service';
 import { ClassService } from './class/class.service';
 import { ToastModule } from 'ng2-toastr/ng2-toastr';
 /* Components */
+import { AdminComponent } from './admin/admin.component';
 import { AppComponent } from './app.component';
 import { RegistrationComponent } from './user/registration/registration.component';
 import { SigninComponent } from './user/signin/signin.component';
@@ -32,7 +33,7 @@ import { LaddaModule } from 'angular2-ladda';
 
 @NgModule({
   imports:      [ BrowserModule, FormsModule, HttpModule, ToastModule, LaddaModule.forRoot({style: "zoom-in"}), routing, CommonModule, CoreModule],
-  declarations: [ AppComponent, RegistrationComponent, RootComponent, PageNotFoundComponent, SecureTestComponent, EqualValidator, DeleteValue, SigninComponent, ClassListComponent, ClassDetailComponent, ClassBrowseComponent],
+  declarations: [ AdminComponent, AppComponent, RegistrationComponent, RootComponent, PageNotFoundComponent, SecureTestComponent, EqualValidator, DeleteValue, SigninComponent, ClassListComponent, ClassDetailComponent, ClassBrowseComponent],
   providers: [UserService, ClassService, AuthRouteGuard],
   bootstrap:    [ AppComponent ]
 })

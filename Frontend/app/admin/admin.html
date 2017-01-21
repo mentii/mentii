@@ -1,0 +1,20 @@
+<div class="row">
+	<h1>Admin Page</h1>
+</div>
+<form #roleChangeForm="ngForm" autocomplete="off" class="form-inline">
+  <div [hidden]="email.pristine || email.valid" class="text-danger">A valid email is required</div>
+  <div class="form-group">
+    <label for="email">Email</label>
+    <input type="email" placeholder="user@example.com" class="form-control" id="email" required pattern="[^@]+@[^@]+\.[^@]+" [(ngModel)]="model.email" name="email" #email="ngModel">
+  </div>
+  <div class="form-group">
+    <div class="dropdown">
+      <select class="btn btn-default dropdown-toggle" type="button" id="roleDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" [(ngModel)]="model.role" name="role" #role="ngModel" (change)="showChange()">
+        <option value="student">Student</option>
+        <option value="teacher">Teacher</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary" [disabled]="!roleChangeForm.form.valid" (click)="submit()" [ladda]='isLoading'><span class="ladda-label">Submit Changes</span></button>
+</form>

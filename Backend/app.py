@@ -68,7 +68,7 @@ def getDatabaseClient():
 def verify_password(email_or_token, password):
   logger.info(str(request))
   dynamoDBInstance = getDatabaseClient()
-  response = MentiiAuth.verify_password(email_or_token, password, dynamoDBInstance, appSecret)
+  response = MentiiAuth.verifyPassword(email_or_token, password, dynamoDBInstance, appSecret)
   logger.info('Password Verified: ' + str(response))
   return response
 
@@ -117,11 +117,21 @@ def signin():
     flaskResponse = ResponseCreation.createEmptyResponse(status)
     logger.info(str(flaskResponse))
     return flaskResponse
-  userCredentials = {'email': request.authorization.username, 'password': request.authorization.password}
+
+  email = request.authorization.username
+  dynamoDBInstance = getDatabaseClient()
+  role = user_ctrl.getRole(email, dynamoDBInstance)
+  userCredentials = {
+    'email': email,
+    'password': request.authorization.password,
+    'role': role
+  }
+
   response = ControllerResponse()
-  token = MentiiAuth.generate_auth_token(userCredentials, appSecret)
+  token = MentiiAuth.generateAuthToken(userCredentials, appSecret)
   response.addToPayload('token', token)
   flaskResponse = ResponseCreation.createResponse(response, status)
+
   logger.info(str(flaskResponse))
   return flaskResponse
 
@@ -155,6 +165,24 @@ def class_list():
   res = class_ctrl.getActiveClassList(dynamoDBInstance)
   if res.hasErrors():
     status = 400
+  return ResponseCreation.createResponse(res, status)
+
+@app.route('/class', methods=['POST', 'OPTIONS'])
+@auth.login_required
+def create_class():
+  status = 200
+  if request.method =='OPTIONS':
+    return ResponseCreation.createEmptyResponse(status)
+
+  if g.authenticatedUser['role'] == "student":
+    res = ResponseCreation.ControllerResponse()
+    res.addError("Role error", "Students cannot create classes")
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    res = class_ctrl.createClass(dynamoDBInstance, request.json)
+    if res.hasErrors():
+      status = 400
   return ResponseCreation.createResponse(res, status)
 
 @app.route('/classes/', methods=['GET', 'OPTIONS'])

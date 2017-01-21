@@ -22,19 +22,38 @@ import { PageNotFoundComponent } from './pageNotFound/pageNotFound.component';
 import { SecureTestComponent } from './secureTest/secureTest.component';
 import { ClassListComponent } from './class/list/list.component';
 import { ClassDetailComponent } from './class/detail/detail.component';
+import { CreateClassComponent } from './class/create/create.component';
 import { ClassBrowseComponent } from './class/browse/browse.component';
 /* Directives */
 import { EqualValidator } from './directives/equal-validator.directive';
 import { DeleteValue } from './directives/delete-value-validator.directive';
 /* Route Guards */
 import { AuthRouteGuard } from './utils/AuthRouteGuard.service';
+import { TeacherRouteGuard } from './utils/TeacherRouteGuard.service';
 /* Vendor */
 import { LaddaModule } from 'angular2-ladda';
 
 @NgModule({
   imports:      [ BrowserModule, FormsModule, HttpModule, ToastModule, LaddaModule.forRoot({style: "zoom-in"}), routing, CommonModule, CoreModule],
-  declarations: [ AdminComponent, AppComponent, RegistrationComponent, RootComponent, PageNotFoundComponent, SecureTestComponent, EqualValidator, DeleteValue, SigninComponent, ClassListComponent, ClassDetailComponent, ClassBrowseComponent],
-  providers: [UserService, ClassService, AuthRouteGuard],
+declarations: [   AdminComponent,
+                  AppComponent,
+                  RegistrationComponent,
+                  RootComponent,
+                  PageNotFoundComponent,
+                  SecureTestComponent,
+                  EqualValidator,
+                  DeleteValue,
+                  SigninComponent,
+                  ClassListComponent,
+                  ClassDetailComponent,
+                  CreateClassComponent,
+                  ClassBrowseComponent
+                ],
+  providers:  [ UserService,
+                ClassService,
+                AuthRouteGuard,
+                TeacherRouteGuard
+              ],
   bootstrap:    [ AppComponent ]
 })
 export class AppModule { }

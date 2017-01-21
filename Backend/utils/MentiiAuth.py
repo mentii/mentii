@@ -6,39 +6,56 @@ import ConfigParser as cp
 from mentii import user_ctrl
 import utils.MentiiLogging as MentiiLogging
 
-def build_user_object(userData):
+def buildUserObject(userData):
   '''
   Builds a standard user object to return to the client for all authenticated calls
   '''
-  if 'email' in userData:
-    return {'email': userData['email']}
-  else:
+  if not userDataValid(userData):
     # Anything other than raising an exception here would be a security flaw.
     # If the code executes to this point and userData does not contain an email
     # then something is very bad. If only "None" was returned then the faulty
     # user would still be given access to resources that they shouldnt be allowed
+    MentiiLogging.getLogger().error("Invalid User Data for buildUserObject:" + str(userData))
     raise ValueError('This should not be called anywhere other than within MentiiAuthentication. If email is not an attribute of userData then somehow the user has managed to bypass authentication without an email and should be stopped.')
+  else:
+    return {'email': userData['email'], 'role': userData['role']}
 
-def generate_auth_token(userCredentials, appSecret=None, expiration = 86400):
+def userDataValid(userData):
+  valid = False
+  if (  'email' in userData.keys() and userData['email'] and
+        'role' in userData.keys() and userData['role']
+  ):
+    valid = True
+  return valid
+
+def generateAuthToken(userCredentials, appSecret=None, expiration = 86400):
   '''
   Generates the auth token based off of the user's email and password with a default expiration duration.
   Default token will last 1 day.
   '''
   if appSecret == None:
     raise ValueError('appSecret cannot be none')
+
   retval = None
-  try:
-    s = Serializer(appSecret, expires_in = expiration)
-    if 'email' in userCredentials and 'password' in userCredentials:
-      email = userCredentials['email']
-      password = userCredentials['password']
-      retval = s.dumps({ 'email': email, 'password': password })
-  except Exception as e:
-    MentiiLogging.getLogger().exception(e)
-    retval = None
+
+  if userCredentialsValid(userCredentials):
+    try:
+      s = Serializer(appSecret, expires_in = expiration)
+      retval = s.dumps({    'email': userCredentials['email'],
+                            'password': userCredentials['password'],
+                            'role': userCredentials['role']})
+    except Exception as e:
+      MentiiLogging.getLogger().exception(e)
+      retval = None
   return retval
 
-def verify_auth_token(token, appSecret=None):
+def userCredentialsValid(userCredentials):
+  valid = userDataValid(userCredentials)
+  if 'password' not in userCredentials.keys() or not userCredentials['password']:
+    valid = False
+  return valid
+
+def verifyAuthToken(token, appSecret=None):
   '''
   Reads the auth token to make sure it has not been modified and that it is not expired
   '''
@@ -51,10 +68,10 @@ def verify_auth_token(token, appSecret=None):
     retval = user # user from token
   except (SignatureExpired, BadSignature) as e:
     MentiiLogging.getLogger().exception(e)
-    retval = None # valid token, but expired
+    retval = None
   return retval
 
-def isPasswordValid(user, password):
+def passwordValid(user, password):
   '''
   Checks that supplied password matches password in database
   '''
@@ -66,7 +83,7 @@ def isPasswordValid(user, password):
       isPasswordValid = True
   return isPasswordValid
 
-def verify_password(emailOrToken, password, dynamoDBInstance, appSecret=None):
+def verifyPassword(emailOrToken, password, dynamoDBInstance, appSecret=None):
   '''
   Verifies the user's credentials for all authenticated calls. This is called by the @auth.login_required
   decorator. Reads from information passed in through a Basic Authentication HTTP header. Username is
@@ -74,15 +91,15 @@ def verify_password(emailOrToken, password, dynamoDBInstance, appSecret=None):
   '''
   if appSecret == None:
     raise ValueError('appSecret cannot be none')
-  user = verify_auth_token(emailOrToken, appSecret)
+  user = verifyAuthToken(emailOrToken, appSecret)
   isPasswordVerified = False
   if not user:
     if emailOrToken != '' and password != '':
       userFromDB = user_ctrl.getUserByEmail(emailOrToken, dynamoDBInstance) # user object from db
-      if userFromDB != None and user_ctrl.isUserActive(userFromDB) and isPasswordValid(userFromDB, password):
-        g.authenticatedUser = build_user_object(userFromDB)
+      if userFromDB != None and user_ctrl.isUserActive(userFromDB) and passwordValid(userFromDB, password):
+        g.authenticatedUser = buildUserObject(userFromDB)
         isPasswordVerified = True
   else:
-    g.authenticatedUser = build_user_object(user)
+    g.authenticatedUser = buildUserObject(user)
     isPasswordVerified = True
   return isPasswordVerified

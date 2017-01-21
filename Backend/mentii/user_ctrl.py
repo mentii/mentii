@@ -86,7 +86,7 @@ def addUserAndSendEmail(email, password, mailer, dbInstance):
     'activationId': activationId,
     'active': "F",
     'classCodes' : [],
-    'userRole': "student"
+    'role' : "student"
   }
   if table is None:
     MentiiLogging.getLogger().error("Unable to get table users in addUserAndSendEmail")
@@ -222,3 +222,23 @@ def changeUserRole(jsonData, dbInstance):
           response.addToPayload('success', 'true')
 
   return response
+
+def getRole(userEmail, dynamoDBInstance):
+  '''
+  Returns the role of the user whose email is pased. If we are unable to get
+  this information from the DB the role 'student' is returned
+  '''
+
+  role = 'student'
+  table = dbUtils.getTable('users', dynamoDBInstance)
+  if table is None:
+    MentiiLogging.getLogger().error('Could not get user table in getUserRole')
+  else:
+    request = {"Key" : {"email": userEmail}, "AttributesToGet": ["role"]}
+    res = dbUtils.getItem(request, table)
+    if res is None or 'Item' not in res:
+      MentiiLogging.getLogger().error('Could not get role for user ' + userEmail + ':\n' + res)
+    else:
+      role = res['Item']['role']
+
+  return role

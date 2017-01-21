@@ -1,28 +1,87 @@
 import boto3
+import uuid
 from boto3.dynamodb.conditions import Key, Attr
 from utils.ResponseCreation import ControllerResponse
 from utils import db_utils as dbUtils
-import uuid
 from flask import g
-import utils.MentiiLogging as MentiiLogging
 
 def getActiveClassList(dynamoDBInstance, email=None):
   response = ControllerResponse()
-  classes = []
-  classCodes = getClassCodesFromUser(dynamoDBInstance, email)
-  #Use the class codes to get the class details for
-  # each class.
-  table = dbUtils.getTable('classes', dynamoDBInstance)
-  if table is None:
-    MentiiLogging.getLogger().error("Unable to get classes table in getActiveClassList")
-    response.addError("Failed to get class list", "A database error occured");
+  usersTable = dbUtils.getTable('users', dynamoDBInstance)
+  classTable = dbUtils.getTable('classes', dynamoDBInstance)
+
+  if usersTable is None or classTable is None:
+    response.addError(  "Get Active Class List Failed",
+                        "Unable to access users and/or classes")
+  else :
+    if email is None:
+      email = g.authenticatedUser['email']
+    classes = []
+    classCodes = getClassCodesFromUser(dynamoDBInstance, email)
+    #Use the class codes to get the class details for
+    # each class.
+    table = dbUtils.getTable('classes', dynamoDBInstance)
+    if table is None:
+      MentiiLogging.getLogger().error("Unable to get classes table in getActiveClassList")
+      response.addError("Failed to get class list", "A database error occured");
+    else:
+      for code in classCodes:
+        request = {"Key": {"code": code}}
+        res = dbUtils.getItem(request, classTable)
+        if res is not None and 'Item' in res:
+          classes.append(res['Item'])
+      response.addToPayload('classes', classes)
+  return response
+
+def checkClassDataValid(classData):
+  return 'title' in classData.keys() and 'description' in classData.keys()
+
+def createClass(dynamoDBInstance, classData, email=None, role=None):
+  response = ControllerResponse()
+
+  email = g.authenticatedUser['email']
+  role = g.authenticatedUser['role']
+  #role is confirmed here incase createClass is called from somewhere other
+  #than app.py create_class()
+  if role == "student":
+    response.addError("Role error", "Students cannot create classes")
+  elif classData is None or not checkClassDataValid(classData):
+    response.addError("createClass call Failed.", "Invalid class data given.")
   else:
-    for code in classCodes:
-      request = {"Key": {"code": code}}
-      res = dbUtils.getItem(request, table)
-      if res is not None and 'Item' in res:
-        classes.append(res['Item'])
-    response.addToPayload('classes', classes)
+    classTable = dbUtils.getTable('classes', dynamoDBInstance)
+    userTable = dbUtils.getTable('users', dynamoDBInstance)
+    if classTable is None or userTable is None:
+      response.addError("createClass call Failed.",
+                        "Unable to locate necessary table(s).")
+    else:
+      classCode = str(uuid.uuid4())
+      newClass = {'code': classCode,
+              'title': classData['title'],
+              'description': classData['description']}
+
+      if 'department' in classData.keys() and classData['department']:
+        newClass['department'] = classData['department']
+      if 'section' in classData.keys() and classData['section']:
+        newClass['section'] = classData['section']
+
+      result = dbUtils.putItem(newClass, classTable)
+
+      if result is None:
+        response.addError(  "createClass call Failed.",
+                            "Unable to create class in classes table.")
+      else:
+        jsonData = {
+          "Key": {"email": email},
+          "UpdateExpression": "SET teaching = list_append(teaching, :i)",
+          "ExpressionAttributeValues": { ":i": [classCode] },
+          "ReturnValues" : "UPDATED_NEW"
+        }
+        res = dbUtils.updateItem(jsonData, userTable)
+        if res is None:
+          response.addError("createClass call Failed.",
+                            "Unable to update user table")
+        else:
+          response.addToPayload('Success', 'Class Created')
   return response
 
 def getClassCodesFromUser(dynamoDBInstance, email=None):

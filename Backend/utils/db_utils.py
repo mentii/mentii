@@ -70,8 +70,8 @@ def preloadDataFromFile(fileName, table):
           password = item['password']
           activationId = item['activationId']
           active = item['active']
+          role = item['role']
           codes = item['classCodes']
-          userRole = item['userRole']
 
           table.put_item(
             Item={
@@ -79,8 +79,8 @@ def preloadDataFromFile(fileName, table):
                'password': password,
                'activationId': activationId,
                'active': active,
-               'classCodes': codes,
-               'userRole': userRole
+               'role': role,
+               'classCodes': codes
             }
           )
         else:
@@ -100,14 +100,14 @@ def preloadClassData(jsonData, table):
       for item in items:
         code = item['code']
         title = item['title']
-        subtitle = item['subtitle']
+        department = item['department']
         description = item['description']
 
         table.put_item(
           Item={
             'code': code,
             'title': title,
-            'subtitle' : subtitle,
+            'department' : department,
             'description' : description
           }
         )
@@ -129,7 +129,7 @@ def preloadDataFromJson(jsonData, table):
       activationId = item['activationId']
       active = item['active']
       classCodes = item['classCodes']
-      userRole = item['userRole']
+      role = item['role']
 
       table.put_item(
         Item={
@@ -138,7 +138,7 @@ def preloadDataFromJson(jsonData, table):
           'activationId': activationId,
           'active': active,
           'classCodes': classCodes,
-          'userRole': userRole
+          'role': role
         }
       )
     else:

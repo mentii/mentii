@@ -82,6 +82,7 @@ class DbUtilsTest(unittest.TestCase):
         "password" : "iameight",
         "activationId" : "12345",
         "active": "T",
+        "role": "student",
         "classCodes": []
       },
       {
@@ -89,6 +90,7 @@ class DbUtilsTest(unittest.TestCase):
         "password" : "iameight2",
         "activationId" : "abcde",
         "active": "F",
+        "role": "student",
         "classCodes": []
       },
       {
@@ -96,6 +98,7 @@ class DbUtilsTest(unittest.TestCase):
         "password" : "6b7330782b2feb4924020cc4a57782a9",
         "activationId" : "abcde",
         "active": "T",
+        "role": "student",
         "classCodes": []
       },
       {
@@ -103,6 +106,7 @@ class DbUtilsTest(unittest.TestCase):
         "password" : "6b7330782b2feb4924020cc4a57782a9",
         "activationId" : "abcde",
         "active": "F",
+        "role": "student",
         "classCodes": []
       }
     ]
@@ -112,15 +116,17 @@ class DbUtilsTest(unittest.TestCase):
       password = item['password']
       activationId = item['activationId']
       active = item['active']
+      role = item['role']
       classCodes = item['classCodes']
 
       self.table.put_item(
         Item={
-           'email': email,
-           'password': password,
-           'activationId': activationId,
-           'active': active,
-           'classCodes': classCodes
+          'email': email,
+          'password': password,
+          'activationId': activationId,
+          'active': active,
+          'role' : role,
+          'classCodes': classCodes
         }
       )
 

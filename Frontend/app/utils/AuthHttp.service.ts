@@ -22,6 +22,8 @@ export class AuthHttp extends Http {
   private _isAuthenticated = new BehaviorSubject<boolean>(false);
   isAuthenticated$ = this._isAuthenticated.asObservable();
 
+  private _role = 'student';
+
   constructor (backend: XHRBackend, options: RequestOptions, private router: Router, public toastr: ToastsManager ) {
     super(backend, options);
   }
@@ -101,6 +103,14 @@ export class AuthHttp extends Http {
   login(token) {
     this.saveAuthToken(token);
     this._isAuthenticated.next(true);
+  }
+
+  setRole(role) {
+    this._role = role;
+  }
+
+  getRole() {
+    return this._role;
   }
 
   /**

@@ -45,24 +45,7 @@ export class AuthHttp extends Http {
       url.headers.set('Authorization', authHeaderString);
     }
     let response = super.request(url, options).catch(this.catchAuthError(this));
-    this.updateRole(response);
     return response;
-  }
-
-  /**
-   * Propogate changes to the user's role throughout the application
-   * @param  {Observable<Response>} response The current request being acted on
-   */
-  updateRole(response: Observable<Response>) {
-    let res = response.subscribe(
-      data => {
-        let json = data.json();
-        let role = json.user.role;
-        this.saveRole(role);
-        this._role.next(role);
-      }
-    );
-    res.unsubscribe();
   }
 
   /**
@@ -130,6 +113,7 @@ export class AuthHttp extends Http {
   */
   saveRole(role) {
     localStorage.setItem(ROLE_LOCAL_STORAGE_KEY, role);
+    this.propagateRole();
   }
 
   /**

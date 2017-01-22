@@ -119,12 +119,13 @@ def signin():
     return flaskResponse
 
   email = request.authorization.username
+  password = request.authorization.password
   dynamoDBInstance = getDatabaseClient()
   userRole = user_ctrl.getRole(email, dynamoDBInstance)
   userCredentials = {
     'email': email,
-    'password': request.authorization.password,
-    'userRole': userRole
+    'userRole': userRole,
+    'password': password
   }
 
   response = ControllerResponse()
@@ -174,9 +175,10 @@ def create_class():
   if request.method =='OPTIONS':
     return ResponseCreation.createEmptyResponse(status)
 
-  if g.authenticatedUser['userRole'] == "student":
+  role = g.authenticatedUser['userRole']
+  if role != "teacher" and role != "admin" :
     res = ResponseCreation.ControllerResponse()
-    res.addError("Role error", "Students cannot create classes")
+    res.addError("Role error", "Only teachers can create classes")
     status = 403
   else:
     dynamoDBInstance = getDatabaseClient()

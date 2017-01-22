@@ -11,60 +11,60 @@ class DbUtilsTest(unittest.TestCase):
 
   @classmethod
   def setUpClass(self):
-    self.settingsName = "./tests/table_settings_2.json"
-    self.badSettingsName = "./tests/bad_table_settings.json"
-    self.mockData = "./tests/mock_data_2.json"
-    self.badMockData = "./tests/bad_mock_data.json"
+    self.settingsName = './tests/table_settings_2.json'
+    self.badSettingsName = './tests/bad_table_settings.json'
+    self.mockData = './tests/mock_data_2.json'
+    self.badMockData = './tests/bad_mock_data.json'
     self.dynamodb = boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
     self.dynamodbClient = boto3.client('dynamodb', endpoint_url='http://localhost:8000')
 
     #clean up local DB before tests
     tables = self.dynamodbClient.list_tables()
-    tableNames = tables.get("TableNames")
+    tableNames = tables.get('TableNames')
     try:
       for name in tableNames:
         self.dynamodb.Table(name).delete()
     except:
-      print("Error deleting tableNames")
+      print('Error deleting tableNames')
 
   @classmethod
   def tearDownClass(self):
     #clean up local DB
     tables = self.dynamodbClient.list_tables()
-    tableNames = tables.get("TableNames")
+    tableNames = tables.get('TableNames')
     try:
       for name in tableNames:
         self.dynamodb.Table(name).delete()
     except:
-      print("Error deleting tableNames")
+      print('Error deleting tableNames')
 
   def setUp(self):
 
     # create table
     setUpData = {
-      "TableName" : "users",
-      "KeySchema":[
+      'TableName' : 'users',
+      'KeySchema':[
         {
-          "AttributeName": "email",
-          "KeyType": "HASH"
+          'AttributeName': 'email',
+          'KeyType': 'HASH'
         }
       ],
-      "AttributeDefinitions":[
+      'AttributeDefinitions':[
         {
-          "AttributeName": "email",
-          "AttributeType": "S"
+          'AttributeName': 'email',
+          'AttributeType': 'S'
         }
       ],
-      "ProvisionedThroughput":{
-        "ReadCapacityUnits": 5,
-        "WriteCapacityUnits": 5
+      'ProvisionedThroughput':{
+        'ReadCapacityUnits': 5,
+        'WriteCapacityUnits': 5
       }
     }
 
-    attribute_definitions = setUpData.get("AttributeDefinitions")
-    key_schema = setUpData.get("KeySchema")
-    provisioned_throughput = setUpData.get("ProvisionedThroughput")
-    table_name = setUpData.get("TableName")
+    attribute_definitions = setUpData.get('AttributeDefinitions')
+    key_schema = setUpData.get('KeySchema')
+    provisioned_throughput = setUpData.get('ProvisionedThroughput')
+    table_name = setUpData.get('TableName')
 
     self.table = self.dynamodb.create_table(
       AttributeDefinitions=attribute_definitions,
@@ -78,6 +78,7 @@ class DbUtilsTest(unittest.TestCase):
     # preload table with data
     items = [
       {
+<<<<<<< HEAD
         "email" : "test@mentii.me",
         "password" : "iameight",
         "activationId" : "12345",

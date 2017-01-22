@@ -9,7 +9,7 @@ export class TeacherRouteGuard implements CanActivate {
   constructor(private authHttpService: AuthHttp, private router: Router) {}
 
   canActivate() {
-    let role = this.authHttpService.getRole();
+    let role = this.authHttpService.propagateRole();
     if (role != 'teacher' && role != 'admin') {
       //by rerouting will not hit the return true
       this.router.navigateByUrl('/dashboard');

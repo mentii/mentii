@@ -206,6 +206,11 @@ def updateItem(jsonData, table):
     logger.error(message)
     return None
 
+  if not isKeyInTable(key, table):
+    message = str(key) + " not in table " + table.table_name
+    logger.exception(message + '\n')
+    return None
+
   if update_expression is not None and expression_attribute_values is not None and return_values is not None:
     response = table.update_item(
       Key=key,
@@ -250,3 +255,7 @@ def deleteTable(tableName, dbInstance):
   except ClientError as e:
     message = "Unable to delete table " + tableName + ". Table does not exist"
     logger.exception(message + '\n' + str(e))
+
+def isKeyInTable(key, table):
+  response = table.get_item(Key=key)
+  return 'Item' in response

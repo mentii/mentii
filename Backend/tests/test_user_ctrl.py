@@ -165,35 +165,91 @@ class UserControlDBTests(unittest.TestCase):
     self.assertTrue(isUserActive)
 
   def test_changeUserRole(self):
-    print("Running test_changeUserRole test")
+    print('Running test_changeUserRole test')
 
     usersTable = db.getTable('users', dynamodb)
 
-    data = {
-      'Key': {'email': ''},
+    request = {
+      'Key': {'email': 'test@mentii.me'},
+      'ProjectExpression' : 'userRole'
     }
 
+    response = db.getItem(request, usersTable)
+    self.assertEqual(response['Item']['userRole'], 'student')
 
-    userRole = db.getItem('test@mentii.me',usersTable)
-    self.assertEqual(userRole, "student")
     # change user role to teacher
-    usr.changeUserRole("test@mentii.me", "T", dynamodb)
-    userRole = usr.getUserRole("test@mentii.me", dynamodb)
-    self.assertEqual(userRole, "teacher")
+    jsonData = {
+      'email': 'test@mentii.me',
+      'userRole' : 'teacher'
+    }
+
+    usr.changeUserRole(jsonData, dynamodb)
+    response = db.getItem(request, usersTable)
+    self.assertEqual(response['Item']['userRole'], 'teacher')
+
     # change user role to admin
-    usr.changeUserRole("test@mentii.me", "A", dynamodb)
-    userRole = usr.getUserRole("test@mentii.me", dynamodb)
-    self.assertEqual(userRole, "admin")
+    jsonData = {
+      'email': 'test@mentii.me',
+      'userRole' : 'admin'
+    }
+
+    usr.changeUserRole(jsonData, dynamodb)
+    response = db.getItem(request, usersTable)
+    self.assertEqual(response['Item']['userRole'], 'admin')
 
   def test_changeUserRole_fail(self):
-    print("Running test_changeUserRole_fail test")
-    userRole = usr.getUserRole("test5@mentii.me", dynamodb)
-    self.assertEqual(userRole, "student")
-    # change user role to not defined
-    usr.changeUserRole("test5@mentii.me", "Z", dynamodb)
-    userRole = usr.getUserRole("test5@mentii.me", dynamodb)
+    print('Running test_changeUserRole_fail test')
+
+    usersTable = db.getTable('users', dynamodb)
+
+    request = {
+      'Key': {'email': 'test4@mentii.me'},
+      'ProjectExpression' : 'userRole'
+    }
+
+    response = db.getItem(request, usersTable)
+    self.assertEqual(response['Item']['userRole'], 'student')
+
+    badJsonData = {
+      'email': 'test4@mentii.me',
+      'userRole' : 'boss'
+    }
+
+    # change user role to not defined role
+    usr.changeUserRole(badJsonData, dynamodb)
+
     #role remains same as it was before failed attempt
-    self.assertEqual(userRole, "student")
+    response = db.getItem(request, usersTable)
+    self.assertEqual(response['Item']['userRole'], 'student')
+
+    badJsonData = {
+      'email': 'test777@mentii.me',
+      'userRole' : 'student'
+    }
+
+    # try to change a user role of a non-existent user
+    response = usr.changeUserRole(badJsonData, dynamodb)
+    self.assertIsNone(response.payload.get('success'))
+
+  def test_getRole(self):
+    print('Running test_getRole test')
+
+    jsonData = {
+      'email': 'test3@mentii.me',
+      'userRole' : 'admin'
+    }
+
+    # change user since default returns student
+    usr.changeUserRole(jsonData, dynamodb)
+    userRole = usr.getRole('test3@mentii.me', dynamodb)
+    self.assertEqual(userRole, 'admin')
+
+  def test_getRole_fail(self):
+    print('Running test_getRole_fail test case')
+
+    # get non-existent user
+    userRole = usr.getRole('test85@mentii.me', dynamodb)
+    self.assertEqual(userRole, 'student')
 
 if __name__ == '__main__':
   if __package__ is None:

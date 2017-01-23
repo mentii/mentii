@@ -183,7 +183,7 @@ class UserControlDBTests(unittest.TestCase):
       'userRole' : 'teacher'
     }
 
-    usr.changeUserRole(jsonData, dynamodb)
+    usr.changeUserRole(jsonData, dynamodb, adminRole='admin')
     response = db.getItem(request, usersTable)
     self.assertEqual(response['Item']['userRole'], 'teacher')
 
@@ -193,7 +193,7 @@ class UserControlDBTests(unittest.TestCase):
       'userRole' : 'admin'
     }
 
-    usr.changeUserRole(jsonData, dynamodb)
+    usr.changeUserRole(jsonData, dynamodb, adminRole='admin')
     response = db.getItem(request, usersTable)
     self.assertEqual(response['Item']['userRole'], 'admin')
 
@@ -216,7 +216,7 @@ class UserControlDBTests(unittest.TestCase):
     }
 
     # change user role to not defined role
-    usr.changeUserRole(badJsonData, dynamodb)
+    usr.changeUserRole(badJsonData, dynamodb, adminRole='admin')
 
     #role remains same as it was before failed attempt
     response = db.getItem(request, usersTable)
@@ -228,7 +228,7 @@ class UserControlDBTests(unittest.TestCase):
     }
 
     # try to change a user role of a non-existent user
-    response = usr.changeUserRole(badJsonData, dynamodb)
+    response = usr.changeUserRole(badJsonData, dynamodb, adminRole='admin')
     self.assertIsNone(response.payload.get('success'))
 
   def test_getRole(self):
@@ -240,7 +240,7 @@ class UserControlDBTests(unittest.TestCase):
     }
 
     # change user since default returns student
-    usr.changeUserRole(jsonData, dynamodb)
+    usr.changeUserRole(jsonData, dynamodb, adminRole='admin')
     userRole = usr.getRole('test3@mentii.me', dynamodb)
     self.assertEqual(userRole, 'admin')
 

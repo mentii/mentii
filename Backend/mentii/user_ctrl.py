@@ -7,6 +7,7 @@ from utils import db_utils as dbUtils
 import utils.MentiiLogging as MentiiLogging
 import uuid
 import hashlib
+from flask import g
 
 
 def register(jsonData, mailer, dbInstance):
@@ -187,9 +188,18 @@ def getUserByEmail(email, dbInstance):
 
   return user
 
-def changeUserRole(jsonData, dbInstance):
+def changeUserRole(jsonData, dbInstance, adminRole=None):
   response = ControllerResponse()
-  if 'email' not in jsonData.keys() or 'userRole' not in jsonData.keys():
+
+  #g will be not be avliable durring testing
+  #and adminRole will need to be passed to the function
+  if g :
+    adminRole = g.authenticatedUser['userRole']
+  #adminRole is confirmed here incase changeUserRole is called from somewhere
+  #other than app.py changeUserRole()
+  if adminRole != 'admin':
+    response.addError('Role Error', 'Only admins can change user roles')
+  elif 'email' not in jsonData.keys() or 'userRole' not in jsonData.keys():
     response.addError('Key Missing Error', 'Email or role missing from json data')
   else:
     email = jsonData['email']

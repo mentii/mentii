@@ -33,8 +33,11 @@ def checkClassDataValid(classData):
 def createClass(dynamoDBInstance, classData, email=None, userRole=None):
   response = ControllerResponse()
 
-  email = g.authenticatedUser['email']
-  userRole = g.authenticatedUser['userRole']
+  #g will be not be avliable durring testing,
+  #and email and userRole will need to be passed to the function
+  if g:
+    email = g.authenticatedUser['email']
+    userRole = g.authenticatedUser['userRole']
   #role is confirmed here incase createClass is called from somewhere other
   #than app.py create_class()
   if userRole != 'teacher' and userRole != 'admin':

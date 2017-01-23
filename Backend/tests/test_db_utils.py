@@ -78,7 +78,6 @@ class DbUtilsTest(unittest.TestCase):
     # preload table with data
     items = [
       {
-<<<<<<< HEAD
         "email" : "test@mentii.me",
         "password" : "iameight",
         "activationId" : "12345",

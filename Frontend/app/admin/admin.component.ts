@@ -22,10 +22,6 @@ export class AdminComponent {
     this.model = new RoleModel('','student');
   }
 
-  showChange(){
-    console.log(this.model.role);
-  }
-
   submit() {
     this.isLoading = true;
     this.userService.changeUserRole(this.model).subscribe(

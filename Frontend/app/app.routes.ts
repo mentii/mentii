@@ -18,6 +18,7 @@ import { ClassBrowseComponent } from './class/browse/browse.component';
 // Route Guards
 import { AuthRouteGuard } from './utils/AuthRouteGuard.service';
 import { TeacherRouteGuard } from './utils/TeacherRouteGuard.service';
+import { AdminRouteGuard } from './utils/AdminRouteGuard.service';
 
 // Route Configuration
 export const routes: Routes = [
@@ -28,7 +29,7 @@ export const routes: Routes = [
   { path: 'dashboard', component: ClassListComponent, canActivate: [AuthRouteGuard] },
   { path: 'class', component: ClassBrowseComponent, canActivate: [AuthRouteGuard] },
   { path: 'class/:id', component: ClassDetailComponent, canActivate: [AuthRouteGuard] },
-  { path: 'admin', component: AdminComponent },
+  { path: 'admin', component: AdminComponent, canActivate: [AuthRouteGuard, AdminRouteGuard]},
   { path: 'create/class', component: CreateClassComponent, canActivate: [AuthRouteGuard, TeacherRouteGuard] },
 
   // The PageNotFound route MUST be last in this list

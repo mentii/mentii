@@ -30,6 +30,7 @@ import { DeleteValue } from './directives/delete-value-validator.directive';
 /* Route Guards */
 import { AuthRouteGuard } from './utils/AuthRouteGuard.service';
 import { TeacherRouteGuard } from './utils/TeacherRouteGuard.service';
+import { AdminRouteGuard } from './utils/AdminRouteGuard.service';
 /* Vendor */
 import { LaddaModule } from 'angular2-ladda';
 
@@ -52,7 +53,8 @@ declarations: [   AdminComponent,
   providers:  [ UserService,
                 ClassService,
                 AuthRouteGuard,
-                TeacherRouteGuard
+                TeacherRouteGuard,
+                AdminRouteGuard
               ],
   bootstrap:    [ AppComponent ]
 })

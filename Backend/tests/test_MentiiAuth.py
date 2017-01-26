@@ -52,8 +52,8 @@ class MentiiAuthTests(unittest.TestCase):
     print('Running MentiiAuth.isPasswordValid test')
     email = 'test3@mentii.me'
     user = user_ctrl.getUserByEmail(email, dynamodb)
-    self.assertTrue(MentiiAuth.passwordValid(user, 'testing1'))
-    self.assertFalse(MentiiAuth.passwordValid(user, 'wrongpassword'))
+    self.assertTrue(MentiiAuth.isPasswordValid(user, 'testing1'))
+    self.assertFalse(MentiiAuth.isPasswordValid(user, 'wrongpassword'))
 
   def test_verify_auth_token(self):
     print('Running MentiiAuth.verify_auth_token test')

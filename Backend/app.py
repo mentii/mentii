@@ -206,8 +206,8 @@ def changeUserRole():
   if request.method =='OPTIONS':
     return ResponseCreation.createEmptyResponse(status)
 
+  res = ResponseCreation.ControllerResponse()
   if g.authenticatedUser['userRole'] != "admin":
-    res = ResponseCreation.ControllerResponse()
     res.addError('Role Error', 'Only admins can change user roles')
     status = 403
   else:

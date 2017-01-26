@@ -88,10 +88,6 @@ class UserControlDBTests(unittest.TestCase):
 
     db.preloadDataFromFile("./tests/"+mockData, table)
 
-  '''@classmethod
-  def tearDownClass(self):
-    table = db.getTable('users', dynamodb).delete()'''
-
   def test_isEmailInSystem(self):
     print("Running isEmailInSystem Test")
 

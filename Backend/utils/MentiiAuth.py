@@ -67,7 +67,7 @@ def verifyAuthToken(token, appSecret=None):
     retval = None
   return retval
 
-def passwordValid(user, password):
+def isPasswordValid(user, password):
   '''
   Checks that supplied password matches password in database
   '''
@@ -92,7 +92,7 @@ def verifyPassword(emailOrToken, password, dynamoDBInstance, appSecret=None):
   if not user:
     if emailOrToken != '' and password != '':
       userFromDB = user_ctrl.getUserByEmail(emailOrToken, dynamoDBInstance) # user object from db
-      if userFromDB != None and user_ctrl.isUserActive(userFromDB) and passwordValid(userFromDB, password):
+      if userFromDB != None and user_ctrl.isUserActive(userFromDB) and isPasswordValid(userFromDB, password):
         g.authenticatedUser = buildUserObject(userFromDB)
         isPasswordVerified = True
   else:

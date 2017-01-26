@@ -48,13 +48,14 @@ def createClass(dynamoDBInstance, classData, email=None, userRole=None):
     classTable = dbUtils.getTable('classes', dynamoDBInstance)
     userTable = dbUtils.getTable('users', dynamoDBInstance)
     if classTable is None or userTable is None:
-      response.addError('createClass call Failed.',
-                        'Unable to locate necessary table(s).')
+      response.addError('createClass call Failed.', 'Unable to locate necessary table(s).')
     else:
       classCode = str(uuid.uuid4())
-      newClass = {'code': classCode,
-              'title': classData['title'],
-              'description': classData['description']}
+      newClass = {
+        'code': classCode,
+        'title': classData['title'],
+        'description': classData['description']
+      }
 
       if 'department' in classData.keys() and classData['department']:
         newClass['department'] = classData['department']
@@ -64,19 +65,19 @@ def createClass(dynamoDBInstance, classData, email=None, userRole=None):
       result = dbUtils.putItem(newClass, classTable)
 
       if result is None:
-        response.addError(  'createClass call Failed.',
-                            'Unable to create class in classes table.')
+        response.addError('createClass call Failed.', 'Unable to create class in classes table.')
       else:
+        # Note: if teaching attribute does not previously exist, a set of class codes will be created
+        # otherwise, the class code will be added to the set of class codes
         jsonData = {
           'Key': {'email': email},
-          'UpdateExpression': 'SET teaching = list_append(teaching, :i)',
-          'ExpressionAttributeValues': { ':i': [classCode] },
+          'UpdateExpression': 'ADD teaching :i',
+          'ExpressionAttributeValues': { ':i': {classCode} },
           'ReturnValues' : 'UPDATED_NEW'
         }
         res = dbUtils.updateItem(jsonData, userTable)
         if res is None:
-          response.addError('createClass call failed',
-                            'Unable to update user data')
+          response.addError('createClass call failed', 'Unable to update user data')
         else:
           response.addToPayload('Success', 'Class Created')
   return response

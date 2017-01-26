@@ -169,6 +169,7 @@ class UserControlDBTests(unittest.TestCase):
       'ProjectExpression' : 'userRole'
     }
 
+    # check that user is a student
     response = db.getItem(request, usersTable)
     self.assertEqual(response['Item']['userRole'], 'student')
 
@@ -191,6 +192,16 @@ class UserControlDBTests(unittest.TestCase):
     usr.changeUserRole(jsonData, dynamodb, adminRole='admin')
     response = db.getItem(request, usersTable)
     self.assertEqual(response['Item']['userRole'], 'admin')
+
+    # change user role back to student
+    jsonData = {
+      'email': 'test@mentii.me',
+      'userRole' : 'student'
+    }
+
+    usr.changeUserRole(jsonData, dynamodb, adminRole='admin')
+    response = db.getItem(request, usersTable)
+    self.assertEqual(response['Item']['userRole'], 'student')
 
   def test_changeUserRole_fail(self):
     print('Running test_changeUserRole_fail test')

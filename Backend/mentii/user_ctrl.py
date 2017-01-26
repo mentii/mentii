@@ -181,7 +181,6 @@ def getUserByEmail(email, dbInstance):
   result = dbUtils.getItem(key, table)
   if result is None:
     MentiiLogging.getLogger().error('Unable to get the user with email: ' + email + ' in getUserByEmail ')
-    return None
 
   if 'Item' in result.keys():
     user = result['Item']

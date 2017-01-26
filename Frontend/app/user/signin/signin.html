@@ -13,7 +13,7 @@
     <form #signinForm="ngForm" autocomplete="off">
       <div class="form-group">
         <label for="email">Email</label>
-        <input type="email" placeholder="user@example.com" class="form-control" id="email" required pattern="[^@]+@[^@]+\.[^@]+" [(ngModel)]="model.email" name="email" #email="ngModel">
+        <input type="email" clearPlaceholder placeholder="user@example.com" class="form-control" id="email" required pattern="[^@]+@[^@]+\.[^@]+" [(ngModel)]="model.email" name="email" #email="ngModel">
       </div>
       <div class="form-group">
         <label for="password">Password</label>

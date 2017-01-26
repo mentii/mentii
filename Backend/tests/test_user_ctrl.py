@@ -255,7 +255,7 @@ class UserControlDBTests(unittest.TestCase):
 
     # get non-existent user
     userRole = usr.getRole('test85@mentii.me', dynamodb)
-    self.assertEqual(userRole, 'student')
+    self.assertIsNone(userRole)
 
 if __name__ == '__main__':
   if __package__ is None:

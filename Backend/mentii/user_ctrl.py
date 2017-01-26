@@ -235,10 +235,11 @@ def changeUserRole(jsonData, dbInstance, adminRole=None):
 def getRole(userEmail, dynamoDBInstance):
   '''
   Returns the role of the user whose email is pased. If we are unable to get
-  this information from the DB the role 'student' is returned
+  this information from the DB the role None is returned. Calling code must
+  grant only student permissions in this case.
   '''
 
-  userRole = 'student'
+  userRole = None
   table = dbUtils.getTable('users', dynamoDBInstance)
   if table is None:
     MentiiLogging.getLogger().error('Could not get user table in getUserRole')

@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { RoleModel } from './role.model';
-import { MentiiConfig } from '../mentii.config';
 import { UserService } from '../user/user.service';
 import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 
@@ -12,7 +11,6 @@ import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 
 export class AdminComponent {
   model = new RoleModel('','student');
-  mentiiConfig = new MentiiConfig();
   isLoading = false;
 
   constructor(public userService: UserService, public toastr: ToastsManager){

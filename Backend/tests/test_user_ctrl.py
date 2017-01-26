@@ -5,7 +5,6 @@ from flask_mail import Mail
 import ConfigParser as cp
 
 import boto3
-import time
 import sys
 from os import path
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )

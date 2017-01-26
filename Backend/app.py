@@ -122,6 +122,8 @@ def signin():
   password = request.authorization.password
   dynamoDBInstance = getDatabaseClient()
   userRole = user_ctrl.getRole(email, dynamoDBInstance)
+  if not userRole:
+    userRole = 'student'
   userCredentials = {
     'email': email,
     'userRole': userRole,

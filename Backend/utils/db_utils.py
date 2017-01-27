@@ -70,6 +70,7 @@ def preloadDataFromFile(fileName, table):
           password = item['password']
           activationId = item['activationId']
           active = item['active']
+          userRole = item['userRole']
           codes = item['classCodes']
 
           table.put_item(
@@ -78,6 +79,7 @@ def preloadDataFromFile(fileName, table):
                'password': password,
                'activationId': activationId,
                'active': active,
+               'userRole': userRole,
                'classCodes': codes
             }
           )
@@ -98,14 +100,14 @@ def preloadClassData(jsonData, table):
       for item in items:
         code = item['code']
         title = item['title']
-        subtitle = item['subtitle']
+        department = item['department']
         description = item['description']
 
         table.put_item(
           Item={
             'code': code,
             'title': title,
-            'subtitle' : subtitle,
+            'department' : department,
             'description' : description
           }
         )
@@ -127,6 +129,7 @@ def preloadDataFromJson(jsonData, table):
       activationId = item['activationId']
       active = item['active']
       classCodes = item['classCodes']
+      userRole = item['userRole']
 
       table.put_item(
         Item={
@@ -134,7 +137,8 @@ def preloadDataFromJson(jsonData, table):
           'password': password,
           'activationId': activationId,
           'active': active,
-          'classCodes': classCodes
+          'classCodes': classCodes,
+          'userRole': userRole
         }
       )
     else:
@@ -172,7 +176,7 @@ def getItem(jsonData, table):
   else:
     data = jsonData
 
-  attributes_to_get = data.get("AttributesToGet")
+  projection_expression = data.get("ProjectionExpression")
   key = data.get("Key")
 
   if key is None:
@@ -180,8 +184,8 @@ def getItem(jsonData, table):
     logger.error(message)
     return None
 
-  if attributes_to_get is not None:
-    response = table.get_item(Key=key,AttributesToGet=attributes_to_get)
+  if projection_expression is not None:
+    response = table.get_item(Key=key,ProjectionExpression=projection_expression)
   else:
     response = table.get_item(Key=key)
   return response
@@ -200,6 +204,11 @@ def updateItem(jsonData, table):
   if key is None:
     message = "Unable to update item. Missing Key"
     logger.error(message)
+    return None
+
+  if not isKeyInTable(key, table):
+    message = str(key) + " not in table " + table.table_name
+    logger.exception(message + '\n')
     return None
 
   if update_expression is not None and expression_attribute_values is not None and return_values is not None:
@@ -246,3 +255,7 @@ def deleteTable(tableName, dbInstance):
   except ClientError as e:
     message = "Unable to delete table " + tableName + ". Table does not exist"
     logger.exception(message + '\n' + str(e))
+
+def isKeyInTable(key, table):
+  response = table.get_item(Key=key)
+  return 'Item' in response

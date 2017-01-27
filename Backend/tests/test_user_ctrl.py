@@ -3,14 +3,12 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from flask_mail import Mail
 import ConfigParser as cp
-from utils.ResponseCreation import ControllerResponse
 
 import boto3
-
 import sys
 from os import path
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
-
+from utils.ResponseCreation import ControllerResponse
 from mentii import user_ctrl as usr
 from utils import db_utils as db
 from botocore.exceptions import ClientError
@@ -90,10 +88,6 @@ class UserControlDBTests(unittest.TestCase):
 
     db.preloadDataFromFile("./tests/"+mockData, table)
 
-  @classmethod
-  def tearDownClass(self):
-    table = db.getTable('users', dynamodb).delete()
-
   def test_isEmailInSystem(self):
     print("Running isEmailInSystem Test")
 
@@ -164,6 +158,104 @@ class UserControlDBTests(unittest.TestCase):
 
     isUserActive = 'status' in response.payload.keys() and response.payload['status'] == 'Success'
     self.assertTrue(isUserActive)
+
+  def test_changeUserRole(self):
+    print('Running test_changeUserRole test')
+
+    usersTable = db.getTable('users', dynamodb)
+
+    request = {
+      'Key': {'email': 'test@mentii.me'},
+      'ProjectExpression' : 'userRole'
+    }
+
+    # check that user is a student
+    response = db.getItem(request, usersTable)
+    self.assertEqual(response['Item']['userRole'], 'student')
+
+    # change user role to teacher
+    jsonData = {
+      'email': 'test@mentii.me',
+      'userRole' : 'teacher'
+    }
+
+    usr.changeUserRole(jsonData, dynamodb, adminRole='admin')
+    response = db.getItem(request, usersTable)
+    self.assertEqual(response['Item']['userRole'], 'teacher')
+
+    # change user role to admin
+    jsonData = {
+      'email': 'test@mentii.me',
+      'userRole' : 'admin'
+    }
+
+    usr.changeUserRole(jsonData, dynamodb, adminRole='admin')
+    response = db.getItem(request, usersTable)
+    self.assertEqual(response['Item']['userRole'], 'admin')
+
+    # change user role back to student
+    jsonData = {
+      'email': 'test@mentii.me',
+      'userRole' : 'student'
+    }
+
+    usr.changeUserRole(jsonData, dynamodb, adminRole='admin')
+    response = db.getItem(request, usersTable)
+    self.assertEqual(response['Item']['userRole'], 'student')
+
+  def test_changeUserRole_fail(self):
+    print('Running test_changeUserRole_fail test')
+
+    usersTable = db.getTable('users', dynamodb)
+
+    request = {
+      'Key': {'email': 'test4@mentii.me'},
+      'ProjectExpression' : 'userRole'
+    }
+
+    response = db.getItem(request, usersTable)
+    self.assertEqual(response['Item']['userRole'], 'student')
+
+    badJsonData = {
+      'email': 'test4@mentii.me',
+      'userRole' : 'boss'
+    }
+
+    # change user role to not defined role
+    usr.changeUserRole(badJsonData, dynamodb, adminRole='admin')
+
+    #role remains same as it was before failed attempt
+    response = db.getItem(request, usersTable)
+    self.assertEqual(response['Item']['userRole'], 'student')
+
+    badJsonData = {
+      'email': 'test777@mentii.me',
+      'userRole' : 'student'
+    }
+
+    # try to change a user role of a non-existent user
+    response = usr.changeUserRole(badJsonData, dynamodb, adminRole='admin')
+    self.assertIsNone(response.payload.get('success'))
+
+  def test_getRole(self):
+    print('Running test_getRole test')
+
+    jsonData = {
+      'email': 'test3@mentii.me',
+      'userRole' : 'admin'
+    }
+
+    # change user since default returns student
+    usr.changeUserRole(jsonData, dynamodb, adminRole='admin')
+    userRole = usr.getRole('test3@mentii.me', dynamodb)
+    self.assertEqual(userRole, 'admin')
+
+  def test_getRole_fail(self):
+    print('Running test_getRole_fail test case')
+
+    # get non-existent user
+    userRole = usr.getRole('test85@mentii.me', dynamodb)
+    self.assertIsNone(userRole)
 
 if __name__ == '__main__':
   if __package__ is None:

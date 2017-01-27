@@ -68,7 +68,7 @@ def getDatabaseClient():
 def verify_password(email_or_token, password):
   logger.info(str(request))
   dynamoDBInstance = getDatabaseClient()
-  response = MentiiAuth.verify_password(email_or_token, password, dynamoDBInstance, appSecret)
+  response = MentiiAuth.verifyPassword(email_or_token, password, dynamoDBInstance, appSecret)
   logger.info('Password Verified: ' + str(response))
   return response
 
@@ -117,11 +117,24 @@ def signin():
     flaskResponse = ResponseCreation.createEmptyResponse(status)
     logger.info(str(flaskResponse))
     return flaskResponse
-  userCredentials = {'email': request.authorization.username, 'password': request.authorization.password}
+
+  email = request.authorization.username
+  password = request.authorization.password
+  dynamoDBInstance = getDatabaseClient()
+  userRole = user_ctrl.getRole(email, dynamoDBInstance)
+  if not userRole:
+    userRole = 'student'
+  userCredentials = {
+    'email': email,
+    'userRole': userRole,
+    'password': password
+  }
+
   response = ControllerResponse()
-  token = MentiiAuth.generate_auth_token(userCredentials, appSecret)
+  token = MentiiAuth.generateAuthToken(userCredentials, appSecret)
   response.addToPayload('token', token)
   flaskResponse = ResponseCreation.createResponse(response, status)
+
   logger.info(str(flaskResponse))
   return flaskResponse
 
@@ -157,6 +170,25 @@ def class_list():
     status = 400
   return ResponseCreation.createResponse(res, status)
 
+@app.route('/class', methods=['POST', 'OPTIONS'])
+@auth.login_required
+def create_class():
+  status = 200
+  if request.method =='OPTIONS':
+    return ResponseCreation.createEmptyResponse(status)
+
+  role = g.authenticatedUser['userRole']
+  if role != "teacher" and role != "admin" :
+    res = ResponseCreation.ControllerResponse()
+    res.addError("Role error", "Only teachers can create classes")
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    res = class_ctrl.createClass(dynamoDBInstance, request.json)
+    if res.hasErrors():
+      status = 400
+  return ResponseCreation.createResponse(res, status)
+
 @app.route('/classes/', methods=['GET', 'OPTIONS'])
 @auth.login_required
 def public_class_list():
@@ -168,6 +200,24 @@ def public_class_list():
   if res.hasErrors():
     status = 400
   return ResponseCreation.createResponse(res, status)
+
+@app.route('/admin/changerole/', methods=['POST', 'OPTIONS'])
+@auth.login_required
+def changeUserRole():
+  status = 200
+  if request.method =='OPTIONS':
+    return ResponseCreation.createEmptyResponse(status)
+
+  res = ResponseCreation.ControllerResponse()
+  if g.authenticatedUser['userRole'] != "admin":
+    res.addError('Role Error', 'Only admins can change user roles')
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    res = user_ctrl.changeUserRole(request.json, dynamoDBInstance)
+    if res.hasErrors():
+      status = 400
+  return ResponseCreation.createResponse(res,status)
 
 if __name__ == '__main__':
   logger.info('mentii app starting')

@@ -4,16 +4,16 @@ import { AuthHttp } from './AuthHttp.service';
 import { Router } from '@angular/router';
 
 @Injectable()
-export class AuthRouteGuard implements CanActivate {
+export class AdminRouteGuard implements CanActivate {
 
   constructor(private authHttpService: AuthHttp, private router: Router) {}
 
   canActivate() {
-    let authStatus: boolean = this.authHttpService.propagateAuthStatus();
-    if (authStatus === false) {
-      // Return to sign in if not authenticated
-      this.router.navigateByUrl('/sign-in');
+    let role = this.authHttpService.propagateRole();
+    if (role != 'admin') {
+      //by rerouting will not hit the return true
+      this.router.navigateByUrl('/dashboard');
     }
-    return authStatus;
+    return true;
   }
 }

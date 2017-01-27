@@ -1,0 +1,42 @@
+
+<div class="row">
+  <div class="col-xs-12">
+    <h2>Create a New Class<br/>
+      <small>Please Enter Required Information</small>
+    </h2>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12 col-sm-10 col-md-8">
+    <form #createClassForm="ngForm" autocomplete="off">
+      <div class="form-group">
+        <label for="title"><span class="text-danger">*</span> Title</label>
+        <input type="text" placeholder="Algebra 1" class="form-control" id="title" required minlength=3 [(ngModel)]="model.title" name="title" #title="ngModel">
+        <span [hidden]="title.pristine || title.valid" class="text-danger">
+          Class title must be at least 3 characters long.
+        </span>
+      </div>
+      <div class="form-group">
+        <label for="department">Department <em class="text-muted font-weight-normal">Optional</em></label>
+        <input type="text" placeholder="Introduction to Variables" class="form-control" id="department" [(ngModel)]="model.department" name="department" #department="ngModel">
+      </div>
+      <div class="form-group">
+        <label for="section">Section <em class="text-muted font-weight-normal">Optional</em></label>
+        <input type="text" placeholder="001" class="form-control" id="section" [(ngModel)]="model.section" name="section" #section="ngModel">
+      </div>
+      <div class="form-group">
+        <label for="description"><span class="text-danger">*</span> Description</label>
+        <textarea placeholder="Describe your class here" class="form-control" rows="3" id="description" required [(ngModel)]="model.description" name="description" #description="ngModel"></textarea>
+        <span [hidden]="description.pristine || description.valid" class="text-danger">
+          Class description is required.
+        </span>
+      </div>
+      <p class="text-danger" *ngIf="!createClassForm.form.valid">* Required Fields</p>
+      <button type="submit" class="btn btn-primary" [disabled]="!createClassForm.form.valid" (click)="submit()" [ladda]='isLoading'>
+        <span class="ladda-label">Create Class</span>
+      </button>
+    </form>
+    <br/>
+    <a [routerLink]="['/dashboard']">Return to Dashboard</a>
+  </div>
+</div>

@@ -1,5 +1,5 @@
 import json
-from flask import Response
+from flask import Response, g
 import utils.MentiiLogging as MentiiLogging
 
 
@@ -13,6 +13,9 @@ class ControllerResponse:
     self.errors = []
     self.payload = {}
     self.hasError = False
+    self.user = {}
+    if g:
+      self.user = g.get('authenticatedUser', {})
 
   def addError(self, title, message):
     MentiiLogging.getLogger().error('%s : %s', title, message)
@@ -27,7 +30,7 @@ class ControllerResponse:
     return self.hasError
 
   def getResponseString(self):
-    responseDict = {"payload": self.payload, "errors": self.errors}
+    responseDict = {'user': self.user, 'payload': self.payload, 'errors': self.errors}
     return json.dumps(responseDict)
 
 def createResponse(controllerResponse, statusCode):

@@ -46,7 +46,8 @@ import { LaddaModule } from 'angular2-ladda';
     LaddaModule.forRoot({style: "zoom-in"}),
     routing,
     CommonModule,
-    CoreModule],
+    CoreModule
+  ],
 
   declarations: [
     AdminComponent,

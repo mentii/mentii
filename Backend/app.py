@@ -172,15 +172,15 @@ def class_list():
 
 @app.route('/teacher/classes/', methods=['GET', 'OPTIONS'])
 @auth.login_required
-def taught_class_list():
+def taughtClassList():
   status = 200
   if request.method =='OPTIONS':
     return ResponseCreation.createEmptyResponse(status)
 
   role = g.authenticatedUser['userRole']
-  if role != "teacher" and role != "admin" :
+  if role != 'teacher' and role != 'admin' :
     res = ResponseCreation.ControllerResponse()
-    res.addError("Role error", "Only teachers can view a list of classes they are teaching")
+    res.addError('Role error', 'Only teachers can view a list of classes they are teaching')
     status = 403
   else:
     dynamoDBInstance = getDatabaseClient()
@@ -199,7 +199,7 @@ def create_class():
   role = g.authenticatedUser['userRole']
   if role != "teacher" and role != "admin" :
     res = ResponseCreation.ControllerResponse()
-    res.addError("Role error", "Only teachers can create classes")
+    res.addError('Role error', 'Only teachers can create classes')
     status = 403
   else:
     dynamoDBInstance = getDatabaseClient()

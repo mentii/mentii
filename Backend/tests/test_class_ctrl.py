@@ -71,8 +71,7 @@ class ClassCtrlDBTests(unittest.TestCase):
     print('Running getTaughtClassCodesFromUser test case')
     user =  'test5@mentii.me'
     response = class_ctrl.getTaughtClassCodesFromUser(dynamodb, user)
-    self.assertIsNotNone(response, None)
-    self.assertIsNotNone(response)
+    self.assertIsNone(response)
 
   def test_checkClassDataValid(self):
     print('Running checkClassDataValid')

@@ -1,0 +1,64 @@
+<div class="row">
+  <div class="col-xs-12 col-sm-9 col-md-8">
+    <h3>
+      Your Dashboard
+    </h3>
+    <p>
+      Here you will find all of the clases that you are currently enrolled in as a student. If you are a teacher you will also find all of the classes you are currently teaching or have taught in the past.
+    </p>
+    <br/>
+  </div>
+</div>
+
+<!-- Teacher Dashboard -->
+<div *ngIf="role == 'teacher' || role == 'admin'">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a href="#taught" aria-controls="taught-classes" role="tab" data-toggle="tab">
+        <h4>Taught Classes</h4>
+      </a>
+    </li>
+    <li role="presentation">
+      <a href="#enrolled" aria-controls="enrolled-classes" role="tab" data-toggle="tab">
+        <h4>Enrolled Classes</h4>
+      </a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="taught">
+      <div class="row">
+        <div class="col-xs-12">
+          <taught-list></taught-list>
+        </div>
+      </div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="enrolled">
+      <div class="row">
+        <div class="col-xs-12">
+          <class-list></class-list>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Student Dashboard -->
+<div *ngIf="role == 'student'">
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a href="#enrolled" aria-controls="enrolled-classes" role="tab" data-toggle="tab">
+        <h4>Enrolled Classes</h4>
+      </a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="enrolled">
+      <div class="row">
+        <div class="col-xs-12">
+          <class-list></class-list>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

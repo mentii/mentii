@@ -6,6 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { AdminComponent } from './admin/admin.component';
 import { AppComponent } from './app.component';
 import { RootComponent } from './root/root.component';
+import { DashboardComponent } from './root/dashboard.component';
 import { RegistrationComponent } from './user/registration/registration.component';
 import { SigninComponent } from './user/signin/signin.component';
 import { PageNotFoundComponent } from './pageNotFound/pageNotFound.component';
@@ -26,7 +27,7 @@ export const routes: Routes = [
   { path: 'sign-in', component: SigninComponent },
   { path: 'register', component: RegistrationComponent },
   { path: 'secure-test', component: SecureTestComponent, canActivate: [AuthRouteGuard] },
-  { path: 'dashboard', component: ClassListComponent, canActivate: [AuthRouteGuard] },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthRouteGuard] },
   { path: 'class', component: ClassBrowseComponent, canActivate: [AuthRouteGuard] },
   { path: 'class/:id', component: ClassDetailComponent, canActivate: [AuthRouteGuard] },
   { path: 'admin', component: AdminComponent, canActivate: [AuthRouteGuard, AdminRouteGuard]},

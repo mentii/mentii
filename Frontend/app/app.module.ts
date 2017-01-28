@@ -18,9 +18,11 @@ import { AppComponent } from './app.component';
 import { RegistrationComponent } from './user/registration/registration.component';
 import { SigninComponent } from './user/signin/signin.component';
 import { RootComponent } from './root/root.component';
+import { DashboardComponent } from './root/dashboard.component';
 import { PageNotFoundComponent } from './pageNotFound/pageNotFound.component';
 import { SecureTestComponent } from './secureTest/secureTest.component';
 import { ClassListComponent } from './class/list/list.component';
+import { TaughtClassListComponent } from './class/taughtList/taughtList.component';
 import { ClassDetailComponent } from './class/detail/detail.component';
 import { CreateClassComponent } from './class/create/create.component';
 import { ClassBrowseComponent } from './class/browse/browse.component';
@@ -35,27 +37,45 @@ import { AdminRouteGuard } from './utils/AdminRouteGuard.service';
 import { LaddaModule } from 'angular2-ladda';
 
 @NgModule({
-  imports:      [ BrowserModule, FormsModule, HttpModule, ToastModule, LaddaModule.forRoot({style: "zoom-in"}), routing, CommonModule, CoreModule],
-declarations: [   AdminComponent,
-                  AppComponent,
-                  RegistrationComponent,
-                  RootComponent,
-                  PageNotFoundComponent,
-                  SecureTestComponent,
-                  EqualValidator,
-                  DeleteValue,
-                  SigninComponent,
-                  ClassListComponent,
-                  ClassDetailComponent,
-                  CreateClassComponent,
-                  ClassBrowseComponent
-                ],
-  providers:  [ UserService,
-                ClassService,
-                AuthRouteGuard,
-                TeacherRouteGuard,
-                AdminRouteGuard
-              ],
-  bootstrap:    [ AppComponent ]
+
+  imports:      [
+    BrowserModule,
+    FormsModule,
+    HttpModule,
+    ToastModule,
+    LaddaModule.forRoot({style: "zoom-in"}),
+    routing,
+    CommonModule,
+    CoreModule],
+
+  declarations: [
+    AdminComponent,
+    AppComponent,
+    RegistrationComponent,
+    RootComponent,
+    DashboardComponent,
+    PageNotFoundComponent,
+    SecureTestComponent,
+    EqualValidator,
+    DeleteValue,
+    SigninComponent,
+    ClassListComponent,
+    ClassDetailComponent,
+    CreateClassComponent,
+    ClassBrowseComponent,
+    TaughtClassListComponent
+  ],
+
+  providers:  [
+    UserService,
+    ClassService,
+    AuthRouteGuard,
+    TeacherRouteGuard,
+    AdminRouteGuard
+  ],
+
+  bootstrap: [
+    AppComponent
+  ]
 })
 export class AppModule { }

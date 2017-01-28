@@ -18,6 +18,7 @@
           </ul>
         </li>
         <li *ngIf="role == 'teacher' || role == 'admin'"><a [routerLink]="['/create/class']">Create a Class</a></li>
+        <li><a [routerLink]="['/class']">View Public Classes</a></li>
       </ul>
       <!-- Right side nav items for unauthenticated users -->
       <ul class="nav navbar-nav navbar-right" *ngIf="!isAuthenticated">

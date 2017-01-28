@@ -27,6 +27,27 @@ def getActiveClassList(dynamoDBInstance, email=None):
     response.addToPayload('classes', classes)
   return response
 
+def getTaughtClassList(dynamoDBInstance, email=None):
+  response = ControllerResponse()
+  usersTable = dbUtils.getTable('users', dynamoDBInstance)
+  classTable = dbUtils.getTable('classes', dynamoDBInstance)
+
+  if usersTable is None or classTable is None:
+    response.addError(  'Get Taught Class List Failed','Unable to access users and/or classes')
+  else :
+    if email is None:
+      email = g.authenticatedUser['email']
+    classes = []
+    classCodes = getTaughtClassCodesFromUser(dynamoDBInstance, email)
+
+    for code in classCodes:
+      request = {'Key': {'code': code}}
+      res = dbUtils.getItem(request, classTable)
+      if res is not None and 'Item' in res:
+        classes.append(res['Item'])
+    response.addToPayload('classes', classes)
+  return response
+
 def checkClassDataValid(classData):
   return 'title' in classData.keys() and 'description' in classData.keys()
 
@@ -97,6 +118,23 @@ def getClassCodesFromUser(dynamoDBInstance, email=None):
     #Get the class codes for the user.
     if res is not None and 'Item' in res:
       classCodes = res['Item']['classCodes']
+  return classCodes
+
+def getTaughtClassCodesFromUser(dynamoDBInstance, email=None):
+  classCodes = []
+  if email is None:
+    email = g.authenticatedUser['email']
+  usersTable = dbUtils.getTable('users', dynamoDBInstance)
+  if usersTable is None:
+    MentiiLogging.getLogger().error('Unable to get users table in getTaughtClassCodesFromUser')
+  else:
+    #An active class list is the list of class codes that
+    # a user has in the user table.
+    request = {"Key" : {"email": email}, "ProjectionExpression": "teaching"}
+    res = dbUtils.getItem(request, usersTable)
+    #Get the class codes for the user.
+    if res is not None and 'Item' in res:
+      classCodes = res['Item']['teaching']
   return classCodes
 
 def getPublicClassList(dynamodb, email=None):

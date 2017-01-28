@@ -134,7 +134,7 @@ def getTaughtClassCodesFromUser(dynamoDBInstance, email=None):
     res = dbUtils.getItem(request, usersTable)
     #Get the class codes for the user.
     if res is not None and 'Item' in res:
-      classCodes = res['Item']['teaching']
+      classCodes = res['Item'].get('teaching', [])
   return classCodes
 
 def getPublicClassList(dynamodb, email=None):

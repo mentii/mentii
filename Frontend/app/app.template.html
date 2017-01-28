@@ -27,6 +27,8 @@
       </ul>
       <!-- Right side nav items for authenticated users -->
       <ul class="nav navbar-nav navbar-right" *ngIf="isAuthenticated">
+        <li><a [routerLink]="['/dashboard']"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+        <li role="separator" class="divider"></li>
         <li><a (click)="logout()" class="logout"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
       </ul>
     </div>

@@ -1,27 +1,38 @@
-import { Attribute, Directive, ElementRef, HostListener, Input } from '@angular/core';
+import { Attribute, Directive, ElementRef, HostListener, Input, Renderer } from '@angular/core';
 
 @Directive({
-  selector: '[clearPlaceholder]'
+  selector: '[clearPlaceholder]',
+  host:{
+    'onfocus' : 'onFocus()',
+    'onblur' : 'onBlur()'
+  }
 })
 
 export class ClearPlaceholder {
   plText : string = '';
-  constructor(private el: ElementRef) {
+  element;
+  constructor(public el: ElementRef, public renderer: Renderer) {
+    // get element
+    this.element = this.renderer.selectRootElement(el.nativeElement);
+
     // get original placeholder text
-    this.plText = el.nativeElement.getAttribute('placeholder');
+    this.plText = this.element.getAttribute('placeholder');
+    console.log(this.plText);
   }
 
   // onFocus set placeholder text to ""
-  @HostListener('onFocus') onFocus(){
+  @HostListener('onfocus') onFocus(){
+    console.log('onFocus');
     this.setPlaceholderText("");
   }
 
   // onBlur set placeholder text to original placeholder text
-  @HostListener('onBlur') onBlur(){
+  @HostListener('onblur') onBlur(){
+    console.log('onBlur');
     this.setPlaceholderText(this.plText);
   }
 
   private setPlaceholderText(text:string) {
-    this.el.nativeElement.setAttribute('placeholder', text);
+    this.renderer.setElementAttribute(this.element,'placeholder', text);
   }
 }

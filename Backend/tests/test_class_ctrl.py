@@ -46,13 +46,19 @@ class ClassCtrlDBTests(unittest.TestCase):
     print('Running getActiveClassList test case')
     user =  'test@mentii.me'
     response = class_ctrl.getActiveClassList(dynamodb, user)
-    self.assertIsNotNone(response, None)
+    self.assertIsNotNone(response)
+
+  def test_getTaughtClassList(self):
+    print('Running getTaughtClassList test case')
+    user =  'test5@mentii.me'
+    response = class_ctrl.getTaughtClassList(dynamodb, user)
+    self.assertIsNotNone(response)
 
   def test_getPublicClassList(self):
     print('Running getPublicClassList test case')
     user =  'test@mentii.me'
     response = class_ctrl.getPublicClassList(dynamodb, user)
-    self.assertIsNotNone(response, None)
+    self.assertIsNotNone(response)
 
   def test_getClassCodesFromUser(self):
     print('Running getClassCodesFromUser test case')
@@ -60,6 +66,13 @@ class ClassCtrlDBTests(unittest.TestCase):
     response = class_ctrl.getClassCodesFromUser(dynamodb, user)
     self.assertIsNotNone(response, None)
     self.assertTrue(len(response) == 3)
+
+  def test_getTaughtClassCodesFromUser(self):
+    print('Running getTaughtClassCodesFromUser test case')
+    user =  'test5@mentii.me'
+    response = class_ctrl.getTaughtClassCodesFromUser(dynamodb, user)
+    self.assertIsNotNone(response, None)
+    self.assertIsNotNone(response)
 
   def test_checkClassDataValid(self):
     print('Running checkClassDataValid')

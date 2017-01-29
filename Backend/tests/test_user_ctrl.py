@@ -1,21 +1,19 @@
 import unittest
-from flask import Flask, request, jsonify
-from flask_cors import CORS, cross_origin
-from flask_mail import Mail
-import ConfigParser as cp
+from mock import MagicMock
 
 import boto3
 import sys
 from os import path
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
+
 from utils.ResponseCreation import ControllerResponse
 from mentii import user_ctrl as usr
+from mentii import class_ctrl as classCtrl
 from utils import db_utils as db
-from botocore.exceptions import ClientError
 
-
-app = Flask(__name__)
-mail = Mail(app)
+#Mailer is not used in testing because it depends on the flask application contex
+mail = None
+usr.sendEmail = MagicMock(return_value = None)
 
 #local DynamoDB
 dynamodb = boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
@@ -77,16 +75,32 @@ class UserControlTests(unittest.TestCase):
 class UserControlDBTests(unittest.TestCase):
   @classmethod
   def setUpClass(self):
-    settingsName = "table_settings.json"
-    mockData = "mock_data.json"
+    self.dynamodbClient = boto3.client('dynamodb', endpoint_url='http://localhost:8000')
 
+    #clean up local DB before tests
+    tables = self.dynamodbClient.list_tables()
+    tableNames = tables.get('TableNames')
     try:
-      table = db.createTableFromFile("./tests/"+settingsName, dynamodb)
-    except ClientError:
-      db.getTable('users', dynamodb).delete()
-      table = db.createTableFromFile("./tests/"+settingsName, dynamodb)
+      for name in tableNames:
+        dynamodb.Table(name).delete()
+    except:
+      print('Error deleting tableNames')
 
-    db.preloadDataFromFile("./tests/"+mockData, table)
+    classSettingsName = 'classes_settings.json'
+    classMockData = 'mock_classes.json'
+    userSettingsName = 'table_settings.json'
+    userMockData = 'mock_data.json'
+
+    userTable = db.createTableFromFile('./tests/'+userSettingsName, dynamodb)
+    classTable = db.createTableFromFile('./tests/'+classSettingsName, dynamodb)
+
+    db.preloadDataFromFile('./tests/'+userMockData, userTable)
+    db.preloadClassData('./tests/'+classMockData, classTable)
+
+  @classmethod
+  def tearDownClass(self):
+    db.getTable('classes', dynamodb).delete()
+    db.getTable('users', dynamodb).delete()
 
   def test_isEmailInSystem(self):
     print("Running isEmailInSystem Test")
@@ -109,11 +123,9 @@ class UserControlDBTests(unittest.TestCase):
     password = "password8"
 
     activationId = ""
-    try:
-      activationId = usr.addUserAndSendEmail(email,password,mail,dynamodb)
-    except RuntimeError:
-      print("Activation ID= " + activationId)
-      self.assertTrue(False)
+
+    activationId = usr.addUserAndSendEmail(email,password,mail,dynamodb)
+    self.assertIsNotNone(activationId)
 
     response = usr.isEmailInSystem(email, dynamodb)
     self.assertTrue(response)
@@ -256,6 +268,56 @@ class UserControlDBTests(unittest.TestCase):
     # get non-existent user
     userRole = usr.getRole('test85@mentii.me', dynamodb)
     self.assertIsNone(userRole)
+
+  def test_joinClass(self):
+    print 'Running test_joinClass'
+
+    joinEmail = 'join@mentii.me'
+    password = 'password'
+    activationId = usr.addUserAndSendEmail(joinEmail,password,mail,dynamodb)
+    usr.activate(activationId, dynamodb)
+
+    teacherEmail = 'teacher@mentii.me'
+    activationId = usr.addUserAndSendEmail(teacherEmail,password,mail,dynamodb)
+    usr.activate(activationId, dynamodb)
+
+    classData = {
+      'title' : 'title',
+      'description' : 'desc'
+    }
+    teacherRole = 'teacher'
+    classCtrl.createClass(dynamodb, classData, teacherEmail, teacherRole)
+
+    res = classCtrl.getPublicClassList(dynamodb, joinEmail)
+    classes = res.payload['classes']
+    classCodes = set()
+    for c in classes:
+      code = c['code']
+      classCodes.add(code)
+      joinData = { 'code' : code }
+      res = usr.joinClass(joinData, dynamodb, joinEmail)
+      self.assertFalse(res.hasErrors())
+      self.assertEqual(res.payload['code'], code)
+
+    joined = classCtrl.getClassCodesFromUser(dynamodb, joinEmail)
+    missing = joined - classCodes
+    #check for empty set
+    self.assertFalse(missing)
+
+    joinEmail2 = 'join2@mentii.me'
+    password = 'password'
+    activationId = usr.addUserAndSendEmail(joinEmail2,password,mail,dynamodb)
+    usr.activate(activationId, dynamodb)
+
+    badJoinData = { 'bad' : 'data' }
+    for c in classes:
+      code = c['code']
+      res = usr.joinClass(badJoinData, dynamodb, joinEmail2)
+      self.assertTrue(res.hasErrors())
+
+    joined = classCtrl.getClassCodesFromUser(dynamodb, joinEmail2)
+    #check for empty set
+    self.assertFalse(joined)
 
 if __name__ == '__main__':
   if __package__ is None:

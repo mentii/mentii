@@ -170,6 +170,16 @@ def class_list():
     status = 400
   return ResponseCreation.createResponse(res, status)
 
+@app.route('/user/classes/', methods=['POST'])
+@auth.login_required
+def joinClass():
+  status = 200
+  dynamoDBInstance = getDatabaseClient()
+  res = user_ctrl.joinClass(request.json, dynamoDBInstance)
+  if res.hasErrors():
+    status = 400
+  return ResponseCreation.createResponse(res, status)
+
 @app.route('/class', methods=['POST', 'OPTIONS'])
 @auth.login_required
 def create_class():

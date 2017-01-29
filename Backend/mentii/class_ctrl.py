@@ -95,7 +95,7 @@ def getClassCodesFromUser(dynamoDBInstance, email=None):
     request = {"Key" : {"email": email}, "ProjectionExpression": "classCodes"}
     res = dbUtils.getItem(request, usersTable)
     #Get the class codes for the user.
-    if res is not None and 'Item' in res:
+    if res is not None and 'Item' in res and 'classCodes' in res['Item']:
       classCodes = res['Item']['classCodes']
   return classCodes
 

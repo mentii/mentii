@@ -120,10 +120,6 @@ def signin():
 
   email = request.authorization.username
   password = request.authorization.password
-
-  logger.info('email: ' + email, ' password: ', password)
-
-
   dynamoDBInstance = getDatabaseClient()
   userRole = user_ctrl.getRole(email, dynamoDBInstance)
   if not userRole:

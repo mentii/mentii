@@ -2,10 +2,6 @@ import { Attribute, Directive, ElementRef, HostListener, Input, Renderer } from 
 
 @Directive({
   selector: '[clearPlaceholder]',
-  host:{
-    'onfocus' : 'onFocus()',
-    'onblur' : 'onBlur()'
-  }
 })
 
 export class ClearPlaceholder {
@@ -14,21 +10,17 @@ export class ClearPlaceholder {
   constructor(public el: ElementRef, public renderer: Renderer) {
     // get element
     this.element = this.renderer.selectRootElement(el.nativeElement);
-
     // get original placeholder text
     this.plText = this.element.getAttribute('placeholder');
-    console.log(this.plText);
   }
 
   // onFocus set placeholder text to ""
-  @HostListener('onfocus') onFocus(){
-    console.log('onFocus');
+  @HostListener('focus') onFocus(){
     this.setPlaceholderText("");
   }
 
   // onBlur set placeholder text to original placeholder text
-  @HostListener('onblur') onBlur(){
-    console.log('onBlur');
+  @HostListener('blur') onBlur(){
     this.setPlaceholderText(this.plText);
   }
 

@@ -27,6 +27,7 @@ import { ClassBrowseComponent } from './class/browse/browse.component';
 /* Directives */
 import { EqualValidator } from './directives/equal-validator.directive';
 import { DeleteValue } from './directives/delete-value-validator.directive';
+import { ClearPlaceholder } from './directives/clearPlaceholderOnFocus.directive';
 /* Route Guards */
 import { AuthRouteGuard } from './utils/AuthRouteGuard.service';
 import { TeacherRouteGuard } from './utils/TeacherRouteGuard.service';
@@ -48,7 +49,8 @@ declarations: [   AdminComponent,
                   ClassListComponent,
                   ClassDetailComponent,
                   CreateClassComponent,
-                  ClassBrowseComponent
+                  ClassBrowseComponent,
+                  ClearPlaceholder
                 ],
   providers:  [ UserService,
                 ClassService,

@@ -1,11 +1,13 @@
-<div class="row">
+<div class="row tab-instruction">
   <div class="col-xs-12 col-sm-9 col-md-8">
     <h3>
       Your Dashboard
     </h3>
-    <p>
-      Here you will find all of the clases that you are currently enrolled in as a student. If you are a teacher you will also find all of the classes you are currently teaching or have taught in the past.
+    <p *ngIf="role == 'teacher' || role == 'admin'">
+      You will find all of the classes you are currently teaching or have taught in the past under the "Taught Classes" tab. If you are also enrolled in other classes, you will see those under the "Enrolled Classes" tab.
     </p>
+    <p *ngIf="role == 'student'">
+      Here you will find all of the clases that you are currently enrolled in as a student. Click on the "View Class Detail Page" button to view more information about a specific class.
     <br/>
   </div>
 </div>

@@ -290,18 +290,18 @@ class UserControlDBTests(unittest.TestCase):
 
     res = classCtrl.getPublicClassList(dynamodb, joinEmail)
     classes = res.payload['classes']
-    classCodes = set()
+    allClassCodes = set()
     for c in classes:
       code = c['code']
-      classCodes.add(code)
+      allClassCodes.add(code)
       joinData = { 'code' : code }
       res = usr.joinClass(joinData, dynamodb, joinEmail)
       self.assertFalse(res.hasErrors())
       self.assertEqual(res.payload['code'], code)
 
     joined = classCtrl.getClassCodesFromUser(dynamodb, joinEmail)
-    missing = joined - classCodes
-    #check for empty set
+    missing = joined - allClassCodes
+    #confirm none missing
     self.assertFalse(missing)
 
     joinEmail2 = 'join2@mentii.me'
@@ -316,7 +316,7 @@ class UserControlDBTests(unittest.TestCase):
       self.assertTrue(res.hasErrors())
 
     joined = classCtrl.getClassCodesFromUser(dynamodb, joinEmail2)
-    #check for empty set
+    #confirm none joined
     self.assertFalse(joined)
 
 if __name__ == '__main__':

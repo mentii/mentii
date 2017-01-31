@@ -268,10 +268,11 @@ def joinClass(jsonData, dynamoDBInstance, email=None):
       response.addError('joinClass call Failed', 'Unable to locate necessary table(s).')
     else:
       classCode = jsonData['code']
+      codeSet = set([classCode])
       addClassToUser = {
         'Key': {'email': email},
         'UpdateExpression': 'ADD classCodes :i',
-        'ExpressionAttributeValues': { ':i': {classCode} },
+        'ExpressionAttributeValues': { ':i': codeSet },
         'ReturnValues' : 'UPDATED_NEW'
       }
       res = dbUtils.updateItem(addClassToUser, userTable)
@@ -281,10 +282,11 @@ def joinClass(jsonData, dynamoDBInstance, email=None):
             classCode not in res['Attributes']['classCodes'] ):
         response.addError('joinClass call Failed', 'Unable to update user data')
       else:
+        emailSet = set([email])
         addUserToClass = {
           'Key': {'code': classCode},
           'UpdateExpression': 'ADD students :i',
-          'ExpressionAttributeValues': { ':i': {email} },
+          'ExpressionAttributeValues': { ':i': emailSet },
           'ReturnValues' : 'ALL_NEW'
         }
         res = dbUtils.updateItem(addUserToClass, classTable)

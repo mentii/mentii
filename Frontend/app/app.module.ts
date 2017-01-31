@@ -29,6 +29,7 @@ import { ClassBrowseComponent } from './class/browse/browse.component';
 /* Directives */
 import { EqualValidator } from './directives/equal-validator.directive';
 import { DeleteValue } from './directives/delete-value-validator.directive';
+import { ClearPlaceholder } from './directives/clearPlaceholderOnFocus.directive';
 /* Route Guards */
 import { AuthRouteGuard } from './utils/AuthRouteGuard.service';
 import { TeacherRouteGuard } from './utils/TeacherRouteGuard.service';
@@ -64,7 +65,8 @@ import { LaddaModule } from 'angular2-ladda';
     ClassDetailComponent,
     CreateClassComponent,
     ClassBrowseComponent,
-    TaughtClassListComponent
+    TaughtClassListComponent,
+    ClearPlaceholder
   ],
 
   providers:  [

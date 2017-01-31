@@ -13,21 +13,21 @@
     <form #registerForm="ngForm" autocomplete="off">
       <div class="form-group">
         <label for="email">Email</label>
-        <input type="email" placeholder="user@example.com" class="form-control" id="email" required pattern="[^@]+@[^@]+\.[^@]+" [(ngModel)]="model.email" name="email" #email="ngModel">
+        <input type="email" placeholder="user@example.com" class="form-control" id="email" required pattern="[^@]+@[^@]+\.[^@]+" [(ngModel)]="model.email" name="email" #email="ngModel" clearPlaceholder>
         <span [hidden]="email.pristine || email.valid" class="text-danger">
           A valid email is required
         </span>
       </div>
       <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" placeholder="********" class="form-control" id="password" required minlength=8 deleteValue="confirmPassword" [(ngModel)]="model.password" name="password" #password="ngModel">
+        <input type="password" placeholder="********" class="form-control" id="password" required minlength=8 deleteValue="confirmPassword" [(ngModel)]="model.password" name="password" #password="ngModel" clearPlaceholder>
         <span [hidden]="password.valid || password.pristine" class="text-danger">
           A password 8 or more characters long is required
         </span>
       </div>
       <div class="form-group">
         <label for="confirmPassword">Confirm Password</label>
-        <input type="password" placeholder="********" class="form-control" id="confirmPassword" required minlength=8 validateEqual="password"[(ngModel)]="model.confirmPassword" name="confirmPassword" #confirmPassword="ngModel">
+        <input type="password" placeholder="********" class="form-control" id="confirmPassword" required minlength=8 validateEqual="password"[(ngModel)]="model.confirmPassword" name="confirmPassword" #confirmPassword="ngModel" clearPlaceholder>
         <span [hidden]="confirmPassword.valid || confirmPassword.pristine" class="text-danger">
           Passwords do not match
         </span>

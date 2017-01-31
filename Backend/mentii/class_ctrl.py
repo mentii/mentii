@@ -89,10 +89,11 @@ def createClass(dynamoDBInstance, classData, email=None, userRole=None):
       else:
         # Note: if teaching attribute does not previously exist, a set of class codes will be created
         # otherwise, the class code will be added to the set of class codes
+        codeSet = set([classCode])
         jsonData = {
           'Key': {'email': email},
-          'UpdateExpression': 'ADD teaching :i',
-          'ExpressionAttributeValues': { ':i': {classCode} },
+          'UpdateExpression': 'ADD teaching :classCode',
+          'ExpressionAttributeValues': { ':classCode': codeSet },
           'ReturnValues' : 'UPDATED_NEW'
         }
         res = dbUtils.updateItem(jsonData, userTable)

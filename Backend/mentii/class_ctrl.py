@@ -24,6 +24,9 @@ def getActiveClassList(dynamoDBInstance, email=None):
       request = {'Key': {'code': code}}
       res = dbUtils.getItem(request, classTable)
       if res is not None and 'Item' in res:
+        print(res['Item'])
+        res['Item']['students'] = list(res['Item']['students'])
+        print(res['Item'])
         classes.append(res['Item'])
     response.addToPayload('classes', classes)
   return response

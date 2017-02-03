@@ -1,8 +1,6 @@
 import json
 from flask import Response, g
 import utils.MentiiLogging as MentiiLogging
-from numbers import Number
-
 
 class ControllerResponse:
   '''

@@ -25,25 +25,27 @@ class ControllerResponse:
     self.hasError = True
 
   def addToPayload(self, attribute, value):
-    value = self.setsToLists(value)
-    print '####################################################################'
-    print value
+    value = self.prepForJsonification(value)
     self.payload[attribute] = value
 
-  def setsToLists(self, item):
-    #if not valid json type except for Array which is handled recursively
-    if (not None and
-        not isinstance(item, basestring) and
-        not isinstance(item, Number) and
-        not isinstance(item, bool)) :
-      #sets to lists
-      if isinstance(item, set) :
-        item = list(item)
-      #iterate though list or dict
-      iterator = item if isinstance(item, dict) else xrange(len(item))
+  def prepForJsonification(self, item):
+    isDict = None
+    isList = None
+    if isinstance(item, dict):
+      isDict = True
+    elif isinstance(item, set):
+      #set to list
+      item = list(item)
+      isList = True
+    elif isinstance(item, list):
+      isList = True
+    #lists or dicts can be jsonified, contents are handled recursively
+    if isDict or isList :
+      #iterator though dict or list
+      iterator = item if isDict else xrange(len(item))
       for i in iterator:
         #recursive call
-        item[i] = self.setsToLists(item[i])
+        item[i] = self.prepForJsonification(item[i])
     return item
 
   def hasErrors(self):

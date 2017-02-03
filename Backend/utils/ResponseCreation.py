@@ -33,8 +33,8 @@ class ControllerResponse:
     isList = None
     if isinstance(item, dict):
       isDict = True
-    elif isinstance(item, set):
-      #set to list
+    elif isinstance(item, set) or isinstance(item, tuple):
+      #sets and tuples cannot be jsonified, lists can
       item = list(item)
       isList = True
     elif isinstance(item, list):

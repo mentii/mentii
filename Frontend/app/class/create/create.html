@@ -11,22 +11,22 @@
     <form #createClassForm="ngForm" autocomplete="off">
       <div class="form-group">
         <label for="title"><span class="text-danger">*</span> Title</label>
-        <input type="text" placeholder="Algebra 1" class="form-control" id="title" required minlength=3 [(ngModel)]="model.title" name="title" #title="ngModel">
+        <input type="text" placeholder="Algebra 1" class="form-control" id="title" required minlength=3 [(ngModel)]="model.title" name="title" #title="ngModel" clearPlaceholder>
         <span [hidden]="title.pristine || title.valid" class="text-danger">
           Class title must be at least 3 characters long.
         </span>
       </div>
       <div class="form-group">
         <label for="department">Department <em class="text-muted font-weight-normal">Optional</em></label>
-        <input type="text" placeholder="Introduction to Variables" class="form-control" id="department" [(ngModel)]="model.department" name="department" #department="ngModel">
+        <input type="text" placeholder="Mathematics" class="form-control" id="department" [(ngModel)]="model.department" name="department" #department="ngModel" clearPlaceholder>
       </div>
       <div class="form-group">
         <label for="section">Section <em class="text-muted font-weight-normal">Optional</em></label>
-        <input type="text" placeholder="001" class="form-control" id="section" [(ngModel)]="model.section" name="section" #section="ngModel">
+        <input type="text" placeholder="001 or A" class="form-control" id="section" [(ngModel)]="model.section" name="section" #section="ngModel" clearPlaceholder>
       </div>
       <div class="form-group">
         <label for="description"><span class="text-danger">*</span> Description</label>
-        <textarea placeholder="Describe your class here" class="form-control" rows="3" id="description" required [(ngModel)]="model.description" name="description" #description="ngModel"></textarea>
+        <textarea placeholder="Describe your class here" class="form-control" rows="3" id="description" required [(ngModel)]="model.description" name="description" #description="ngModel" clearPlaceholder></textarea>
         <span [hidden]="description.pristine || description.valid" class="text-danger">
           Class description is required.
         </span>

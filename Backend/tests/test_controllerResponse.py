@@ -46,5 +46,38 @@ class ControllerResponseTests(unittest.TestCase):
     response.addError("Error", "Error message")
     self.assertEqual(response.hasErrors(), True)
 
+  def test_prepForJsonDump(self):
+    testDict = {'one' : 1}
+    cleaned = self.response.prepForJsonDump(testDict)
+    self.assertEqual(cleaned, testDict)
+
+    testTuple = ('test', 'test')
+    cleaned = self.response.prepForJsonDump(testTuple)
+    self.assertTrue(isinstance(cleaned, list))
+
+    testSet = set(['test', 'test'])
+    cleaned = self.response.prepForJsonDump(testSet)
+    self.assertTrue(isinstance(cleaned, list))
+
+    testList = ['one', 2]
+    cleaned = self.response.prepForJsonDump(testList)
+    self.assertEqual(cleaned, testList)
+
+    testList.append(testTuple)
+    testList.append(testSet)
+    cleaned = self.response.prepForJsonDump(testList)
+    self.assertTrue(isinstance(cleaned, list))
+    self.assertTrue(len(cleaned), 4)
+    self.assertTrue(isinstance(cleaned[2], list))
+    self.assertTrue(isinstance(cleaned[3], list))
+
+    testDict['list'] = testList
+    cleaned = self.response.prepForJsonDump(testDict)
+    self.assertTrue(isinstance(cleaned, dict))
+    self.assertTrue(isinstance(cleaned['list'], list))
+    self.assertTrue(len(cleaned['list']), 4)
+    self.assertTrue(isinstance(cleaned['list'][2], list))
+    self.assertTrue(isinstance(cleaned['list'][3], list))
+
 if __name__ == '__main__':
   unittest.main()

@@ -6,7 +6,7 @@ import sys
 from os import path
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 
-from utils.ResponseCreation import ControllerResponse
+from utils.ResponseCreation import ControllerResponse, createResponse
 from mentii import user_ctrl as usr
 from mentii import class_ctrl as classCtrl
 from utils import db_utils as db
@@ -289,6 +289,10 @@ class UserControlDBTests(unittest.TestCase):
     classCtrl.createClass(dynamodb, classData, teacherEmail, teacherRole)
 
     res = classCtrl.getPublicClassList(dynamodb, joinEmail)
+
+    #confirm response can be created from classSet
+    flaskRes = createResponse(res, 200)
+
     classes = res.payload['classes']
     allClassCodes = set()
     for c in classes:

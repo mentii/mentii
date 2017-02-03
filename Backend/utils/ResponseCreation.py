@@ -25,16 +25,16 @@ class ControllerResponse:
     self.hasError = True
 
   def addToPayload(self, attribute, value):
-    value = self.prepForJsonification(value)
+    value = self.prepForJsonDump(value)
     self.payload[attribute] = value
 
-  def prepForJsonification(self, item):
+  def prepForJsonDump(self, item):
     isDict = None
     isList = None
     if isinstance(item, dict):
       isDict = True
     elif isinstance(item, set) or isinstance(item, tuple):
-      #sets and tuples cannot be jsonified, lists can
+      #sets cannot be jsonified, and we may need to retype items in a tuple
       item = list(item)
       isList = True
     elif isinstance(item, list):
@@ -45,7 +45,7 @@ class ControllerResponse:
       iterator = item if isDict else xrange(len(item))
       for i in iterator:
         #recursive call
-        item[i] = self.prepForJsonification(item[i])
+        item[i] = self.prepForJsonDump(item[i])
     return item
 
   def hasErrors(self):

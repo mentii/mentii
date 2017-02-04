@@ -105,7 +105,7 @@ def createClass(dynamoDBInstance, classData, email=None, userRole=None):
   return response
 
 def getClassCodesFromUser(dynamoDBInstance, email=None):
-  classCodes = {}
+  classCodes = set()
   if email is None:
     email = g.authenticatedUser['email']
   usersTable = dbUtils.getTable('users', dynamoDBInstance)

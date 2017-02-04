@@ -1,0 +1,30 @@
+<div class="row">
+  <div class="col-xs-12">
+    <h2>Change User Role</h2>
+    <p>
+      <strong>Note: </strong>User will not notice the change until the next time they sign in
+    </p>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12 col-sm-8 col-md-6">
+    <form #roleChangeForm="ngForm" autocomplete="off">
+      <div [hidden]="email.pristine || email.valid" class="text-danger">A valid email is required</div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" placeholder="user@example.com" class="form-control" id="email" required pattern="[^@]+@[^@]+\.[^@]+" [(ngModel)]="model.email" name="email" #email="ngModel" clearPlaceholder>
+      </div>
+      <div class="form-group">
+        <label for="role">Role</label>
+        <div class="dropdown">
+          <select class="btn btn-default dropdown-toggle form-control" type="button" id="roleDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" [(ngModel)]="model.role" name="role" #role="ngModel">
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" [disabled]="!roleChangeForm.form.valid" (click)="submit()" [ladda]='isLoading'><span class="ladda-label">Update Role</span></button>
+    </form>
+  </div>
+</div>

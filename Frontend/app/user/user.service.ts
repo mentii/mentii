@@ -11,6 +11,7 @@ import { MentiiConfig } from '../mentii.config'
 // Models
 import { RegistrationModel } from '../user/registration/registration.model';
 import { SigninModel } from '../user/signin/signin.model';
+import { RoleModel } from '../admin/role.model';
 
 @Injectable()
 export class UserService {
@@ -52,6 +53,41 @@ export class UserService {
     let options = new RequestOptions({ headers: headers });
     let body = {}
     return this.http.post(signinUrl, body, options)
+    .map((res:Response) => res)
+    .catch((error:any) => Observable.throw(error));
+  }
+
+  /**
+  * Service method to change a user's role in the database
+  * @param  {RoleModel} roleModel Model representation of the change user form. Contains an email and user role type.
+  * @return {Observable<any>}
+  */
+  changeUserRole(roleModel: RoleModel):Observable<any> {
+    let roleUrl = this.mentiiConfig.getRootUrl() + '/admin/changerole/';
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let options = new RequestOptions({ headers: headers });
+    let body = {
+      "email": roleModel.email,
+      "userRole": roleModel.role
+    }
+    return this.authHttp.post(roleUrl, body, options)
+    .map((res:Response) => res)
+    .catch((error:any) => Observable.throw(error));
+  }
+
+  /**
+  * Service method to add a class to a user and vice versa
+  * @param  {string} classCode code of class user will join
+  * @return {Observable<any>} data.json() will contain class title and code
+  */
+  joinClass(classCode) : Observable<any> {
+    let joinClassUrl = this.mentiiConfig.getRootUrl() + '/user/classes/';
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let options = new RequestOptions({ headers: headers })
+    let body = {
+      "code": classCode
+    }
+    return this.authHttp.post(joinClassUrl, body)
     .map((res:Response) => res)
     .catch((error:any) => Observable.throw(error));
   }

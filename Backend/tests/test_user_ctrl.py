@@ -1,23 +1,19 @@
 import unittest
-from flask import Flask, request, jsonify
-from flask_cors import CORS, cross_origin
-from flask_mail import Mail
-import ConfigParser as cp
-from utils.ResponseCreation import ControllerResponse
+from mock import MagicMock
 
 import boto3
-
 import sys
 from os import path
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 
+from utils.ResponseCreation import ControllerResponse, createResponse
 from mentii import user_ctrl as usr
+from mentii import class_ctrl as classCtrl
 from utils import db_utils as db
-from botocore.exceptions import ClientError
 
-
-app = Flask(__name__)
-mail = Mail(app)
+#Mailer is not used in testing because it depends on the flask application contex
+mail = None
+usr.sendEmail = MagicMock(return_value = None)
 
 #local DynamoDB
 dynamodb = boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
@@ -79,20 +75,32 @@ class UserControlTests(unittest.TestCase):
 class UserControlDBTests(unittest.TestCase):
   @classmethod
   def setUpClass(self):
-    settingsName = "table_settings.json"
-    mockData = "mock_data.json"
+    self.dynamodbClient = boto3.client('dynamodb', endpoint_url='http://localhost:8000')
 
+    #clean up local DB before tests
+    tables = self.dynamodbClient.list_tables()
+    tableNames = tables.get('TableNames')
     try:
-      table = db.createTableFromFile("./tests/"+settingsName, dynamodb)
-    except ClientError:
-      db.getTable('users', dynamodb).delete()
-      table = db.createTableFromFile("./tests/"+settingsName, dynamodb)
+      for name in tableNames:
+        dynamodb.Table(name).delete()
+    except:
+      print('Error deleting tableNames')
 
-    db.preloadDataFromFile("./tests/"+mockData, table)
+    classSettingsName = 'classes_settings.json'
+    classMockData = 'mock_classes.json'
+    userSettingsName = 'table_settings.json'
+    userMockData = 'mock_data.json'
+
+    userTable = db.createTableFromFile('./tests/'+userSettingsName, dynamodb)
+    classTable = db.createTableFromFile('./tests/'+classSettingsName, dynamodb)
+
+    db.preloadDataFromFile('./tests/'+userMockData, userTable)
+    db.preloadClassData('./tests/'+classMockData, classTable)
 
   @classmethod
   def tearDownClass(self):
-    table = db.getTable('users', dynamodb).delete()
+    db.getTable('classes', dynamodb).delete()
+    db.getTable('users', dynamodb).delete()
 
   def test_isEmailInSystem(self):
     print("Running isEmailInSystem Test")
@@ -115,11 +123,9 @@ class UserControlDBTests(unittest.TestCase):
     password = "password8"
 
     activationId = ""
-    try:
-      activationId = usr.addUserAndSendEmail(email,password,mail,dynamodb)
-    except RuntimeError:
-      print("Activation ID= " + activationId)
-      self.assertTrue(False)
+
+    activationId = usr.addUserAndSendEmail(email,password,mail,dynamodb)
+    self.assertIsNotNone(activationId)
 
     response = usr.isEmailInSystem(email, dynamodb)
     self.assertTrue(response)
@@ -164,6 +170,158 @@ class UserControlDBTests(unittest.TestCase):
 
     isUserActive = 'status' in response.payload.keys() and response.payload['status'] == 'Success'
     self.assertTrue(isUserActive)
+
+  def test_changeUserRole(self):
+    print('Running test_changeUserRole test')
+
+    usersTable = db.getTable('users', dynamodb)
+
+    request = {
+      'Key': {'email': 'test@mentii.me'},
+      'ProjectExpression' : 'userRole'
+    }
+
+    # check that user is a student
+    response = db.getItem(request, usersTable)
+    self.assertEqual(response['Item']['userRole'], 'student')
+
+    # change user role to teacher
+    jsonData = {
+      'email': 'test@mentii.me',
+      'userRole' : 'teacher'
+    }
+
+    usr.changeUserRole(jsonData, dynamodb, adminRole='admin')
+    response = db.getItem(request, usersTable)
+    self.assertEqual(response['Item']['userRole'], 'teacher')
+
+    # change user role to admin
+    jsonData = {
+      'email': 'test@mentii.me',
+      'userRole' : 'admin'
+    }
+
+    usr.changeUserRole(jsonData, dynamodb, adminRole='admin')
+    response = db.getItem(request, usersTable)
+    self.assertEqual(response['Item']['userRole'], 'admin')
+
+    # change user role back to student
+    jsonData = {
+      'email': 'test@mentii.me',
+      'userRole' : 'student'
+    }
+
+    usr.changeUserRole(jsonData, dynamodb, adminRole='admin')
+    response = db.getItem(request, usersTable)
+    self.assertEqual(response['Item']['userRole'], 'student')
+
+  def test_changeUserRole_fail(self):
+    print('Running test_changeUserRole_fail test')
+
+    usersTable = db.getTable('users', dynamodb)
+
+    request = {
+      'Key': {'email': 'test4@mentii.me'},
+      'ProjectExpression' : 'userRole'
+    }
+
+    response = db.getItem(request, usersTable)
+    self.assertEqual(response['Item']['userRole'], 'student')
+
+    badJsonData = {
+      'email': 'test4@mentii.me',
+      'userRole' : 'boss'
+    }
+
+    # change user role to not defined role
+    usr.changeUserRole(badJsonData, dynamodb, adminRole='admin')
+
+    #role remains same as it was before failed attempt
+    response = db.getItem(request, usersTable)
+    self.assertEqual(response['Item']['userRole'], 'student')
+
+    badJsonData = {
+      'email': 'test777@mentii.me',
+      'userRole' : 'student'
+    }
+
+    # try to change a user role of a non-existent user
+    response = usr.changeUserRole(badJsonData, dynamodb, adminRole='admin')
+    self.assertIsNone(response.payload.get('success'))
+
+  def test_getRole(self):
+    print('Running test_getRole test')
+
+    jsonData = {
+      'email': 'test3@mentii.me',
+      'userRole' : 'admin'
+    }
+
+    # change user since default returns student
+    usr.changeUserRole(jsonData, dynamodb, adminRole='admin')
+    userRole = usr.getRole('test3@mentii.me', dynamodb)
+    self.assertEqual(userRole, 'admin')
+
+  def test_getRole_fail(self):
+    print('Running test_getRole_fail test case')
+
+    # get non-existent user
+    userRole = usr.getRole('test85@mentii.me', dynamodb)
+    self.assertIsNone(userRole)
+
+  def test_joinClass(self):
+    print 'Running test_joinClass'
+
+    joinEmail = 'join@mentii.me'
+    password = 'password'
+    activationId = usr.addUserAndSendEmail(joinEmail,password,mail,dynamodb)
+    usr.activate(activationId, dynamodb)
+
+    teacherEmail = 'teacher@mentii.me'
+    activationId = usr.addUserAndSendEmail(teacherEmail,password,mail,dynamodb)
+    usr.activate(activationId, dynamodb)
+
+    classData = {
+      'title' : 'title',
+      'description' : 'desc'
+    }
+    teacherRole = 'teacher'
+    classCtrl.createClass(dynamodb, classData, teacherEmail, teacherRole)
+
+    res = classCtrl.getPublicClassList(dynamodb, joinEmail)
+
+    #confirm response can be created from classSet
+    flaskRes = createResponse(res, 200)
+
+    classes = res.payload['classes']
+    allClassCodes = set()
+    for c in classes:
+      code = c['code']
+      allClassCodes.add(code)
+      joinData = { 'code' : code }
+      res = usr.joinClass(joinData, dynamodb, joinEmail)
+      self.assertFalse(res.hasErrors())
+      self.assertEqual(res.payload['code'], code)
+
+    joined = classCtrl.getClassCodesFromUser(dynamodb, joinEmail)
+    missing = joined - allClassCodes
+    #confirm empty set, meaning that all classes have been joined
+    self.assertFalse(missing)
+
+    joinEmail2 = 'join2@mentii.me'
+    password = 'password'
+    activationId = usr.addUserAndSendEmail(joinEmail2,password,mail,dynamodb)
+    usr.activate(activationId, dynamodb)
+
+    badJoinData = { 'bad' : 'data' }
+    for c in classes:
+      code = c['code']
+      res = usr.joinClass(badJoinData, dynamodb, joinEmail2)
+      self.assertTrue(res.hasErrors())
+
+    joined = classCtrl.getClassCodesFromUser(dynamodb, joinEmail2)
+    #confirm none joined
+    self.assertFalse(joined)
 
 if __name__ == '__main__':
   if __package__ is None:

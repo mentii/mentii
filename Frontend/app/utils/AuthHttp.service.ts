@@ -9,6 +9,7 @@ import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 
 
 const AUTH_TOKEN_NAME = "auth_token";
+const ROLE_LOCAL_STORAGE_KEY = 'role';
 
 /**
 * Used in place of the Http Service so that authentication headers
@@ -21,6 +22,9 @@ export class AuthHttp extends Http {
 
   private _isAuthenticated = new BehaviorSubject<boolean>(false);
   isAuthenticated$ = this._isAuthenticated.asObservable();
+
+  private _role = new BehaviorSubject<string>('student');
+  role$ = this._role.asObservable();
 
   constructor (backend: XHRBackend, options: RequestOptions, private router: Router, public toastr: ToastsManager ) {
     super(backend, options);
@@ -40,9 +44,13 @@ export class AuthHttp extends Http {
       // Probably won't be used but in place in case we use query strings
       url.headers.set('Authorization', authHeaderString);
     }
-    return super.request(url, options).catch(this.catchAuthError(this));
+    let response = super.request(url, options).catch(this.catchAuthError(this));
+    return response;
   }
 
+  /**
+   * Catch all auth errors for requests
+   */
   private catchAuthError (self: AuthHttp) {
     return (res: Response) => {
       if (res.status === 401) {
@@ -71,8 +79,8 @@ export class AuthHttp extends Http {
   * Service method to save the auth token
   * @param {String} token
   */
+
   saveAuthToken(token) {
-    // TODO: Should we store the auth token somewhere else?
     localStorage.setItem(AUTH_TOKEN_NAME, token);
   }
 
@@ -85,11 +93,37 @@ export class AuthHttp extends Http {
   }
 
   /**
+  * Service method to load the user's role
+  * @return {String} role
+  */
+  loadRole() {
+    return localStorage.getItem(ROLE_LOCAL_STORAGE_KEY);
+  }
+
+  /**
+  * Service method to remove the user's role
+  */
+  removeRole() {
+    localStorage.removeItem(ROLE_LOCAL_STORAGE_KEY);
+  }
+
+  /**
+  * Service method to save the user's role
+  * @param {String} role
+  */
+  saveRole(role) {
+    localStorage.setItem(ROLE_LOCAL_STORAGE_KEY, role);
+    this.propagateRole();
+  }
+
+  /**
    * Removes auth token from local storage
    * Updates the isAuthenticated flag throughout app to false
    */
   logout() {
     this.removeAuthToken();
+    localStorage.removeItem('role');
+    this._role.next('');
     this._isAuthenticated.next(false);
   }
 
@@ -107,7 +141,7 @@ export class AuthHttp extends Http {
    * Checks the current authentication status and
    * updates the isAuthenticated flag accordingly
    */
-  checkAuthStatus() {
+  propagateAuthStatus() {
     let authStatus = false; // default to false. Would rather reject an authenticated user than allow anyone
     if (this.loadAuthToken() != null){
       this._isAuthenticated.next(true);
@@ -117,5 +151,15 @@ export class AuthHttp extends Http {
       authStatus = false;
     }
     return authStatus;
+  }
+
+  /**
+   * Checks the current user role and
+   * updates the _role flag accordingly
+   */
+  propagateRole() {
+    let role = this.loadRole();
+    this._role.next(role);
+    return role;
   }
 }

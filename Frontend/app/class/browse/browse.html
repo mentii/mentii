@@ -19,14 +19,14 @@
       <div class="col-xs-12">
         <a [routerLink]="['/class/', class.code]">
           <h3>
-            {{class.title}}<small>{{class.subtitle}}</small>
+            {{class.title}}<small>{{class.department}}</small>
           </h3>
         </a>
         <p>
           <span *ngIf="class.section"><em>Section: {{class.section}}</em><br/></span>
           {{class.description}}
         </p>
-        <button class="btn btn-sm btn-primary" (click)="joinClass()">
+        <button class="btn btn-sm btn-primary" (click)="joinClass(class.code)">
           Join {{class.title}}
         </button>
       </div>

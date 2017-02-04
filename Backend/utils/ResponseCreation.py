@@ -1,7 +1,6 @@
 import json
-from flask import Response
+from flask import Response, g
 import utils.MentiiLogging as MentiiLogging
-
 
 class ControllerResponse:
   '''
@@ -13,6 +12,9 @@ class ControllerResponse:
     self.errors = []
     self.payload = {}
     self.hasError = False
+    self.user = {}
+    if g:
+      self.user = g.get('authenticatedUser', {})
 
   def addError(self, title, message):
     MentiiLogging.getLogger().error('%s : %s', title, message)
@@ -21,13 +23,34 @@ class ControllerResponse:
     self.hasError = True
 
   def addToPayload(self, attribute, value):
+    value = self.prepForJsonDump(value)
     self.payload[attribute] = value
+
+  def prepForJsonDump(self, item):
+    isDict = None
+    isList = None
+    if isinstance(item, dict):
+      isDict = True
+    elif isinstance(item, set) or isinstance(item, tuple):
+      #sets cannot be jsonified, and we may need to retype items in a tuple
+      item = list(item)
+      isList = True
+    elif isinstance(item, list):
+      isList = True
+    #lists or dicts can be jsonified, contents are handled recursively
+    if isDict or isList :
+      #iterator though dict or list
+      iterator = item if isDict else xrange(len(item))
+      for i in iterator:
+        #recursive call
+        item[i] = self.prepForJsonDump(item[i])
+    return item
 
   def hasErrors(self):
     return self.hasError
 
   def getResponseString(self):
-    responseDict = {"payload": self.payload, "errors": self.errors}
+    responseDict = {'user': self.user, 'payload': self.payload, 'errors': self.errors}
     return json.dumps(responseDict)
 
 def createResponse(controllerResponse, statusCode):

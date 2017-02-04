@@ -46,6 +46,14 @@ h6 {
   color: rgb(165, 238, 197);
 }
 
+.text-muted {
+  color: #666;
+}
+
+.font-weight-normal {
+  font-weight: normal;
+}
+
 .welcome {
   margin-top: 10%;
   text-align: center;
@@ -58,4 +66,22 @@ h6 {
 .empty-state {
   margin-top: 10%;
   margin-bottom: 10%;
+}
+
+.logout:hover {
+  color: #a94442 !important;
+}
+
+.tab-instruction {
+  padding-top: 15px;
+  padding-bottom: 30px;
+}
+
+@media (max-width:767px){
+  .divider {
+        height: 1px;
+        margin: 9px 0;
+        overflow: hidden;
+        background-color: #e5e5e5;
+    }
 }

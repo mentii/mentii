@@ -67,7 +67,7 @@ class ControllerResponseTests(unittest.TestCase):
     testList.append(testSet)
     cleaned = self.response.prepForJsonDump(testList)
     self.assertTrue(isinstance(cleaned, list))
-    self.assertTrue(len(cleaned), 4)
+    self.assertEqual(len(cleaned), 4)
     self.assertTrue(isinstance(cleaned[2], list))
     self.assertTrue(isinstance(cleaned[3], list))
 
@@ -75,7 +75,7 @@ class ControllerResponseTests(unittest.TestCase):
     cleaned = self.response.prepForJsonDump(testDict)
     self.assertTrue(isinstance(cleaned, dict))
     self.assertTrue(isinstance(cleaned['list'], list))
-    self.assertTrue(len(cleaned['list']), 4)
+    self.assertEqual(len(cleaned['list']), 4)
     self.assertTrue(isinstance(cleaned['list'][2], list))
     self.assertTrue(isinstance(cleaned['list'][3], list))
 

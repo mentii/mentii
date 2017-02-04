@@ -54,7 +54,7 @@ def checkClassDataValid(classData):
 def createClass(dynamoDBInstance, classData, email=None, userRole=None):
   response = ControllerResponse()
 
-  #g will be not be avliable durring testing,
+  #g will be not be available during testing
   #and email and userRole will need to be passed to the function
   if g:
     email = g.authenticatedUser['email']
@@ -105,7 +105,7 @@ def createClass(dynamoDBInstance, classData, email=None, userRole=None):
   return response
 
 def getClassCodesFromUser(dynamoDBInstance, email=None):
-  classCodes = []
+  classCodes = {}
   if email is None:
     email = g.authenticatedUser['email']
   usersTable = dbUtils.getTable('users', dynamoDBInstance)

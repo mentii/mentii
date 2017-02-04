@@ -305,7 +305,7 @@ class UserControlDBTests(unittest.TestCase):
 
     joined = classCtrl.getClassCodesFromUser(dynamodb, joinEmail)
     missing = joined - allClassCodes
-    #confirm none missing
+    #confirm the empty set, meing that all classes have been joined
     self.assertFalse(missing)
 
     joinEmail2 = 'join2@mentii.me'

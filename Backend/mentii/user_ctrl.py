@@ -189,7 +189,7 @@ def getUserByEmail(email, dbInstance):
 def changeUserRole(jsonData, dbInstance, adminRole=None):
   response = ControllerResponse()
 
-  #g will be not be avliable durring testing
+  #g will be not be available during testing
   #and adminRole will need to be passed to the function
   if g :
     adminRole = g.authenticatedUser['userRole']
@@ -254,48 +254,61 @@ def getRole(userEmail, dynamoDBInstance):
 
 def joinClass(jsonData, dynamoDBInstance, email=None):
   response = ControllerResponse()
-
-  #g will be not be avliable durring testing
+  #g will be not be available during testing
   #and email will need to be passed to the function
   if g :
     email = g.authenticatedUser['email']
   if 'code' not in jsonData.keys() or not jsonData['code']:
     response.addError('Key Missing Error', 'class code missing from data')
   else:
-    classTable = dbUtils.getTable('classes', dynamoDBInstance)
-    userTable = dbUtils.getTable('users', dynamoDBInstance)
-    if classTable is None or userTable is None:
-      response.addError('joinClass call Failed', 'Unable to locate necessary table(s).')
+    classCode = jsonData['code']
+    updatedClassCodes = addClassCodeToStudent(email, classCode, dynamoDBInstance)
+    if not updatedClassCodes:
+      response.addError('joinClass call Failed', 'Unable to update user data')
     else:
-      classCode = jsonData['code']
-      codeSet = set([classCode])
-      addClassToUser = {
-        'Key': {'email': email},
-        'UpdateExpression': 'ADD classCodes :i',
-        'ExpressionAttributeValues': { ':i': codeSet },
-        'ReturnValues' : 'UPDATED_NEW'
-      }
-      res = dbUtils.updateItem(addClassToUser, userTable)
-      if (  not res or
-            'Attributes' not in res or
-            'classCodes' not in res['Attributes'] or
-            classCode not in res['Attributes']['classCodes'] ):
-        response.addError('joinClass call Failed', 'Unable to update user data')
+      updatedClass = addStudentToClass(classCode, email, dynamoDBInstance)
+      if not updatedClass:
+        response.addError('joinClass call Failed', 'Unable to update class data')
       else:
-        emailSet = set([email])
-        addUserToClass = {
-          'Key': {'code': classCode},
-          'UpdateExpression': 'ADD students :i',
-          'ExpressionAttributeValues': { ':i': emailSet },
-          'ReturnValues' : 'ALL_NEW'
-        }
-        res = dbUtils.updateItem(addUserToClass, classTable)
-        if (  not res or
-              'Attributes' not in res or
-              'students' not in res['Attributes'] or
-              email not in res['Attributes']['students'] ):
-          response.addError('joinClass call Failed', 'Unable to update class data')
-        else:
-          response.addToPayload('title', res['Attributes']['title'])
-          response.addToPayload('code', res['Attributes']['code'])
+        response.addToPayload('title', updatedClass['title'])
+        response.addToPayload('code', updatedClass['code'])
   return response
+
+def addClassCodeToStudent(email, classCode, dynamoDBInstance):
+  userTable = dbUtils.getTable('users', dynamoDBInstance)
+  if userTable:
+    codeSet = set([classCode])
+    addClassToUser = {
+      'Key': {'email': email},
+      'UpdateExpression': 'ADD classCodes :i',
+      'ExpressionAttributeValues': { ':i': codeSet },
+      'ReturnValues' : 'UPDATED_NEW'
+    }
+    res = dbUtils.updateItem(addClassToUser, userTable)
+    if (  res and
+          'Attributes' in res and
+          'classCodes' in res['Attributes'] and
+          classCode in res['Attributes']['classCodes']
+    ):
+      return res['Attributes']['classCodes']
+  return None
+
+def addStudentToClass(classCode, email, dynamoDBInstance):
+  classTable = dbUtils.getTable('classes', dynamoDBInstance)
+  if classTable:
+    emailSet = set([email])
+    addUserToClass = {
+      'Key': {'code': classCode},
+      'UpdateExpression': 'ADD students :i',
+      'ExpressionAttributeValues': { ':i': emailSet },
+      'ReturnValues' : 'ALL_NEW'
+    }
+    res = dbUtils.updateItem(addUserToClass, classTable)
+    if (  res and
+          'Attributes' in res and
+          'students' in res['Attributes'] and
+          email in res['Attributes']['students'] and
+          'title' in res['Attributes']
+    ):
+      return res['Attributes']
+  return None

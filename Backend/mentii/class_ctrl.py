@@ -4,6 +4,7 @@ from boto3.dynamodb.conditions import Key, Attr
 from utils.ResponseCreation import ControllerResponse
 from utils import db_utils as dbUtils
 from flask import g
+import utils.MentiiLogging as MentiiLogging
 
 def getActiveClassList(dynamoDBInstance, email=None):
   response = ControllerResponse()
@@ -53,7 +54,7 @@ def checkClassDataValid(classData):
 def createClass(dynamoDBInstance, classData, email=None, userRole=None):
   response = ControllerResponse()
 
-  #g will be not be avliable durring testing,
+  #g will be not be available during testing
   #and email and userRole will need to be passed to the function
   if g:
     email = g.authenticatedUser['email']
@@ -104,7 +105,7 @@ def createClass(dynamoDBInstance, classData, email=None, userRole=None):
   return response
 
 def getClassCodesFromUser(dynamoDBInstance, email=None):
-  classCodes = []
+  classCodes = set()
   if email is None:
     email = g.authenticatedUser['email']
   usersTable = dbUtils.getTable('users', dynamoDBInstance)
@@ -116,7 +117,9 @@ def getClassCodesFromUser(dynamoDBInstance, email=None):
     request = {"Key" : {"email": email}, "ProjectionExpression": "classCodes"}
     res = dbUtils.getItem(request, usersTable)
     #Get the class codes for the user.
-    if res is not None and 'Item' in res:
+    if res is None or 'Item' not in res or 'classCodes' not in res['Item']:
+      MentiiLogging.getLogger().error('Unable to get user data in getClassCodesFromUser')
+    else:
       classCodes = res['Item']['classCodes']
   return classCodes
 

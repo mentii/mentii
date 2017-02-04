@@ -26,7 +26,7 @@
           <span *ngIf="class.section"><em>Section: {{class.section}}</em><br/></span>
           {{class.description}}
         </p>
-        <button class="btn btn-sm btn-primary" (click)="joinClass()">
+        <button class="btn btn-sm btn-primary" (click)="joinClass(class.code)">
           Join {{class.title}}
         </button>
       </div>

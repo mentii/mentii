@@ -27,6 +27,20 @@ def getActiveClassList(dynamoDBInstance, email=None):
     response.addToPayload('classes', classes)
   return response
 
+def getClass(classCode, dynamoDBInstance):
+  response = ControllerResponse()
+  classTable = dbUtils.getTable('classes', dynamoDBInstance)
+  if classTable is None:
+    response.addError('Get Class Failed', 'Unable to access class data')
+  else:
+    request = {'Key': {'code': code}}
+    res = dbUtils.getItem(request, classTable)
+    if res is None or 'Item' not in res:
+      response.addError('Get Class Failed', 'Unable to load class data')
+    else:
+      response.addToPayload('class', res)
+  return response;
+
 def checkClassDataValid(classData):
   return 'title' in classData.keys() and 'description' in classData.keys()
 

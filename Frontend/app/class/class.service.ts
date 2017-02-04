@@ -34,7 +34,7 @@ export class ClassService {
     .catch((error:any) => Observable.throw(error));
   }
 
-  getClassDetail(classCode:string):Observable<any> {
+  getClass(classCode:String):Observable<any> {
     let getClassDetailUrl = this.mentiiConfig.getRootUrl() + '/classes/' + classCode;
     let body = {}
     return this.authHttp.get(getClassDetailUrl, body)

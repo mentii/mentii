@@ -24,7 +24,7 @@ module.exports = function(config) {
     },
 
     files: [
-      'node_modules/systemjs/dist/system-polyfills.src.js',
+      'node_modules/promise-polyfill/promise.js',
       // System.js for module loading
       'node_modules/systemjs/dist/system.src.js',
 

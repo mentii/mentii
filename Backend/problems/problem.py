@@ -1,87 +1,44 @@
 #!/usr/bin/env python
+import subprocess
+import os
 
-class problem:
+JAVASCRIPT_FIRSTLINE="const mathsteps = require('mathsteps');\n"
+JAVASCRIPT_PROBLEMLINE="const steps = mathsteps.solveEquation('{0}')\n";
+JAVASCRIPT_PRINTLINE="steps.forEach(step => {console.log(step.newEquation.print()); });\n"
+
+JAVASCRIPT_FILEPATH='/home/ryan/workspace/mathstepsStuff/mentii.js'
+JAVASCRIPT_OUTPUTPATH='mentii_output.txt'
+
+'''
+NOTE: 
+
+  It looks like the mathsteps needs to be installed where ever the 
+  javascript file is executed. This means we can have a special 
+  place on the server that has mathsteps and we just write and run the
+  script there. 
+'''
+
+ 
+def _writeProblemFile(problem, filename=JAVASCRIPT_FILEPATH):
+  with open(filename, 'w') as f:
+    f.write(JAVASCRIPT_FIRSTLINE)
+    f.write(JAVASCRIPT_PROBLEMLINE.format(problem))
+    f.write(JAVASCRIPT_PRINTLINE)
+
+
+def getStepsForProblem(problem):
+  _writeProblemFile(problem)
+  with open(JAVASCRIPT_OUTPUTPATH, 'w') as f:
+    subprocess.call(['nodejs', JAVASCRIPT_FILEPATH], stdout=f)
   
-  def __init__(self):
-    '''
-    Problem representation. 
+  problemSteps = []
+  with open(JAVASCRIPT_OUTPUTPATH, 'r') as f:
+    for line in f:
+      problemSteps.append(line)
 
-    Problems consist of a right hand side 
-    and a left hand side. Each side can have
-    operands and operators. There must be 
-    at least one operand on each side of 
-    a problem.
-    
-    Operands will be represented by string numbers
-    
-    Operators will be represented by string characters.
-      Currently supported: "+" "-"
+  #Clean up the tmp files
+  os.remove(JAVASCRIPT_FILEPATH)
+  os.remove(JAVASCRIPT_OUTPUTPATH)
 
-    Variables are represented by string characters
-    '''
-    self.rhs = []
-    self.lhs = []
-
-  def setEquation(self, lhs, rhs):
-    self.lhs = lhs
-    self.rhs = rhs
-
-  def findSteps(self):
-    '''
-    Find steps that we can take to solve this equation. 
-
-    The idea is to return a list that we can then choose 
-    a step from and then apply that operation to both sides. 
-
-    This requires that the equation always has 'x' in 
-    one of the sides and that 'x' appears as the first
-    thing in that equation. 
-
-    Test:
-    >>> foo = problem()
-    >>> foo.setEquation(['x', '+', '2', '-', '3'], ['4'])
-    >>> foo.findSteps()
-    ['-2', '+3']
-    '''
-    steps = []
-    varSide = None
-    otherSide = None
-    if len(self.rhs) == 0 or len(self.lhs) == 0:
-      #Error, an equation needs something on both sides
-      return steps
-
-    if 'x' in self.rhs:
-      varSide = self.rhs
-      otherSide = self.lhs
-    else:
-      varSide = self.lhs
-      otherSide = self.rhs
-      
-    operator = None
-    operand = None
-    for val in varSide:
-      if val == 'x':
-        continue
-      elif val == '+':
-        operator = '+'
-      elif val == '-':
-        operator = '-'
-      elif val.isdigit():
-        operand = val 
-        if operator is not None:
-          if operator == '+':
-            steps.append('-'+operand)
-            operand = None
-          elif operator == '-':
-            steps.append('+'+operand)
-            operand = None
-
-    return steps
-
-
-
-
-
-
-
+  return problemSteps
 

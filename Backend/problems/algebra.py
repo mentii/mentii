@@ -4,9 +4,9 @@ import os
 
 JAVASCRIPT_FIRSTLINE="const mathsteps = require('mathsteps');\n"
 JAVASCRIPT_PROBLEMLINE="const steps = mathsteps.solveEquation('{0}')\n";
-JAVASCRIPT_PRINTLINE="steps.forEach(step => {console.log(step.newEquation.print()); });\n"
+JAVASCRIPT_PRINTLINE="steps.forEach(step => { if(step.substeps.length > 1){ step.substeps.forEach(subStep => console.log(subStep.newEquation.print())) }\n console.log(step.newEquation.print()); });\n"
 
-JAVASCRIPT_FILEPATH='/home/ryan/workspace/mathstepsStuff/mentii.js'
+JAVASCRIPT_FILEPATH='mentii.js'
 JAVASCRIPT_OUTPUTPATH='mentii_output.txt'
 
 '''
@@ -31,10 +31,12 @@ def getStepsForProblem(problem):
   with open(JAVASCRIPT_OUTPUTPATH, 'w') as f:
     subprocess.call(['nodejs', JAVASCRIPT_FILEPATH], stdout=f)
   
-  problemSteps = []
+  problemSteps = [problem]
   with open(JAVASCRIPT_OUTPUTPATH, 'r') as f:
     for line in f:
-      problemSteps.append(line)
+      cleanLine = line.strip()
+      if cleanLine != problemSteps[-1]:
+        problemSteps.append(cleanLine)
 
   #Clean up the tmp files
   os.remove(JAVASCRIPT_FILEPATH)

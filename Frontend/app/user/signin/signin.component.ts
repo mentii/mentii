@@ -32,7 +32,7 @@ export class SigninComponent {
   }
 
   handleError(err) {
-    this.toastr.error("Unrecgonized email or password.");
+    this.toastr.error("Unrecognized email or password.");
     this.isLoading = false;
   }
 

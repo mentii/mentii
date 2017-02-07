@@ -96,7 +96,6 @@ class ClassCtrlDBTests(unittest.TestCase):
 
     data = {'Key': {'email': email}}
     teacher = db.getItem(data, usersTable)
-    print(teacher)
     self.assertTrue('Item' in teacher.keys())
     self.assertTrue('teaching' in teacher['Item'])
 
@@ -106,7 +105,6 @@ class ClassCtrlDBTests(unittest.TestCase):
     classCode = str(teachingList[0])
     data = {'Key': {'code': classCode}}
     classItem = db.getItem(data, classesTable)
-    print(classItem)
     self.assertTrue('Item' in classItem.keys())
     self.assertEqual(classItem['Item']['title'], 'PSY')
     self.assertEqual(classItem['Item']['department'], 'science')

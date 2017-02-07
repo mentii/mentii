@@ -1,5 +1,6 @@
 import boto3
 import uuid
+import utils.MentiiLogging as MentiiLogging
 from boto3.dynamodb.conditions import Key, Attr
 from utils.ResponseCreation import ControllerResponse
 from utils import db_utils as dbUtils
@@ -11,8 +12,7 @@ def getActiveClassList(dynamoDBInstance, email=None):
   classTable = dbUtils.getTable('classes', dynamoDBInstance)
 
   if usersTable is None or classTable is None:
-    response.addError(  'Get Active Class List Failed',
-                        'Unable to access users and/or classes')
+    response.addError('Get Active Class List Failed', 'Unable to access users and/or classes')
   else :
     if email is None:
       email = g.authenticatedUser['email']

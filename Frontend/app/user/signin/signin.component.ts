@@ -1,10 +1,10 @@
-import { AuthHttp } from '../../utils/AuthHttp.service';
 import { Component } from '@angular/core';
-import { MentiiConfig } from '../../mentii.config';
 import { Router } from '@angular/router';
 import { SigninModel } from './signin.model';
-import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { MentiiConfig } from '../../mentii.config';
 import { UserService } from '../user.service';
+import { AuthHttp } from '../../utils/AuthHttp.service';
+import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 
 @Component({
   moduleId: module.id,
@@ -27,12 +27,12 @@ export class SigninComponent {
       this.authHttpService.saveRole(data.user.userRole);
       this.router.navigateByUrl('/dashboard');
     } else {
-      alert("Success but no token. False authentication.");
+      alert("Success but no token. False authentication");
     }
   }
 
   handleError(err) {
-    this.toastr.error("Unrecognized email or password.");
+    this.toastr.error("Sign in failed");
     this.isLoading = false;
   }
 

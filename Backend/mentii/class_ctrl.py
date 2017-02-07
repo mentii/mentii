@@ -5,6 +5,7 @@ from boto3.dynamodb.conditions import Key, Attr
 from utils.ResponseCreation import ControllerResponse
 from utils import db_utils as dbUtils
 from flask import g
+import utils.MentiiLogging as MentiiLogging
 
 def getActiveClassList(dynamoDBInstance, email=None):
   response = ControllerResponse()
@@ -27,13 +28,33 @@ def getActiveClassList(dynamoDBInstance, email=None):
     response.addToPayload('classes', classes)
   return response
 
+def getTaughtClassList(dynamoDBInstance, email=None):
+  response = ControllerResponse()
+  if email is None:
+    email = g.authenticatedUser['email']
+  usersTable = dbUtils.getTable('users', dynamoDBInstance)
+  classTable = dbUtils.getTable('classes', dynamoDBInstance)
+  if usersTable is None or classTable is None:
+    response.addError(  'Get Taught Class List Failed','Unable to access users and/or classes')
+  else:
+    classes = []
+    classCodes = getTaughtClassCodesFromUser(dynamoDBInstance, email)
+    if classCodes is not None:
+      for code in classCodes:
+        request = {'Key': {'code': code}}
+        res = dbUtils.getItem(request, classTable)
+        if res is not None and 'Item' in res:
+          classes.append(res['Item'])
+    response.addToPayload('classes', classes)
+  return response
+
 def checkClassDataValid(classData):
   return 'title' in classData.keys() and 'description' in classData.keys()
 
 def createClass(dynamoDBInstance, classData, email=None, userRole=None):
   response = ControllerResponse()
 
-  #g will be not be avliable durring testing,
+  #g will be not be available during testing
   #and email and userRole will need to be passed to the function
   if g:
     email = g.authenticatedUser['email']
@@ -84,7 +105,7 @@ def createClass(dynamoDBInstance, classData, email=None, userRole=None):
   return response
 
 def getClassCodesFromUser(dynamoDBInstance, email=None):
-  classCodes = []
+  classCodes = set()
   if email is None:
     email = g.authenticatedUser['email']
   usersTable = dbUtils.getTable('users', dynamoDBInstance)
@@ -96,8 +117,27 @@ def getClassCodesFromUser(dynamoDBInstance, email=None):
     request = {"Key" : {"email": email}, "ProjectionExpression": "classCodes"}
     res = dbUtils.getItem(request, usersTable)
     #Get the class codes for the user.
-    if res is not None and 'Item' in res:
+    if res is None or 'Item' not in res or 'classCodes' not in res['Item']:
+      MentiiLogging.getLogger().error('Unable to get user data in getClassCodesFromUser')
+    else:
       classCodes = res['Item']['classCodes']
+  return classCodes
+
+def getTaughtClassCodesFromUser(dynamoDBInstance, email=None):
+  classCodes = None
+  if email is None:
+    email = g.authenticatedUser['email']
+  usersTable = dbUtils.getTable('users', dynamoDBInstance)
+  if usersTable is None:
+    MentiiLogging.getLogger().error('Unable to get users table in getTaughtClassCodesFromUser')
+  else:
+    #An active class list is the list of class codes that
+    # a user has in the user table.
+    request = {'Key' : {'email': email}, 'ProjectionExpression': 'teaching'}
+    res = dbUtils.getItem(request, usersTable)
+    #Get the class codes for the user.
+    if res is not None and 'Item' in res:
+      classCodes = res['Item'].get('teaching', [])
   return classCodes
 
 def getPublicClassList(dynamodb, email=None):

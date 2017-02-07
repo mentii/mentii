@@ -71,3 +71,17 @@ h6 {
 .logout:hover {
   color: #a94442 !important;
 }
+
+.tab-instruction {
+  padding-top: 15px;
+  padding-bottom: 30px;
+}
+
+@media (max-width:767px){
+  .divider {
+        height: 1px;
+        margin: 9px 0;
+        overflow: hidden;
+        background-color: #e5e5e5;
+    }
+}

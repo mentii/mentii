@@ -1,6 +1,5 @@
 import boto3
 import uuid
-import utils.MentiiLogging as MentiiLogging
 from boto3.dynamodb.conditions import Key, Attr
 from utils.ResponseCreation import ControllerResponse
 from utils import db_utils as dbUtils

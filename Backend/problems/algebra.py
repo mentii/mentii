@@ -18,8 +18,13 @@ NOTE:
   script there. 
 '''
 
+def setMathstepsLocation(path):
+  global JAVASCRIPT_FILEPATH
+  #Set a global variable for the javacript path... 
+  JAVASCRIPT_FILEPATH = path + "/mentii.js"
+
  
-def _writeProblemFile(problem, filename=JAVASCRIPT_FILEPATH):
+def _writeProblemFile(problem, filename):
   with open(filename, 'w') as f:
     f.write(JAVASCRIPT_FIRSTLINE)
     f.write(JAVASCRIPT_PROBLEMLINE.format(problem))
@@ -27,7 +32,7 @@ def _writeProblemFile(problem, filename=JAVASCRIPT_FILEPATH):
 
 
 def getStepsForProblem(problem):
-  _writeProblemFile(problem)
+  _writeProblemFile(problem, JAVASCRIPT_FILEPATH)
   with open(JAVASCRIPT_OUTPUTPATH, 'w') as f:
     subprocess.call(['nodejs', JAVASCRIPT_FILEPATH], stdout=f)
   

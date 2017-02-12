@@ -1,15 +1,23 @@
 import unittest
 import sys
 from os import path
+import ConfigParser as cp
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 from problems import mathstepsWrapper
 
+
+#Configuration setup
+configPath = "/config/prodConfig.ini"
+parser = cp.ConfigParser()
+parser.read(configPath)
+
+mathstepsPath = parser.get("MathstepsLocation", 'path')
 
 class MentiiMathstepsTests(unittest.TestCase):
 
   @classmethod
   def setUpClass(self):
-    mathstepsWrapper.setMathstepsLocation("/home/ryan/mathsteps/")
+    mathstepsWrapper.setMathstepsLocation(mathstepsPath)
 
   def test_getStepsForProblem(self):
     problem1 = "5x=10"

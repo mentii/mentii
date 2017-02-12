@@ -7,3 +7,5 @@ isProd: False
 appSecret: askjonnyboy
 [MentiiData]
 path: /path/path/mentii
+[MathstepsLocation]
+path: /path/to/mathsteps

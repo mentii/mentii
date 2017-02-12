@@ -1,29 +1,18 @@
 ---
 engines:
-  csslint:
-    enabled: true
   duplication:
     enabled: true
     config:
       languages:
-      - javascript
       - python
-  eslint:
-    enabled: true
   fixme:
     enabled: true
   radon:
     enabled: true
 ratings:
   paths:
-  - "**.css"
-  - "**.ts"
-  - "**.js"
   - "**.py"
 exclude_paths:
   - "Backend/tests/**/*"
   - "Backend/config/**/*"
-  - "Frontend/vendor/**/*"
-  - "Frontend/testing/**/*"
-  - "Frontend/node_modules/**/*"
-  - "Frontend/favicon/**/*"
+  - "Frontend/**/*"

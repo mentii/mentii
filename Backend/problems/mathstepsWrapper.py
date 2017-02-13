@@ -34,7 +34,7 @@ def _writeProblemFile(problem, filename):
 def getStepsForProblem(problem):
   _writeProblemFile(problem, JAVASCRIPT_FILEPATH)
   with open(JAVASCRIPT_OUTPUTPATH, 'w') as f:
-    subprocess.call(['nodejs', JAVASCRIPT_FILEPATH], stdout=f)
+    subprocess.call(['node', JAVASCRIPT_FILEPATH], stdout=f)
   
   problemSteps = [problem]
   with open(JAVASCRIPT_OUTPUTPATH, 'r') as f:

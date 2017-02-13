@@ -33,12 +33,12 @@ def getClass(classCode, dynamoDBInstance):
   if classTable is None:
     response.addError('Get Class Failed', 'Unable to access class data')
   else:
-    request = {'Key': {'code': code}}
+    request = {'Key': {'code': classCode}}
     res = dbUtils.getItem(request, classTable)
     if res is None or 'Item' not in res:
       response.addError('Get Class Failed', 'Unable to load class data')
     else:
-      response.addToPayload('class', res)
+      response.addToPayload('class', res['Item'])
   return response;
 
 def checkClassDataValid(classData):

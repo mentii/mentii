@@ -201,7 +201,7 @@ def public_class_list():
     status = 400
   return ResponseCreation.createResponse(res, status)
 
-@app.route('/classes/<classCode>', + classCode methods=['GET', 'OPTIONS'])
+@app.route('/classes/<classCode>', methods=['GET', 'OPTIONS'])
 @auth.login_required
 def getClass(classCode):
   status = 200

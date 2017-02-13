@@ -1,7 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { ClassService } from '../class.service';
 import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { ClassModel } from '../class.model';
 
 @Component({
   moduleId: module.id,
@@ -10,18 +12,18 @@ import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 })
 
 export class ClassDetailComponent implements OnInit, OnDestroy {
-  classCode: String;
+  model = new ClassModel('', '', '', '', '');
   private routeSub: any;
 
-  constructor(private activatedRoute: ActivatedRoute, public classService: ClassService, public toastr: ToastsManager){
+  constructor(private activatedRoute: ActivatedRoute, public router: Router, public classService: ClassService, public toastr: ToastsManager){
   }
 
   ngOnInit() {
     this.routeSub = this.activatedRoute.params.subscribe(params => {
-      this.classCode = params['id'];
-      this.classService.getClass(this.classCode)
+      this.model.code = params['id'];
+      this.classService.getClass(this.model.code)
       .subscribe(
-        data => this.handleSuccess(data.json()),
+        data => this.handleSuccess(data.json().payload.class),
         err => this.handleError(err)
       );
     });
@@ -32,9 +34,17 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   }
 
   handleSuccess(data){
+    this.model = new ClassModel(
+      data.title,
+      data.department,
+      data.description,
+      data.section, data.code
+    );
   }
 
   handleError(err){
+    this.toastr.error("The public class list failed to load.");
+    this.router.navigateByUrl('/dashboard');
   }
 
 }

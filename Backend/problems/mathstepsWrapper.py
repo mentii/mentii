@@ -3,8 +3,16 @@ import subprocess
 import os
 
 JAVASCRIPT_FIRSTLINE="const mathsteps = require('mathsteps');\n"
-JAVASCRIPT_PROBLEMLINE="const steps = mathsteps.solveEquation('{0}')\n";
-JAVASCRIPT_PRINTLINE="steps.forEach(step => { if(step.substeps.length > 1){ step.substeps.forEach(subStep => console.log(subStep.newEquation.print())) }\n console.log(step.newEquation.print()); });\n"
+JAVASCRIPT_PROBLEMLINE="const steps = mathsteps.solveEquation('{0}');\n"
+JAVASCRIPT_PRINTLINE='''steps.forEach(
+  step => 
+    { if(step.substeps.length > 1)
+      { step.substeps.forEach(
+          subStep => console.log(subStep.newEquation.print())
+        ) 
+      }\n 
+      console.log(step.newEquation.print()); 
+    });\n'''
 
 JAVASCRIPT_FILEPATH='mentii.js'
 JAVASCRIPT_OUTPUTPATH='mentii_output.txt'

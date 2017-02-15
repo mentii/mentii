@@ -1,7 +1,24 @@
 <div class="row">
-  <div class="col-xs-12">
-    <h3>{{model.title}}  <small>{{model.department}}</small></h3>
-    <h4><small><strong>{{model.section}}</strong></small></h4>
-    <p>{{model.description}}</p>
+  <div class="col-xs-12 col-md-8">
+    <div class="row">
+      <div class="col-xs-12">
+        <h3>{{model.title}}  <small>{{model.department}}</small></h3>
+        <h4><small><strong>{{model.section}}</strong></small></h4>
+        <p>{{model.description}}</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <h4>Activities</h4>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <activity-list [activities]="activities"></activity-list>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-12 col-md-4" *ngIf="isTeacher()">
+    <h4>Students</h4>
   </div>
 </div>

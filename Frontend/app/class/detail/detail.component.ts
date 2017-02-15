@@ -13,6 +13,7 @@ import { ClassModel } from '../class.model';
 
 export class ClassDetailComponent implements OnInit, OnDestroy {
   model = new ClassModel('', '', '', '', '');
+  activities = [];
   private routeSub: any;
 
   constructor(private activatedRoute: ActivatedRoute, public router: Router, public classService: ClassService, public toastr: ToastsManager){
@@ -38,13 +39,19 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
       data.title,
       data.department,
       data.description,
-      data.section, data.code
+      data.section,
+      data.code,
     );
+    this.activities = data.activities;
   }
 
   handleError(err){
-    this.toastr.error("The public class list failed to load.");
+    this.toastr.error("Unable to access class.");
     this.router.navigateByUrl('/dashboard');
+  }
+
+  isTeacher(){
+    return true;
   }
 
 }

@@ -63,7 +63,7 @@ def verifyAuthToken(token, appSecret=None):
     user = s.loads(token)
     retval = user # user from token
   except (SignatureExpired, BadSignature) as e:
-    MentiiLogging.getLogger().exception(e)
+    MentiiLogging.getLogger().warning(e)
     retval = None
   return retval
 

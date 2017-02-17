@@ -2,10 +2,10 @@ import { Component, Input } from '@angular/core';
 
 @Component({
   moduleId: module.id,
-  selector: 'activity-list',
+  selector: 'user-list',
   templateUrl: 'list.html'
 })
 
-export class ActivityListComponent {
-  @Input() activities;
+export class UserListComponent {
+  @Input() users;
 }

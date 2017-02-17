@@ -28,18 +28,23 @@ def getActiveClassList(dynamoDBInstance, email=None):
     response.addToPayload('classes', classes)
   return response
 
-def getClass(classCode, dynamoDBInstance):
+def getClass(classCode, dynamoDBInstance, email=None, userRole=None):
   response = ControllerResponse()
-  classTable = dbUtils.getTable('classes', dynamoDBInstance)
-  if classTable is None:
-    response.addError('Get Class Failed', 'Unable to access class data')
-  else:
-    request = {'Key': {'code': classCode}}
-    res = dbUtils.getItem(request, classTable)
-    if res is None or 'Item' not in res:
+  classData = getClassByCode(classCode, dynamoDBInstance)
+  if not classData:
       response.addError('Get Class Failed', 'Unable to load class data')
-    else:
-      response.addToPayload('class', res['Item'])
+  else:
+    if g:
+      email = g.authenticatedUser['email']
+      userRole = g.authenticatedUser['userRole']
+    if ((userRole == 'teacher' or userRole == 'admin')
+        and classCode in getTaughtClassCodesFromUser(dynamoDBInstance, email)):
+      classData['isTeacher'] = True
+    elif 'students' in classData:
+        #Only the teacher of a class can get the class's students
+        del classData['students']
+
+    response.addToPayload('class', classData)
   return response;
 
 def getTaughtClassList(dynamoDBInstance, email=None):
@@ -117,6 +122,22 @@ def createClass(dynamoDBInstance, classData, email=None, userRole=None):
         else:
           response.addToPayload('Success', 'Class Created')
   return response
+
+def getClassByCode(classCode, dynamoDBInstance):
+  classData = None
+  classTable = dbUtils.getTable('classes', dynamoDBInstance)
+  if not classTable:
+    MentiiLogging.getLogger().error(
+      'Unable to access class table in getClassByCode')
+  else:
+    request = {'Key': {'code': classCode}}
+    res = dbUtils.getItem(request, classTable)
+    if not res or 'Item' not in res:
+      MentiiLogging.getLogger().error(
+        'Unable to load class data in getClassByCode')
+    else:
+      classData = res['Item']
+  return classData
 
 def getClassCodesFromUser(dynamoDBInstance, email=None):
   classCodes = set()

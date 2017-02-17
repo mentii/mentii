@@ -12,12 +12,16 @@ import { ClassModel } from '../class.model';
 })
 
 export class ClassDetailComponent implements OnInit, OnDestroy {
-  model = new ClassModel('', '', '', '', '');
-  activities = [];
+  model = new ClassModel('', '', '', '', '', [], []);
   private routeSub: any;
+  showTeacherView = false;
 
-  constructor(private activatedRoute: ActivatedRoute, public router: Router, public classService: ClassService, public toastr: ToastsManager){
-  }
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private classService: ClassService,
+    private toastr: ToastsManager
+  ){}
 
   ngOnInit() {
     this.routeSub = this.activatedRoute.params.subscribe(params => {
@@ -41,17 +45,15 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
       data.description,
       data.section,
       data.code,
+      data.activities,
+      data.students
     );
-    this.activities = data.activities;
+    this.showTeacherView = data.isTeacher;
   }
 
   handleError(err){
     this.toastr.error("Unable to access class.");
     this.router.navigateByUrl('/dashboard');
-  }
-
-  isTeacher(){
-    return true;
   }
 
 }

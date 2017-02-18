@@ -1,0 +1,3 @@
+module.exports = {
+    "path": "/my/exact/path/to/mathstep/folder/node_modules/"
+};

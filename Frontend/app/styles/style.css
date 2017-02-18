@@ -70,6 +70,7 @@ h6 {
 
 .logout:hover {
   color: #a94442 !important;
+  cursor: pointer;
 }
 
 .tab-instruction {

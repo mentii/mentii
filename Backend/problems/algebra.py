@@ -19,9 +19,11 @@ def modifyStep(step):
   Called by API
   Gets the index of the selected steps from pickFailurePoints in the original solution path
 '''
-def generateBadSteps(problemSolutionPath, numOfFailurePoints):
+def generateBadSteps(problemSolutionPath, numOfFailurePoints, failurePoints=None):
+  # if testing failure points can be passed in
   # randomly pick failure points from problem solution path
-  failurePoints = random.sample(problemSolutionPath, numOfFailurePoints)
+  if not failurePoints:
+    failurePoints = random.sample(problemSolutionPath, numOfFailurePoints)
 
   response = []
   for correctStep  in problemSolutionPath:
@@ -31,7 +33,6 @@ def generateBadSteps(problemSolutionPath, numOfFailurePoints):
 
   # for each failure point generate the bad step and path
   for step in failurePoints:
-    #print(step)
     failureIndex = problemSolutionPath.index(step)
     badStep = modifyStep(step)
     badStepPath = mathsteps.getStepsForProblem(badStep)

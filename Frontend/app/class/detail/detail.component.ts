@@ -15,6 +15,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   model = new ClassModel('', '', '', '', '', [], []);
   private routeSub: any;
   showTeacherView = false;
+  isLoading = true;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -49,6 +50,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
       data.students
     );
     this.showTeacherView = data.isTeacher;
+    this.isLoading = false;
   }
 
   handleError(err){

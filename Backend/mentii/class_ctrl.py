@@ -41,8 +41,9 @@ def getClass(classCode, dynamoDBInstance, email=None, userRole=None):
     if ((userRole == 'teacher' or userRole == 'admin')
         and classCode in getTaughtClassCodesFromUser(dynamoDBInstance, email)):
       classData['isTeacher'] = True
+    #Else remove students[] from classData, if it exists, because:
+    #Only the teacher of a class can get the class's students
     elif 'students' in classData:
-      #Only the teacher of a class can get the class's students
       del classData['students']
     response.addToPayload('class', classData)
   return response;

@@ -8,6 +8,7 @@ from problems import mathstepsWrapper
 class MentiiMathstepsTests(unittest.TestCase):
 
   def test_getStepsForProblem(self):
+    print('Running getStepsForProblem test case')
     problem1 = "5x=10"
     problem2 = "3x+2x=5*2"
     sol1 = [u'(5x) / 5 = 10/5', u'x = 10/5', u'x = 2']

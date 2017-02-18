@@ -264,17 +264,44 @@ class ClassCtrlDBTests(unittest.TestCase):
     class_ctrl.getTaughtClassCodesFromUser = realGetTaughtClassCodesFromUser
 
   def test_getClassByCode(self):
-
-    print '####################################################################'
-
+    #ClientError getting table, None returned by getTable
     mockDBInstance = MagicMock()
     mockDBInstance.Table.side_effect = ClientError({'Error': {}}, 'error')
-
     res = class_ctrl.getClassByCode('code', mockDBInstance)
-    mockDBInstance.Table .assert_called_once()
+    mockDBInstance.Table.assert_called_once()
     self.assertIsNone(res)
 
+    #getItem returns None
+    mockTable = MagicMock()
+    mockTable.get_item = MagicMock(return_value = None)
+    mockDBInstance = MagicMock()
+    mockDBInstance.Table = MagicMock(return_value = mockTable)
+    res = class_ctrl.getClassByCode('code', mockDBInstance)
+    mockTable.get_item.assert_called_once()
+    mockDBInstance.Table.assert_called_once()
+    self.assertIsNone(res)
 
+    #getItem return is missing 'Item'
+    mockTable = MagicMock()
+    mockTable.get_item = MagicMock(return_value = {'notItem' : 'notHere'})
+    mockDBInstance = MagicMock()
+    mockDBInstance.Table = MagicMock(return_value = mockTable)
+    res = class_ctrl.getClassByCode('code', mockDBInstance)
+    mockTable.get_item.assert_called_once()
+    mockDBInstance.Table.assert_called_once()
+    self.assertIsNone(res)
+
+    #Successful
+    classData = 'classData'
+    mockTable = MagicMock()
+    mockTable.get_item = MagicMock(return_value = {'Item' : classData})
+    mockDBInstance = MagicMock()
+    mockDBInstance.Table = MagicMock(return_value = mockTable)
+    res = class_ctrl.getClassByCode('code123', mockDBInstance)
+    mockTable.get_item.assert_called_once()
+    mockDBInstance.Table.assert_called_once()
+    mockTable.get_item.assert_called_with(Key={'code': 'code123'})
+    self.assertEqual(res, classData)
 
 if __name__ == '__main__':
   if __package__ is None:

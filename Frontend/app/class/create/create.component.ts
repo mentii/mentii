@@ -11,7 +11,7 @@ import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 })
 
 export class CreateClassComponent {
-  model = new ClassModel('', '', '', '', '');
+  model = new ClassModel('', '', '', '', '', [], []);
   isLoading = false;
 
   constructor(public classService: ClassService, public toastr: ToastsManager, public router: Router){

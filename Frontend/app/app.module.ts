@@ -26,6 +26,8 @@ import { TaughtClassListComponent } from './class/taughtList/taughtList.componen
 import { ClassDetailComponent } from './class/detail/detail.component';
 import { CreateClassComponent } from './class/create/create.component';
 import { ClassBrowseComponent } from './class/browse/browse.component';
+import { ActivityListComponent } from './activity/list/list.component';
+import { UserListComponent } from './user/list/list.component';
 /* Directives */
 import { EqualValidator } from './directives/equal-validator.directive';
 import { DeleteValue } from './directives/delete-value-validator.directive';
@@ -52,6 +54,7 @@ import { LaddaModule } from 'angular2-ladda';
 
   declarations: [
     AdminComponent,
+    ActivityListComponent,
     AppComponent,
     RegistrationComponent,
     RootComponent,
@@ -66,7 +69,8 @@ import { LaddaModule } from 'angular2-ladda';
     CreateClassComponent,
     ClassBrowseComponent,
     TaughtClassListComponent,
-    ClearPlaceholder
+    ClearPlaceholder,
+    UserListComponent
   ],
 
   providers:  [

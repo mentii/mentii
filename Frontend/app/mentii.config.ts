@@ -4,10 +4,21 @@ export class MentiiConfig {
 
   getRootUrl():string {
     var url:string = 'http://api.mentii.me';
-    if (this.isProd() == false) {
+    if (!this.isProd() && !this.isStaging()) {
       url = 'http://127.0.0.1:5000';
     }
+    if (this.isStaging()){
+      url = 'http://stapi.mentii.me';
+    }
     return url;
+  }
+
+  isStaging():boolean {
+    let _isStaging:boolean = false;
+    if (window.location.hostname == 'stapp.mentii.me') {
+      _isStaging = true;
+    }
+    return _isStaging;
   }
 
   isProd():boolean {

@@ -1,7 +1,8 @@
 import unittest
-
+from mock import MagicMock
 
 import boto3
+from botocore.exceptions import ClientError
 import sys
 from os import path
 sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
@@ -108,7 +109,6 @@ class ClassCtrlDBTests(unittest.TestCase):
 
     data = {'Key': {'email': email}}
     teacher = db.getItem(data, usersTable)
-    print(teacher)
     self.assertTrue('Item' in teacher.keys())
     self.assertTrue('teaching' in teacher['Item'])
 
@@ -118,7 +118,6 @@ class ClassCtrlDBTests(unittest.TestCase):
     classCode = str(teachingList[0])
     data = {'Key': {'code': classCode}}
     classItem = db.getItem(data, classesTable)
-    print(classItem)
     self.assertTrue('Item' in classItem.keys())
     self.assertEqual(classItem['Item']['title'], 'PSY')
     self.assertEqual(classItem['Item']['department'], 'science')
@@ -201,6 +200,108 @@ class ClassCtrlDBTests(unittest.TestCase):
     teacher = db.getItem(data, usersTable)
     self.assertTrue('Item' in teacher.keys())
     self.assertFalse('teaching' in teacher['Item'])
+
+  def test_getClass(self):
+    realGetClassByCode = class_ctrl.getClassByCode
+    realGetTaughtClassCodesFromUser = class_ctrl.getTaughtClassCodesFromUser
+
+    #test None returned by getClassByCode
+    class_ctrl.getClassByCode = MagicMock(return_value = None)
+    res = class_ctrl.getClass('code', None)
+    self.assertTrue(res.hasErrors())
+
+    #test get class by student (no students or isTeacher returned)
+    data = { 'students': ['aaron'], 'title': 'fakeClass' }
+    class_ctrl.getClassByCode = MagicMock(return_value = data)
+    res = class_ctrl.getClass('code', None, 'email', 'student')
+    self.assertFalse(res.hasErrors())
+    self.assertFalse('students' in res.payload['class'])
+    self.assertFalse('isTeacher' in res.payload['class'])
+    self.assertTrue('title' in res.payload['class'])
+
+    #test get class by teacher, who does not teach class (no students or isTeacher returned)
+    data = { 'students': ['aaron'], 'title': 'fakeClass' }
+    class_ctrl.getClassByCode = MagicMock(return_value = data)
+    class_ctrl.getTaughtClassCodesFromUser = MagicMock(
+        return_value = ['other_code'])
+    res = class_ctrl.getClass('code', None, 'email', 'teacher')
+    self.assertFalse(res.hasErrors())
+    self.assertFalse('students' in res.payload['class'])
+    self.assertFalse('isTeacher' in res.payload['class'])
+    self.assertTrue('title' in res.payload['class'])
+
+    #test get class by admin, who does not teach class (no students or isTeacher returned)
+    data = { 'students': ['aaron'], 'title': 'fakeClass' }
+    class_ctrl.getClassByCode = MagicMock(return_value = data)
+    res = class_ctrl.getClass('code', None, 'email', 'admin')
+    self.assertFalse(res.hasErrors())
+    self.assertFalse('students' in res.payload['class'])
+    self.assertFalse('isTeacher' in res.payload['class'])
+    self.assertTrue('title' in res.payload['class'])
+
+    #test get class by teacher who teaches class (students and isTeacher returned)
+    data = { 'students': ['aaron'], 'title': 'fakeClass' }
+    class_ctrl.getClassByCode = MagicMock(return_value = data)
+    class_ctrl.getTaughtClassCodesFromUser = MagicMock(return_value = ['code'])
+    res = class_ctrl.getClass('code', None, 'email', 'teacher')
+    self.assertFalse(res.hasErrors())
+    self.assertTrue('students' in res.payload['class'])
+    self.assertTrue('isTeacher' in res.payload['class'])
+    self.assertTrue('title' in res.payload['class'])
+
+    #test get class by admin who teaches class (students and isTeacher returned)
+    data = { 'students': ['aaron'], 'title': 'fakeClass' }
+    class_ctrl.getClassByCode = MagicMock(return_value = data)
+    class_ctrl.getTaughtClassCodesFromUser = MagicMock(return_value = ['code'])
+    res = class_ctrl.getClass('code', None, 'email', 'admin')
+    self.assertFalse(res.hasErrors())
+    self.assertTrue('students' in res.payload['class'])
+    self.assertTrue('isTeacher' in res.payload['class'])
+    self.assertTrue('title' in res.payload['class'])
+
+    #resetting mocked functions
+    class_ctrl.getClassByCode = realGetClassByCode
+    class_ctrl.getTaughtClassCodesFromUser = realGetTaughtClassCodesFromUser
+
+  def test_getClassByCode(self):
+    #ClientError getting table, None returned by getTable
+    mockDBInstance = MagicMock()
+    mockDBInstance.Table.side_effect = ClientError({'Error': {}}, 'error')
+    res = class_ctrl.getClassByCode('code', mockDBInstance)
+    mockDBInstance.Table.assert_called_once()
+    self.assertIsNone(res)
+
+    #getItem returns None
+    mockTable = MagicMock()
+    mockTable.get_item = MagicMock(return_value = None)
+    mockDBInstance = MagicMock()
+    mockDBInstance.Table = MagicMock(return_value = mockTable)
+    res = class_ctrl.getClassByCode('code', mockDBInstance)
+    mockTable.get_item.assert_called_once()
+    mockDBInstance.Table.assert_called_once()
+    self.assertIsNone(res)
+
+    #getItem return is missing 'Item'
+    mockTable = MagicMock()
+    mockTable.get_item = MagicMock(return_value = {'notItem' : 'notHere'})
+    mockDBInstance = MagicMock()
+    mockDBInstance.Table = MagicMock(return_value = mockTable)
+    res = class_ctrl.getClassByCode('code', mockDBInstance)
+    mockTable.get_item.assert_called_once()
+    mockDBInstance.Table.assert_called_once()
+    self.assertIsNone(res)
+
+    #Successful
+    classData = 'classData'
+    mockTable = MagicMock()
+    mockTable.get_item = MagicMock(return_value = {'Item' : classData})
+    mockDBInstance = MagicMock()
+    mockDBInstance.Table = MagicMock(return_value = mockTable)
+    res = class_ctrl.getClassByCode('code123', mockDBInstance)
+    mockTable.get_item.assert_called_once()
+    mockDBInstance.Table.assert_called_once()
+    mockTable.get_item.assert_called_with(Key={'code': 'code123'})
+    self.assertEqual(res, classData)
 
 if __name__ == '__main__':
   if __package__ is None:

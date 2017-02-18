@@ -8,6 +8,8 @@ from flask import g
 from mentii import user_ctrl
 from mentii import class_ctrl
 from utils import MentiiAuth
+from problems import mathstepsWrapper
+from problems import algebra
 import utils.ResponseCreation as ResponseCreation
 from utils.ResponseCreation import ControllerResponse
 import utils.MentiiLogging as MentiiLogging
@@ -229,6 +231,18 @@ def public_class_list():
     status = 400
   return ResponseCreation.createResponse(res, status)
 
+@app.route('/classes/<classCode>', methods=['GET', 'OPTIONS'])
+@auth.login_required
+def getClass(classCode):
+  status = 200
+  if request.method =='OPTIONS':
+    return ResponseCreation.createEmptyResponse(status)
+  dynamoDBInstance = getDatabaseClient()
+  res = class_ctrl.getClass(classCode, dynamoDBInstance)
+  if res.hasErrors():
+    status = 400
+  return ResponseCreation.createResponse(res, status)
+
 @app.route('/admin/changerole/', methods=['POST', 'OPTIONS'])
 @auth.login_required
 def changeUserRole():
@@ -245,6 +259,33 @@ def changeUserRole():
     res = user_ctrl.changeUserRole(request.json, dynamoDBInstance)
     if res.hasErrors():
       status = 400
+  return ResponseCreation.createResponse(res,status)
+
+@app.route('/ms-test/', methods=['POST', 'OPTIONS'])
+def mathsteps():
+  status = 200
+  if request.method =='OPTIONS':
+    return ResponseCreation.createEmptyResponse(status)
+  res = ResponseCreation.ControllerResponse()
+  problem = request.json['problem']
+  steps = mathstepsWrapper.getStepsForProblem(problem)
+  res.addToPayload('steps', steps)
+  if res.hasErrors():
+    status = 400
+  return ResponseCreation.createResponse(res,status)
+
+@app.route('/ms-bad-test/', methods=['POST', 'OPTIONS'])
+def badsteps():
+  status = 200
+  if request.method =='OPTIONS':
+    return ResponseCreation.createEmptyResponse(status)
+  res = ResponseCreation.ControllerResponse()
+  problem = request.json['problem']
+  steps = mathstepsWrapper.getStepsForProblem(problem)
+  respon = algebra.generateBadSteps(steps,3)
+  res.addToPayload('steps', respon)
+  if res.hasErrors():
+    status = 400
   return ResponseCreation.createResponse(res,status)
 
 if __name__ == '__main__':

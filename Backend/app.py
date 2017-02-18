@@ -8,6 +8,7 @@ from flask import g
 from mentii import user_ctrl
 from mentii import class_ctrl
 from utils import MentiiAuth
+from problems import mathstepsWrapper
 import utils.ResponseCreation as ResponseCreation
 from utils.ResponseCreation import ControllerResponse
 import utils.MentiiLogging as MentiiLogging
@@ -245,6 +246,19 @@ def changeUserRole():
     res = user_ctrl.changeUserRole(request.json, dynamoDBInstance)
     if res.hasErrors():
       status = 400
+  return ResponseCreation.createResponse(res,status)
+
+@app.route('/ms-test/', methods=['POST', 'OPTIONS'])
+def mathsteps():
+  status = 200
+  if request.method =='OPTIONS':
+    return ResponseCreation.createEmptyResponse(status)
+  res = ResponseCreation.ControllerResponse()
+  problem = request.json['problem']
+  steps = mathstepsWrapper.getStepsForProblem(problem)
+  res.addToPayload('steps', steps)
+  if res.hasErrors():
+    status = 400
   return ResponseCreation.createResponse(res,status)
 
 if __name__ == '__main__':

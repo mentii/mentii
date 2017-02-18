@@ -28,6 +28,26 @@ def getActiveClassList(dynamoDBInstance, email=None):
     response.addToPayload('classes', classes)
   return response
 
+def getClass(classCode, dynamoDBInstance, email=None, userRole=None):
+  response = ControllerResponse()
+  classData = getClassByCode(classCode, dynamoDBInstance)
+  if not classData:
+      response.addError('Get Class Failed', 'Unable to load class data')
+  else:
+    if g:
+      email = g.authenticatedUser['email']
+      userRole = g.authenticatedUser['userRole']
+    #Checks that user is the teacher of the class w/ classCode
+    if ((userRole == 'teacher' or userRole == 'admin')
+        and classCode in getTaughtClassCodesFromUser(dynamoDBInstance, email)):
+      classData['isTeacher'] = True
+    #Else remove students[] from classData, if it exists, because:
+    #Only the teacher of a class can get the class's students
+    elif 'students' in classData:
+      del classData['students']
+    response.addToPayload('class', classData)
+  return response;
+
 def getTaughtClassList(dynamoDBInstance, email=None):
   response = ControllerResponse()
   if email is None:
@@ -103,6 +123,22 @@ def createClass(dynamoDBInstance, classData, email=None, userRole=None):
         else:
           response.addToPayload('Success', 'Class Created')
   return response
+
+def getClassByCode(classCode, dynamoDBInstance):
+  classData = None
+  classTable = dbUtils.getTable('classes', dynamoDBInstance)
+  if not classTable:
+    MentiiLogging.getLogger().error(
+      'Unable to access class table in getClassByCode')
+  else:
+    request = {'Key': {'code': classCode}}
+    res = dbUtils.getItem(request, classTable)
+    if not res or 'Item' not in res:
+      MentiiLogging.getLogger().error(
+        'Unable to load class data in getClassByCode')
+    else:
+      classData = res['Item']
+  return classData
 
 def getClassCodesFromUser(dynamoDBInstance, email=None):
   classCodes = set()

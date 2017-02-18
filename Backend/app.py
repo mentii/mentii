@@ -9,6 +9,7 @@ from mentii import user_ctrl
 from mentii import class_ctrl
 from utils import MentiiAuth
 from problems import mathstepsWrapper
+from problems import algebra
 import utils.ResponseCreation as ResponseCreation
 from utils.ResponseCreation import ControllerResponse
 import utils.MentiiLogging as MentiiLogging
@@ -257,6 +258,20 @@ def mathsteps():
   problem = request.json['problem']
   steps = mathstepsWrapper.getStepsForProblem(problem)
   res.addToPayload('steps', steps)
+  if res.hasErrors():
+    status = 400
+  return ResponseCreation.createResponse(res,status)
+
+@app.route('/ms-bad-test/', methods=['POST', 'OPTIONS'])
+def badsteps():
+  status = 200
+  if request.method =='OPTIONS':
+    return ResponseCreation.createEmptyResponse(status)
+  res = ResponseCreation.ControllerResponse()
+  problem = request.json['problem']
+  steps = mathstepsWrapper.getStepsForProblem(problem)
+  respon = algebra.generateBadSteps(steps,3)
+  res.addToPayload('steps', respon)
   if res.hasErrors():
     status = 400
   return ResponseCreation.createResponse(res,status)

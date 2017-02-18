@@ -2,35 +2,38 @@
   <div class="col-xs-12 col-md-8">
     <div class="row">
       <div class="col-xs-12">
-        <h3>
+        <h2>
           {{model.title}}
-          <span *ngIf="model.department">&nbsp;-&nbsp;</span>
-          <em class="text-muted">{{model.department}}</em>
-        </h3>
+          <small *ngIf="model.department">
+            <span>&nbsp;-&nbsp;</span>
+            <em class="text-muted">{{model.department}}</em>
+          </small>
+        </h2>
         <span *ngIf="model.section">
           <em><strong>Section: {{model.section}}</strong></em>
           <br/>
         </span>
         <p>{{model.description}}</p>
+        <hr/>
       </div>
     </div>
     <div class="row">
       <div class="col-xs-12">
-        <h4>Activities</h4>
+        <h3>Activities</h3>
         <activity-list [activities]="model.activities"></activity-list>
       </div>
     </div>
   </div>
   <div class="col-xs-12 col-md-4"  *ngIf="showTeacherView">
     <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Teacher View</h3>
-      </div>
       <div class="panel-body">
-        <div>
-          <h4>Students</h4>
-          <user-list [users]="model.students"></user-list>
-        </div>
+        <p class="text-muted">
+          <em>
+            This panel is only visible to the teacher of this class.
+          </em>
+        </p>
+        <h4>Students</h4>
+        <user-list [users]="model.students"></user-list>
       </div>
     </div>
   </div>

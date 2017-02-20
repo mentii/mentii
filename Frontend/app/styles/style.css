@@ -107,3 +107,8 @@ h6 {
         background-color: #e5e5e5;
     }
 }
+
+label.required::before {
+  content: "* ";
+  color: #a94442;
+}

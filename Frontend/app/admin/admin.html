@@ -24,6 +24,7 @@
           </select>
         </div>
       </div>
+      <p class="text-danger" *ngIf="!roleChangeForm.form.valid">* Required Fields</p>
       <button type="submit" class="btn btn-primary" [disabled]="!roleChangeForm.form.valid" (click)="submit()" [ladda]='isLoading'><span class="ladda-label">Update Role</span></button>
     </form>
   </div>

@@ -32,6 +32,7 @@
           Passwords do not match
         </span>
       </div>
+      <p class="text-danger" *ngIf="!registerForm.form.valid">* Required Fields</p>
       <button type="submit" class="btn btn-primary" [disabled]="!registerForm.form.valid" (click)="submit()" [ladda]='isLoading'><span class="ladda-label">Register Account</span></button>
     </form>
     <br/>

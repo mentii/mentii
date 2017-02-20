@@ -11,7 +11,7 @@
     <form #roleChangeForm="ngForm" autocomplete="off">
       <div [hidden]="email.pristine || email.valid" class="text-danger">A valid email is required</div>
       <div class="form-group">
-        <span class="text-danger">* </span><label for="email">Email</label>
+        <label class="required" for="email">Email</label>
         <input type="email" placeholder="user@example.com" class="form-control" id="email" required pattern="[^@]+@[^@]+\.[^@]+" [(ngModel)]="model.email" name="email" #email="ngModel" clearPlaceholder>
       </div>
       <div class="form-group">

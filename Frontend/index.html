@@ -60,14 +60,28 @@
 </head>
 <!-- 3. Display the application -->
 <body>
-  <my-app>
-    <div class="loading" style="margin: 0 auto; text-align: center; margin-top: 15%; color: #777;">
-      <h3><i class="fa fa-spinner fa-2x fa-spin" aria-hidden="true"></i></h3>
-      <h1>loading mentii</h1>
+  <div class="content">
+    <div class="content-inside">
+      <my-app>
+        <div class="loading" style="margin: 0 auto; text-align: center; margin-top: 15%; color: #777;">
+          <h3><i class="fa fa-spinner fa-2x fa-spin" aria-hidden="true"></i></h3>
+          <h1>loading mentii</h1>
+        </div>
+      </my-app>
     </div>
-  </my-app>
+  </div>
+  <footer class="footer">
+    <nav class="navbar navbar-default text-muted text-center">
+      <div class="container">
+        <p class="navbar-text">
+          <em>v<span id="version"></span></em> | <a href="https://github.com/mentii/mentii/blob/master/LICENSE" target="_blank">MIT License</a> | <a href="https://github.com/mentii/mentii" target="_blank">View the Source Code on Github</a>
+        </p>
+      </div>
+    </nav>
+  </footer>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+  <script src="package.json.service.js"></script>
 </body>
 </html>

@@ -1,6 +1,27 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
 body {
   padding-top: 70px;
-  padding-bottom: 50px;
+}
+
+.content {
+  min-height: 100%;
+}
+.content-inside {
+  padding-bottom: 102px;
+}
+.footer {
+  height: 102px;
+  margin-top: -102px;
+  padding-top: 50px;
+}
+
+.footer .navbar {
+  border-radius: 0;
+  margin-bottom: 0;
 }
 
 .navbar-default .navbar-brand {

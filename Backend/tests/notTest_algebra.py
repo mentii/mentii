@@ -41,6 +41,30 @@ class MentiiMathstepsTests(unittest.TestCase):
     ]
     self.assertEqual(response, badSteps)
 
+  def test_getProblem(self):
+    print('Running getProblem test case')
+    activity1 = 'a1'
+    activity1Result = '5x=10'
+    activity2 = 'bad'
+    activity2Result = 'Bad Problem'
+
+    res1 = algebra.getProblem(activity1)
+    res2 = algebra.getProblem(activity2)
+
+    self.assertEqual(activity1Result, res1)
+    self.assertEqual(activity2Result, res2)
+
+  def test_getProblemTree(self):
+    print('Running getProblemTree test case')
+    activity1 = '5x=10'
+    activity2 = 'bad'
+
+    res1 = algebra.getProblemTree(activity1)
+    self.assertFalse(res1.hasErrors())
+    res2 = algebra.getProblemTree(activity2)
+    self.assertTrue(res2.hasErrors())
+
+
 
 if __name__ == '__main__':
   if __package__ is None:

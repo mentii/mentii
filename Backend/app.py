@@ -289,6 +289,17 @@ def badsteps():
     status = 400
   return ResponseCreation.createResponse(res,status)
 
+@app.route('/algebra-problem/', methods=['POST', 'OPTIONS'])
+def algebraSteps():
+  status = 200
+  if request.method =='OPTIONS':
+    return ResponseCreation.createEmptyResponse(status)
+  problem = algebra.getProblem(request.json['activity'])
+  res = algebra.getProblemTree(problem) 
+  if res.hasErrors():
+    status = 400
+  return ResponseCreation.createResponse(res,status)
+
 if __name__ == '__main__':
   logger.info('mentii app starting')
   try:

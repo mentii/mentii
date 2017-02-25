@@ -5,5 +5,5 @@ Password: FakePassword
 isProd: False
 [MentiiAuthentication]
 appSecret: askjonnyboy
-[Logfile Location]
+[LogfileLocation]
 path: /path/path/mentii

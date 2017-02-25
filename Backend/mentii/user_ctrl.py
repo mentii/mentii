@@ -133,7 +133,7 @@ def sendEmail(httpOrigin, email, activationId, mailer):
 
   #Build Message
   msg = Message('Mentii: Thank You for Creating an Account!', recipients=[email],
-      extra_headers={'Content-Transfer-Encoding': 'quoted-printable'}, html=str(message))
+      extra_headers={'Content-Transfer-Encoding': 'quoted-printable'}, html=message)
 
   #Send Email
   mailer.send(msg)

@@ -1,6 +1,5 @@
 import boto3
 import re
-import pyquery
 from flask import render_template
 from flask_mail import Message
 from boto3.dynamodb.conditions import Key, Attr
@@ -119,8 +118,7 @@ def sendEmail(httpOrigin, email, activationId, mailer):
   the passed in email. The message should contain
   a link built with the activationId
   '''
-  message = render_template('registrationEmail.html')
-
+  #Change the URL to the appropriate environment
   host = ''
   if httpOrigin.find('stapp') != -1:
     host = 'http://stapp.mentii.me'
@@ -129,13 +127,13 @@ def sendEmail(httpOrigin, email, activationId, mailer):
   else:
     host = 'http://localhost:3000'
 
-  #Change the URL to the appropriate environment
-  htmlEmail = pyquery.PyQuery(message)
-  htmlEmail('#activation').attr('href', host +'/activation/{0}'.format(activationId))
+  url = host + '/activation/{0}'.format(activationId)
+
+  message = render_template('registrationEmail.html', url=url)
 
   #Build Message
   msg = Message('Mentii: Thank You for Creating an Account!', recipients=[email],
-      extra_headers={'Content-Transfer-Encoding': 'quoted-printable'}, html=str(htmlEmail))
+      extra_headers={'Content-Transfer-Encoding': 'quoted-printable'}, html=str(message))
 
   #Send Email
   mailer.send(msg)

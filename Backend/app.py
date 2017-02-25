@@ -290,12 +290,12 @@ def badsteps():
     status = 400
   return ResponseCreation.createResponse(res,status)
 
-@app.route('/problem/<classId>/<activity>/', methods=['GET'])
+@app.route('/problem/<classId>/<activity>/', methods=['GET', 'OPTIONS'])
 def problemSteps(classId, activity):
   status = 200
   problem = problem_ctrl.getProblemTemplate(classId, activity)
   print(problem)
-  res = algebra.getProblemTree(problem) 
+  res = algebra.getProblemTree(problem)
   if res.hasErrors():
     status = 400
   return ResponseCreation.createResponse(res,status)

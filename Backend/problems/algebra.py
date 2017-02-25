@@ -51,8 +51,11 @@ def generateBadSteps(problemSolutionPath, numOfFailurePoints, failurePoints=None
   if not failurePoints and numOfFailurePoints < (len(problemSolutionPath) - 1):
     #Use a slice so we don't pick the first step as a failure point
     failurePoints = random.sample(problemSolutionPath[1:-1], numOfFailurePoints)
+  elif failurePoints:
+    pass #Keep the failure points as they were passed in
   else:
     failurePoints = []
+
 
   response = []
   for correctStep  in problemSolutionPath:

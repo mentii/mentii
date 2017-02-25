@@ -22,7 +22,6 @@ class MentiiMathstepsTests(unittest.TestCase):
     print('Running generateBadSteps test case')
     problem = '11+x=55/5'
     path = mathstepsWrapper.getStepsForProblem(problem)
-    [u'11+x=55/5', u'11 + x = 11', u'(11 + x) - 11 = 11 - 11', u'x + 0 = 11 - 11', u'x = 11 - 11', u'x = 0']
 
     failurePoints = [u'11 + x = 11']
     badSteps = algebra.generateBadSteps(path,1, failurePoints)
@@ -39,6 +38,8 @@ class MentiiMathstepsTests(unittest.TestCase):
       { 'correctStep' : u'x = 11 - 11'},
       { 'correctStep' : u'x = 0'}
     ]
+
+    
     self.assertEqual(response, badSteps)
 
   def test_getProblem(self):

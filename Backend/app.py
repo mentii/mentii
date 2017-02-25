@@ -7,6 +7,7 @@ from flask_httpauth import HTTPBasicAuth
 from flask import g
 from mentii import user_ctrl
 from mentii import class_ctrl
+from mentii import problem_ctrl
 from problems import mathstepsWrapper
 from problems import algebra
 from utils import MentiiAuth
@@ -289,12 +290,11 @@ def badsteps():
     status = 400
   return ResponseCreation.createResponse(res,status)
 
-@app.route('/algebra-problem/', methods=['POST', 'OPTIONS'])
-def algebraSteps():
+@app.route('/problem/<classId>/<activity>/', methods=['GET'])
+def problemSteps(classId, activity):
   status = 200
-  if request.method =='OPTIONS':
-    return ResponseCreation.createEmptyResponse(status)
-  problem = algebra.getProblem(request.json['activity'])
+  problem = problem_ctrl.getProblemTemplate(classId, activity)
+  print(problem)
   res = algebra.getProblemTree(problem) 
   if res.hasErrors():
     status = 400

@@ -3,6 +3,7 @@
 // Imports
 import { ModuleWithProviders }  from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { ActivationComponent } from './user/activation/activation.component';
 import { AdminComponent } from './admin/admin.component';
 import { AppComponent } from './app.component';
 import { RootComponent } from './root/root.component';
@@ -26,6 +27,7 @@ export const routes: Routes = [
   { path: '', component: RootComponent }, // Application root
   { path: 'sign-in', component: SigninComponent },
   { path: 'register', component: RegistrationComponent },
+  { path: 'activation/:id', component: ActivationComponent},
   { path: 'secure-test', component: SecureTestComponent, canActivate: [AuthRouteGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthRouteGuard] },
   { path: 'class', component: ClassBrowseComponent, canActivate: [AuthRouteGuard] },

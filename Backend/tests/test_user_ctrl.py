@@ -70,7 +70,8 @@ class UserControlTests(unittest.TestCase):
     print("Running register fail case Test")
     jsonData = {"email" : "mail@mentii.me"}
     dbInstance = "blah"
-    self.assertNotEqual(usr.register(jsonData,mail,dbInstance), None)
+    httpOrigin = "localhost:2222"
+    self.assertNotEqual(usr.register(httpOrigin,jsonData,mail,dbInstance), None)
 
 class UserControlDBTests(unittest.TestCase):
   @classmethod
@@ -121,10 +122,10 @@ class UserControlDBTests(unittest.TestCase):
 
     email = "email@mentii.me"
     password = "password8"
-
+    httpOrigin = "localhost:7777"
     activationId = ""
 
-    activationId = usr.addUserAndSendEmail(email,password,mail,dynamodb)
+    activationId = usr.addUserAndSendEmail(httpOrigin, email,password,mail,dynamodb)
     self.assertIsNotNone(activationId)
 
     response = usr.isEmailInSystem(email, dynamodb)
@@ -142,9 +143,10 @@ class UserControlDBTests(unittest.TestCase):
 
     email = "mail@mentii.me"
     password = "password"
-
     jsonData = {"email" : email, "password" : password}
-    response = usr.register(jsonData,mail,dynamodb)
+    httpOrigin = "localhost:9999"
+
+    response = usr.register(httpOrigin, jsonData, mail, dynamodb)
     self.assertTrue(usr.isEmailInSystem(email, dynamodb))
 
     # These statements should be the proper test, but the mailer throws
@@ -153,7 +155,7 @@ class UserControlDBTests(unittest.TestCase):
     #self.assertTrue(isUserRegistered)
 
     # Delete user after test
-    response = usr.deleteUser(email, dynamodb)
+    usr.deleteUser(email, dynamodb)
 
   def test_hashPassword(self):
     print("Running hashPassword Test")
@@ -274,11 +276,13 @@ class UserControlDBTests(unittest.TestCase):
 
     joinEmail = 'join@mentii.me'
     password = 'password'
-    activationId = usr.addUserAndSendEmail(joinEmail,password,mail,dynamodb)
+    httpOrigin = "localhost:1111"
+
+    activationId = usr.addUserAndSendEmail(httpOrigin, joinEmail,password,mail,dynamodb)
     usr.activate(activationId, dynamodb)
 
     teacherEmail = 'teacher@mentii.me'
-    activationId = usr.addUserAndSendEmail(teacherEmail,password,mail,dynamodb)
+    activationId = usr.addUserAndSendEmail(httpOrigin, teacherEmail,password,mail,dynamodb)
     usr.activate(activationId, dynamodb)
 
     classData = {
@@ -310,7 +314,7 @@ class UserControlDBTests(unittest.TestCase):
 
     joinEmail2 = 'join2@mentii.me'
     password = 'password'
-    activationId = usr.addUserAndSendEmail(joinEmail2,password,mail,dynamodb)
+    activationId = usr.addUserAndSendEmail(httpOrigin, joinEmail2,password,mail,dynamodb)
     usr.activate(activationId, dynamodb)
 
     badJoinData = { 'bad' : 'data' }

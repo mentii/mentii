@@ -13,6 +13,7 @@ import { UserService } from './user/user.service';
 import { ClassService } from './class/class.service';
 import { ToastModule } from 'ng2-toastr/ng2-toastr';
 /* Components */
+import { ActivationComponent } from './user/activation/activation.component';
 import { AdminComponent } from './admin/admin.component';
 import { AppComponent } from './app.component';
 import { RegistrationComponent } from './user/registration/registration.component';
@@ -53,6 +54,7 @@ import { LaddaModule } from 'angular2-ladda';
   ],
 
   declarations: [
+    ActivationComponent,
     AdminComponent,
     ActivityListComponent,
     AppComponent,

@@ -1,5 +1,7 @@
 import boto3
 import re
+import pyquery
+from flask import render_template
 from flask_mail import Message
 from boto3.dynamodb.conditions import Key, Attr
 from utils.ResponseCreation import ControllerResponse
@@ -10,7 +12,7 @@ import hashlib
 from flask import g
 
 
-def register(jsonData, mailer, dbInstance):
+def register(httpOrigin, jsonData, mailer, dbInstance):
   response = ControllerResponse()
   if not validateRegistrationJSON(jsonData):
     response.addError('Register Validation Error', 'The json data did not have an email or did not have a password')
@@ -30,10 +32,8 @@ def register(jsonData, mailer, dbInstance):
 
   if not response.hasErrors():
     hashedPassword = hashPassword(parsePassword(jsonData))
-    activationId = addUserAndSendEmail(email, hashedPassword, mailer, dbInstance)
-    if activationId is not None:
-      response.addToPayload('activationId', activationId)
-    else:
+    activationId = addUserAndSendEmail(httpOrigin, email, hashedPassword, mailer, dbInstance)
+    if activationId is None:
       response.addError('Activation Id is None', 'Could not create an activation Id')
 
   return response
@@ -77,7 +77,7 @@ def isEmailValid(email):
 def isPasswordValid(password):
   return len(password) >= 8
 
-def addUserAndSendEmail(email, password, mailer, dbInstance):
+def addUserAndSendEmail(httpOrigin, email, password, mailer, dbInstance):
   activationId = str(uuid.uuid4())
   table = dbUtils.getTable('users', dbInstance)
 
@@ -100,7 +100,7 @@ def addUserAndSendEmail(email, password, mailer, dbInstance):
     return None
 
   try:
-    sendEmail(email, activationId, mailer)
+    sendEmail(httpOrigin, email, activationId, mailer)
   except Exception as e:
     MentiiLogging.getLogger().exception(e)
     return None
@@ -113,15 +113,29 @@ def deleteUser(email, dbInstance):
   response = dbUtils.deleteItem(key, table)
   return response
 
-def sendEmail(email, activationId, mailer):
+def sendEmail(httpOrigin, email, activationId, mailer):
   '''
   Create a message and send it from our email to
   the passed in email. The message should contain
   a link built with the activationId
   '''
+  message = render_template('registrationEmail.html')
+
+  host = ''
+  if httpOrigin.find('stapp') != -1:
+    host = 'http://stapp.mentii.me'
+  elif httpOrigin.find('app') != -1:
+    host = 'http://app.mentii.me'
+  else:
+    host = 'http://localhost:3000'
+
+  #Change the URL to the appropriate environment
+  htmlEmail = pyquery.PyQuery(message)
+  htmlEmail('#activation').attr('href', host +'/activation/{0}'.format(activationId))
+
   #Build Message
-  msg = Message('Mentii: Thank You for Creating an Account!', recipients=[email])
-  msg.body = 'Here is your activationId link: api.mentii.me/activate/{0}'.format(activationId)
+  msg = Message('Mentii: Thank You for Creating an Account!', recipients=[email],
+      extra_headers={'Content-Transfer-Encoding': 'quoted-printable'}, html=str(htmlEmail))
 
   #Send Email
   mailer.send(msg)

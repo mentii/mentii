@@ -24,7 +24,7 @@ def userDataValid(userData):
   return (  'email' in userData.keys() and userData['email'] and
             'userRole' in userData.keys() and userData['userRole'] )
 
-def generateAuthToken(userCredentials, appSecret=None, expiration = 86400):
+def generateAuthToken(userCredentials, appSecret=None, expiration = 60):
   '''
   Generates the auth token based off of the user's email and password with a default expiration duration.
   Default token will last 1 day.

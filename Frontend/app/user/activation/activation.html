@@ -8,7 +8,19 @@
     </div>
   </div>
 </div>
-<div class="row" [hidden]="activationSuccessful">
+<div class="row" *ngIf="isLoading">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class='text-center'>
+        <h1 class="text-brand">
+          <i class="fa fa-spinner fa-2x fa-spin" aria-hidden="true"></i>
+          Activating Account...
+        </h1>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row" *ngIf="!isLoading && !activationSuccessful">
   <div class="row">
     <div class="col-xs-12">
       <div class='text-center'>
@@ -22,7 +34,7 @@
     </div>
   </div>
 </div>
-<div class="row" [hidden]="!activationSuccessful">
+<div class="row" *ngIf="!isLoading && activationSuccessful">
   <div class="row">
     <div class="col-xs-12">
       <div class='text-center'>

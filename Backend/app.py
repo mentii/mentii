@@ -28,7 +28,7 @@ parser = cp.ConfigParser()
 parser.read(configPath)
 
 #Setup logfile
-logPath = parser.get('MentiiData', 'path') + '/logs'
+logPath = parser.get('LogfileLocation', 'path') + '/logs'
 MentiiLogging.setupLogger(logPath)
 logger = MentiiLogging.getLogger()
 

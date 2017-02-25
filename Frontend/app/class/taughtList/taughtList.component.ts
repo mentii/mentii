@@ -31,8 +31,6 @@ export class TaughtClassListComponent implements OnInit {
 
   handleError(err){
     this.isLoading = false;
-    console.log("TaughList")
-    console.log(err)
     if (err.isAuthenticationError == false) {
       this.toastr.error("The taught class list failed to load.");
     }

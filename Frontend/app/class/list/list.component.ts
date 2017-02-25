@@ -31,8 +31,6 @@ export class ClassListComponent implements OnInit {
 
   handleError(err){
     this.isLoading = false;
-    console.log("Class List component")
-    console.log(err)
     if (err.isAuthenticationError == false) {
       this.toastr.error("The class list component failed to load.");
     }

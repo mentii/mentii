@@ -12,6 +12,7 @@ import { routing } from './app.routes';
 import { UserService } from './user/user.service';
 import { ClassService } from './class/class.service';
 import { ToastModule } from 'ng2-toastr/ng2-toastr';
+import { BookService } from './book/book.service';
 /* Components */
 import { AdminComponent } from './admin/admin.component';
 import { AppComponent } from './app.component';
@@ -28,6 +29,7 @@ import { CreateClassComponent } from './class/create/create.component';
 import { ClassBrowseComponent } from './class/browse/browse.component';
 import { ActivityListComponent } from './activity/list/list.component';
 import { UserListComponent } from './user/list/list.component';
+import { CreateBookComponent } from './book/create/create.component';
 /* Directives */
 import { EqualValidator } from './directives/equal-validator.directive';
 import { DeleteValue } from './directives/delete-value-validator.directive';
@@ -70,7 +72,8 @@ import { LaddaModule } from 'angular2-ladda';
     ClassBrowseComponent,
     TaughtClassListComponent,
     ClearPlaceholder,
-    UserListComponent
+    UserListComponent,
+    CreateBookComponent
   ],
 
   providers:  [
@@ -78,7 +81,8 @@ import { LaddaModule } from 'angular2-ladda';
     ClassService,
     AuthRouteGuard,
     TeacherRouteGuard,
-    AdminRouteGuard
+    AdminRouteGuard,
+    BookService
   ],
 
   bootstrap: [

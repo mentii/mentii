@@ -11,6 +11,7 @@ futures==3.0.5
 itsdangerous==0.24
 Jinja2==2.9.5
 jmespath==0.9.1
+lxml==3.7.3
 MarkupSafe==0.23
 nose2==0.6.5
 python-dateutil==2.6.0

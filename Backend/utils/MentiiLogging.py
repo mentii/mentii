@@ -1,13 +1,13 @@
 import os
-import time
 import logging
 from logging.handlers import TimedRotatingFileHandler
+from datetime import datetime
 
 FILE = '/mentiilog.log'
 
 def setupLogger(path):
   path += FILE
-  confirmLogDir(path)
+  prepareLogfile(path)
 
   logger = logging.getLogger('Backend')
   logger.setLevel(logging.DEBUG)
@@ -23,10 +23,16 @@ def setupLogger(path):
   formatter = logging.Formatter('[%(levelname)-8s][%(name)-8s][%(asctime)s] : %(message)s')
   handler.setFormatter(formatter)
   logger.addHandler(handler)
+  logger.info("Logfile Created.")
 
 def getLogger():
   return logging.getLogger('Backend')
 
-def confirmLogDir(path):
+def prepareLogfile(path):
   if not os.path.exists(os.path.dirname(path)):
     os.makedirs(os.path.dirname(path))
+  elif os.path.isfile(path):
+    # Rename old logfile
+    modifiedTime = os.path.getmtime(path) 
+    timeStamp =  datetime.fromtimestamp(modifiedTime).strftime("%b-%d-%y-%H:%M:%S")
+    os.rename(path,path+".old."+timeStamp)

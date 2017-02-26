@@ -10,22 +10,14 @@
 </div>
 <div class="row">
   <!-- Only show if the api is currently loading -->
-  <div class="col-xs-12 col-sm-offset-1 col-sm-10" *ngIf="isLoading">
+  <div class="col-xs-12" *ngIf="isLoading">
     <i class="fa fa-spinner fa-spin"></i> Loading classes available to join...
   </div>
   <!-- Only show if classes are in the data payload and it is not currently loading -->
-  <div class="col-xs-12 col-sm-offset-1 col-sm-10" *ngIf="classes.length && !isLoading">
+  <div class="col-xs-12" *ngIf="classes.length && !isLoading">
     <div class="row" *ngFor="let class of classes;">
       <div class="col-xs-12">
-        <a [routerLink]="['/class/', class.code]">
-          <h3>
-            {{class.title}}<small>{{class.department}}</small>
-          </h3>
-        </a>
-        <p>
-          <span *ngIf="class.section"><em>Section: {{class.section}}</em><br/></span>
-          {{class.description}}
-        </p>
+        <class-list-item [classObject]="class"></class-list-item>
         <button class="btn btn-sm btn-primary" (click)="joinClass(class.code)">
           Join {{class.title}}
         </button>
@@ -33,7 +25,7 @@
     </div>
   </div>
   <!-- Only show if no data returned and is not currently loading -->
-  <div class="col-xs-12 col-sm-offset-1 col-sm-10" *ngIf="!classes.length && !isLoading">
+  <div class="col-xs-12" *ngIf="!classes.length && !isLoading">
     <div class="row">
       <div class="col-xs-12">
         <div class="empty-state text-center">

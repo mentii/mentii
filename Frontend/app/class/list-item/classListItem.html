@@ -1,0 +1,15 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      {{classObject.title}}<span *ngIf="classObject.department">&nbsp;-&nbsp;</span><em class="text-muted">{{classObject.department}}</em>
+    </h3>
+  </div>
+  <div class="panel-body">
+    <p>
+      <span *ngIf="classObject.section"><em><strong>Section: {{classObject.section}}</strong></em><br/></span>
+      {{classObject.description}}
+    </p>
+    <br/>
+    <a [routerLink]="['/class/', classObject.code]" class="btn btn-sm btn-info">View Class Detail Page</a>
+  </div>
+</div>

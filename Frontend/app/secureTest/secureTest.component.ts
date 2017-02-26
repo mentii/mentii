@@ -3,7 +3,7 @@ import { Response, Headers, RequestOptions } from "@angular/http";
 import { AuthHttp } from '../utils/AuthHttp.service';
 import { Router } from '@angular/router';
 import { MentiiConfig } from '../mentii.config';
-import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   moduleId: module.id,
@@ -13,7 +13,7 @@ import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 export class SecureTestComponent {
   mentiiConfig = new MentiiConfig();
 
-  constructor(public http: AuthHttp, public router: Router, public toastr: ToastsManager){
+  constructor(public http: AuthHttp, public router: Router, public toastr: ToastrService){
     this.testToken();
   }
 

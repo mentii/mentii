@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RoleModel } from './role.model';
 import { UserService } from '../user/user.service';
-import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   moduleId: module.id,
@@ -13,7 +13,7 @@ export class AdminComponent {
   model = new RoleModel('','student');
   isLoading = false;
 
-  constructor(public userService: UserService, public toastr: ToastsManager){
+  constructor(public userService: UserService, public toastr: ToastrService){
   }
 
   newModel() {

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ClassModel } from '../class.model';
 import { ClassService } from '../class.service';
 import { UserService } from '../../user/user.service';
-import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router'
 
 
@@ -17,7 +17,7 @@ export class ClassBrowseComponent implements OnInit {
   classes: ClassModel[] = [];
   isJoinClassInprogress = false;
 
-  constructor(public classService: ClassService, public toastr: ToastsManager, public router: Router, public userService: UserService ){
+  constructor(public classService: ClassService, public toastr: ToastrService, public router: Router, public userService: UserService ){
   }
 
   ngOnInit() {

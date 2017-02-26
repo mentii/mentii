@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ClassModel } from '../class.model';
-import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { ClassService } from '../class.service';
 
 @Component({
@@ -13,7 +13,7 @@ export class ClassListComponent implements OnInit {
   classes: ClassModel[] = [];
   isLoading = true;
 
-  constructor(public classService: ClassService, public toastr: ToastsManager){
+  constructor(public classService: ClassService, public toastr: ToastrService){
   }
 
   ngOnInit() {

@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
-import { UserService } from '../../user/user.service';
-import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 import { Router } from '@angular/router';
+import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { UserService } from '../../user/user.service';
 
 @Component({
   moduleId: module.id,

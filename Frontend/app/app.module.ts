@@ -27,6 +27,7 @@ import { TaughtClassListComponent } from './class/taughtList/taughtList.componen
 import { ClassDetailComponent } from './class/detail/detail.component';
 import { CreateClassComponent } from './class/create/create.component';
 import { ClassBrowseComponent } from './class/browse/browse.component';
+import { ClassListItemComponent } from './class/listItem/classListItem.component';
 import { ActivityListComponent } from './activity/list/list.component';
 import { DisplayProblemComponent } from './problem/display/displayProblem.component';
 import { UserListComponent } from './user/list/list.component';
@@ -71,6 +72,7 @@ import { LaddaModule } from 'angular2-ladda';
     ClassDetailComponent,
     CreateClassComponent,
     ClassBrowseComponent,
+    ClassListItemComponent,
     TaughtClassListComponent,
     ClearPlaceholder,
     UserListComponent

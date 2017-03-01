@@ -15,21 +15,7 @@
     </div>
     <div class="row" *ngFor="let class of classes;">
       <div class="col-xs-12">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">
-              {{class.title}}<span *ngIf="class.department">&nbsp;-&nbsp;</span><em class="text-muted">{{class.department}}</em>
-            </h3>
-          </div>
-          <div class="panel-body">
-            <p>
-              <span *ngIf="class.section"><em><strong>Section: {{class.section}}</strong></em><br/></span>
-              {{class.description}}
-            </p>
-            <br/>
-            <a [routerLink]="['/class/', class.code]" class="btn btn-sm btn-info">View Class Detail Page</a>
-          </div>
-        </div>
+        <class-list-item [classObject]="class"></class-list-item>
       </div>
     </div>
   </div>

@@ -7,6 +7,7 @@ from flask_httpauth import HTTPBasicAuth
 from flask import g
 from mentii import user_ctrl
 from mentii import class_ctrl
+from mentii import problem_ctrl
 from problems import mathstepsWrapper
 from problems import algebra
 from utils import MentiiAuth
@@ -283,8 +284,18 @@ def badsteps():
   res = ResponseCreation.ControllerResponse()
   problem = request.json['problem']
   steps = mathstepsWrapper.getStepsForProblem(problem)
-  respon = algebra.generateBadSteps(steps,3)
+  respon = algebra.generateTreeWithBadSteps(steps,3)
   res.addToPayload('steps', respon)
+  if res.hasErrors():
+    status = 400
+  return ResponseCreation.createResponse(res,status)
+
+@app.route('/problem/<classId>/<activity>/', methods=['GET', 'OPTIONS'])
+@auth.login_required
+def problemSteps(classId, activity):
+  status = 200
+  problem = problem_ctrl.getProblemTemplate(classId, activity)
+  res = algebra.getProblemTree(problem)
   if res.hasErrors():
     status = 400
   return ResponseCreation.createResponse(res,status)

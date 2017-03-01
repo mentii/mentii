@@ -11,8 +11,8 @@ import { routing } from './app.routes';
 /* Services */
 import { UserService } from './user/user.service';
 import { ClassService } from './class/class.service';
+import { ToastrModule } from 'ngx-toastr';
 import { ProblemService } from './problem/problem.service';
-import { ToastModule } from 'ng2-toastr/ng2-toastr';
 /* Components */
 import { AdminComponent } from './admin/admin.component';
 import { AppComponent } from './app.component';
@@ -48,7 +48,7 @@ import { LaddaModule } from 'angular2-ladda';
     BrowserModule,
     FormsModule,
     HttpModule,
-    ToastModule,
+    ToastrModule.forRoot({preventDuplicates: true}),
     LaddaModule.forRoot({style: "zoom-in"}),
     routing,
     CommonModule,

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { RegistrationModel } from './registration.model';
 import { MentiiConfig } from '../../mentii.config';
 import { UserService } from '../user.service';
-import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   moduleId: module.id,
@@ -16,7 +16,7 @@ export class RegistrationComponent {
   regSuccess = false;
   isLoading = false;
 
-  constructor(public userService: UserService, public toastr: ToastsManager){
+  constructor(public userService: UserService, public toastr: ToastrService){
   }
 
   newModel() {

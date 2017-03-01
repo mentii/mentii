@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ClassModel } from '../class.model';
 import { ClassService } from '../class.service';
-import { ToastsManager } from 'ng2-toastr/ng2-toastr';
-import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router'
 
 
 @Component({
@@ -15,7 +15,7 @@ export class ClassBrowseComponent implements OnInit {
   isLoading = true;
   classes: ClassModel[] = [];
 
-  constructor(public classService: ClassService, public toastr: ToastsManager, public router: Router ){
+  constructor(public classService: ClassService, public toastr: ToastrService, public router: Router ){
   }
 
   ngOnInit() {

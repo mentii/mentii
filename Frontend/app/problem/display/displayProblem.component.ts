@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ProblemService } from '../problem.service';
 import { UserService } from '../../user/user.service';
-import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router'
 
@@ -32,7 +32,7 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   badStepShown = false;
   problemIsComplete = false;
 
-  constructor(public problemService: ProblemService, public toastr: ToastsManager, public router: Router, private activatedRoute: ActivatedRoute){
+  constructor(public problemService: ProblemService, public toastr: ToastrService, public router: Router, private activatedRoute: ActivatedRoute){
   }
 
   showNextStep(){

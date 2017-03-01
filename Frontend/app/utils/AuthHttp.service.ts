@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { ToastrService } from 'ngx-toastr';
 
 
 const AUTH_TOKEN_NAME = "auth_token";
@@ -26,7 +26,7 @@ export class AuthHttp extends Http {
   private _role = new BehaviorSubject<string>('student');
   role$ = this._role.asObservable();
 
-  constructor (backend: XHRBackend, options: RequestOptions, private router: Router, public toastr: ToastsManager ) {
+  constructor (backend: XHRBackend, options: RequestOptions, private router: Router, public toastr: ToastrService ) {
     super(backend, options);
   }
 

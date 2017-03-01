@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ClassModel } from '../class.model';
 import { Router } from '@angular/router';
 import { ClassService } from '../class.service';
-import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   moduleId: module.id,
@@ -14,7 +14,7 @@ export class CreateClassComponent {
   model = new ClassModel('', '', '', '', '', [], []);
   isLoading = false;
 
-  constructor(public classService: ClassService, public toastr: ToastsManager, public router: Router){
+  constructor(public classService: ClassService, public toastr: ToastrService, public router: Router){
   }
 
   submit() {

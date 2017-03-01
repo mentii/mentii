@@ -11,7 +11,7 @@ import { MentiiConfig } from '../mentii.config'
 // Models
 import { RegistrationModel } from '../user/registration/registration.model';
 import { SigninModel } from '../user/signin/signin.model';
-import { RoleModel } from '../admin/role.model';
+import { RoleModel } from '../admin/changeRole/role.model';
 
 @Injectable()
 export class UserService {

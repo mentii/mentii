@@ -29,7 +29,9 @@ import { CreateClassComponent } from './class/create/create.component';
 import { ClassBrowseComponent } from './class/browse/browse.component';
 import { ActivityListComponent } from './activity/list/list.component';
 import { UserListComponent } from './user/list/list.component';
+import { ChangeRole } from './admin/changeRole/changeRole.component'
 import { CreateBookComponent } from './book/create/create.component';
+import { ChapterListComponent } from './book/chapterList/list.component';
 /* Directives */
 import { EqualValidator } from './directives/equal-validator.directive';
 import { DeleteValue } from './directives/delete-value-validator.directive';
@@ -73,7 +75,9 @@ import { LaddaModule } from 'angular2-ladda';
     TaughtClassListComponent,
     ClearPlaceholder,
     UserListComponent,
-    CreateBookComponent
+    ChangeRole,
+    CreateBookComponent,
+    ChapterListComponent
   ],
 
   providers:  [

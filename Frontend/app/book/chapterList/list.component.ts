@@ -2,10 +2,14 @@ import { Component, Input } from '@angular/core';
 
 @Component({
   moduleId: module.id,
-  selector: 'chapter-list',
+  selector: 'chapterList',
   templateUrl: 'list.html'
 })
 
 export class ChapterListComponent {
-  @Input() activities;
+  @Input() chapters;
+
+  addChapter() {
+    console.log('Alright')
+  }
 }

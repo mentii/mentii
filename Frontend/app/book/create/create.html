@@ -1,14 +1,12 @@
 
 <div class="row">
   <div class="col-xs-12">
-    <h2>Create a New Book<br/>
-      <small>Please Enter Required Information</small>
-    </h2>
+    <h2>Create a New Book</h2>
   </div>
 </div>
 <div class="row">
-  <div class="col-xs-12 col-sm-10 col-md-8">
-    <form #createClassForm="ngForm" autocomplete="off">
+  <div class="col-xs-12 col-md-10">
+    <form #createBookForm="ngForm" autocomplete="off">
       <div class="form-group">
         <label class="required" for="title">Title</label>
         <input type="text" placeholder="Algebra" class="form-control" id="title" required minlength=3 [(ngModel)]="model.title" name="title" #title="ngModel" clearPlaceholder>
@@ -23,13 +21,14 @@
           Book description is required.
         </span>
       </div>
-      <!-- <chapter-list [chapters]="model.chapters"></chapter-list> -->
-      <p class="text-danger" *ngIf="!createClassForm.form.valid">* Required Fields</p>
-      <button type="submit" class="btn btn-primary" [disabled]="!createClassForm.form.valid" (click)="submit()" [ladda]='isLoading'>
-        <span class="ladda-label">Create Book</span>
+      <label>Chapters</label>
+      <div class="panel panel-default">
+        <chapterList [chapters]="model.chapters"></chapterList>
+      </div>
+      <p class="text-danger" *ngIf="!createBookForm.form.valid">* Required Fields</p>
+      <button type="submit" class="btn btn-primary" [disabled]="!createBookForm.form.valid" (click)="submit()">
+        Create Book
       </button>
     </form>
-    <br/>
-    <a [routerLink]="['/dashboard']">Return to Dashboard</a>
   </div>
 </div>

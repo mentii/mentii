@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../user/user.service';
 import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 
@@ -9,6 +10,17 @@ import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 })
 
 export class AdminComponent {
-  constructor(){
+  private routeSub: any;
+  activeControl = '';
+
+  constructor(private activatedRoute: ActivatedRoute){
+  }
+
+  ngOnInit() {
+    this.routeSub = this.activatedRoute.params.subscribe(params => {
+      if (params['control']) {
+        this.activeControl = params['control'];
+      }
+    });
   }
 }

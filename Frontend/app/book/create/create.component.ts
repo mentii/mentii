@@ -6,7 +6,7 @@ import { BookService } from '../book.service';
 
 @Component({
   moduleId: module.id,
-  selector: 'book-create',
+  selector: 'addBook',
   templateUrl: 'create.html'
 })
 

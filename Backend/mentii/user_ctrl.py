@@ -15,25 +15,24 @@ def register(httpOrigin, jsonData, mailer, dbInstance):
   response = ControllerResponse()
   if not validateRegistrationJSON(jsonData):
     response.addError('Register Validation Error', 'The json data did not have an email or did not have a password')
-    return response
+  else:
+    email = parseEmail(jsonData)
+    password = parsePassword(jsonData)
 
-  email = parseEmail(jsonData)
-  password = parsePassword(jsonData)
+    if not isEmailValid(email):
+      response.addError('Email invalid', 'The email is invalid')
 
-  if not isEmailValid(email):
-    response.addError('Email invalid', 'The email is invalid')
+    if not isPasswordValid(password):
+      response.addError('Password Invalid', 'The password is invalid')
 
-  if not isPasswordValid(password):
-    response.addError('Password Invalid', 'The password is invalid')
+    if isEmailInSystem(email, dbInstance) and isUserActive(getUserByEmail(email, dbInstance)):
+      response.addError('Registration Failed', 'We were unable to register this user')
 
-  if isEmailInSystem(email, dbInstance) and isUserActive(getUserByEmail(email, dbInstance)):
-    response.addError('Registration Failed', 'We were unable to register this user')
-
-  if not response.hasErrors():
-    hashedPassword = hashPassword(parsePassword(jsonData))
-    activationId = addUserAndSendEmail(httpOrigin, email, hashedPassword, mailer, dbInstance)
-    if activationId is None:
-      response.addError('Activation Id is None', 'Could not create an activation Id')
+    if not response.hasErrors():
+      hashedPassword = hashPassword(parsePassword(jsonData))
+      activationId = addUserAndSendEmail(httpOrigin, email, hashedPassword, mailer, dbInstance)
+      if activationId is None:
+        response.addError('Activation Id is None', 'Could not create an activation Id')
 
   return response
 
@@ -89,20 +88,19 @@ def addUserAndSendEmail(httpOrigin, email, password, mailer, dbInstance):
   }
   if table is None:
     MentiiLogging.getLogger().error('Unable to get table users in addUserAndSendEmail')
-    return None
+    activationId = None
 
   #This will change an existing user with the same email.
   response = dbUtils.putItem(jsonData,table)
 
   if response is None:
     MentiiLogging.getLogger().error('Unable to add user to table users in addUserAndSendEmail')
-    return None
+    activationId = None
 
   try:
     sendEmail(httpOrigin, email, activationId, mailer)
   except Exception as e:
     MentiiLogging.getLogger().exception(e)
-    return None
 
   return activationId
 
@@ -118,6 +116,9 @@ def sendEmail(httpOrigin, email, activationId, mailer):
   the passed in email. The message should contain
   a link built with the activationId
   '''
+  if activationId is None:
+    return
+
   #Change the URL to the appropriate environment
   host = ''
   if httpOrigin.find('stapp') != -1:

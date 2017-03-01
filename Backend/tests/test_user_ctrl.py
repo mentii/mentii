@@ -21,56 +21,57 @@ dynamodb = boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
 class UserControlTests(unittest.TestCase):
 
   def test_parseEmail(self):
-    print("Running parseEmail Test")
-    validJson = {"email" : "johndoe@mentii.me"}
+    print('Running parseEmail Test')
+    validJson = {'email' : 'johndoe@mentii.me'}
     invalidJson = {}
-    self.assertEqual(usr.parseEmail(validJson),"johndoe@mentii.me",msg="Unable to parse email field from json data")
+    self.assertEqual(usr.parseEmail(validJson),'johndoe@mentii.me',msg='Unable to parse email field from json data')
     self.assertIsNone(usr.parseEmail(invalidJson))
 
   def test_parsePassword(self):
-    print("Running parsePassword Test")
-    validJson = {"password" : "pw"}
+    print('Running parsePassword Test')
+    validJson = {'password' : 'pw'}
     invalidJson = {}
-    self.assertEqual(usr.parsePassword(validJson),"pw",msg="Unable to parse password field from json data")
+    self.assertEqual(usr.parsePassword(validJson),'pw',msg='Unable to parse password field from json data')
     self.assertIsNone(usr.parsePassword(invalidJson))
 
   def test_validateRegistrationJSON(self):
-    print("Running validateRegistrationJSON Test")
-    validJson = {"email" : "marydoe@mentii.me", "password":"water"}
-    missingEmail = {"password":"notMissing"}
-    missingPassword = {"email" : "notMissing"}
+    print('Running validateRegistrationJSON Test')
+    validJson = {'email' : 'marydoe@mentii.me', 'password':'water'}
+    missingEmail = {'password':'notMissing'}
+    missingPassword = {'email' : 'notMissing'}
 
-    self.assertTrue(usr.validateRegistrationJSON(validJson), msg="Unable to validate registration email and password")
+    self.assertTrue(usr.validateRegistrationJSON(validJson), msg='Unable to validate registration email and password')
     self.assertFalse(usr.validateRegistrationJSON(missingEmail))
     self.assertFalse(usr.validateRegistrationJSON(missingPassword))
     self.assertFalse(usr.validateRegistrationJSON(None))
 
   def test_isEmailValid(self):
-    print("Running isEmailValid Test")
+    print('Running isEmailValid Test')
 
-    validEmail = "hello@mentii.me"
-    invalidEmail = "hellomentiime"
-    emptyEmail = ""
+    validEmail = 'hello@mentii.me'
+    invalidEmail = 'hellomentiime'
+    emptyEmail = ''
 
     self.assertTrue(usr.isEmailValid(validEmail))
     self.assertFalse(usr.isEmailValid(invalidEmail))
     self.assertFalse(usr.isEmailValid(emptyEmail))
 
   def test_isPasswordValid(self):
-    print("Running isPasswordValid Test")
-    validPassword = "iameight"
-    invalidPassword = "less"
-    emptyPassword = ""
+    print('Running isPasswordValid Test')
+    validPassword = 'iameight'
+    invalidPassword = 'less'
+    emptyPassword = ''
 
     self.assertTrue(usr.isPasswordValid(validPassword))
     self.assertFalse(usr.isPasswordValid(invalidPassword))
     self.assertFalse(usr.isPasswordValid(emptyPassword))
 
   def test_register_fail(self):
-    print("Running register fail case Test")
-    jsonData = {"email" : "mail@mentii.me"}
-    dbInstance = "blah"
-    self.assertNotEqual(usr.register(jsonData,mail,dbInstance), None)
+    print('Running register fail case Test')
+    jsonData = {'email' : 'mail@mentii.me'}
+    dbInstance = 'blah'
+    httpOrigin = 'localhost:2222'
+    self.assertIsNotNone(usr.register(httpOrigin,jsonData,mail,dbInstance))
 
 class UserControlDBTests(unittest.TestCase):
   @classmethod
@@ -103,28 +104,28 @@ class UserControlDBTests(unittest.TestCase):
     db.getTable('users', dynamodb).delete()
 
   def test_isEmailInSystem(self):
-    print("Running isEmailInSystem Test")
+    print('Running isEmailInSystem Test')
 
-    email = "test@mentii.me"
+    email = 'test@mentii.me'
     response = usr.isEmailInSystem(email, dynamodb)
     self.assertTrue(response)
 
   def test_isEmailNotInSystem(self):
-    print("Running isEmailNotInSystem Test")
+    print('Running isEmailNotInSystem Test')
 
-    email = "notInDB@mentii.me"
+    email = 'notInDB@mentii.me'
     response = usr.isEmailInSystem(email, dynamodb)
     self.assertFalse(response)
 
   def test_addUserAndSendEmail(self):
-    print("Running addUserAndSendEmail Test")
+    print('Running addUserAndSendEmail Test')
 
-    email = "email@mentii.me"
-    password = "password8"
+    email = 'email@mentii.me'
+    password = 'password8'
+    httpOrigin = 'localhost:7777'
+    activationId = ''
 
-    activationId = ""
-
-    activationId = usr.addUserAndSendEmail(email,password,mail,dynamodb)
+    activationId = usr.addUserAndSendEmail(httpOrigin, email,password,mail,dynamodb)
     self.assertIsNotNone(activationId)
 
     response = usr.isEmailInSystem(email, dynamodb)
@@ -138,13 +139,14 @@ class UserControlDBTests(unittest.TestCase):
   # TODO: add a real test case for failing to add a user
 
   def test_register(self):
-    print("Running register Test")
+    print('Running register Test')
 
-    email = "mail@mentii.me"
-    password = "password"
+    email = 'mail@mentii.me'
+    password = 'password'
+    jsonData = {'email' : email, 'password' : password}
+    httpOrigin = 'localhost:9999'
 
-    jsonData = {"email" : email, "password" : password}
-    response = usr.register(jsonData,mail,dynamodb)
+    response = usr.register(httpOrigin, jsonData, mail, dynamodb)
     self.assertTrue(usr.isEmailInSystem(email, dynamodb))
 
     # These statements should be the proper test, but the mailer throws
@@ -153,19 +155,19 @@ class UserControlDBTests(unittest.TestCase):
     #self.assertTrue(isUserRegistered)
 
     # Delete user after test
-    response = usr.deleteUser(email, dynamodb)
+    usr.deleteUser(email, dynamodb)
 
   def test_hashPassword(self):
-    print("Running hashPassword Test")
+    print('Running hashPassword Test')
 
-    pw = "falsjdlf12lj"
+    pw = 'falsjdlf12lj'
     hashPW = usr.hashPassword(pw)
     self.assertNotEqual(pw,hashPW)
 
   def test_activate(self):
-    print("Running activate Test")
+    print('Running activate Test')
 
-    activationId = "12345"
+    activationId = '12345'
     response = usr.activate(activationId, dynamodb)
 
     isUserActive = 'status' in response.payload.keys() and response.payload['status'] == 'Success'
@@ -274,11 +276,13 @@ class UserControlDBTests(unittest.TestCase):
 
     joinEmail = 'join@mentii.me'
     password = 'password'
-    activationId = usr.addUserAndSendEmail(joinEmail,password,mail,dynamodb)
+    httpOrigin = 'localhost:1111'
+
+    activationId = usr.addUserAndSendEmail(httpOrigin, joinEmail,password,mail,dynamodb)
     usr.activate(activationId, dynamodb)
 
     teacherEmail = 'teacher@mentii.me'
-    activationId = usr.addUserAndSendEmail(teacherEmail,password,mail,dynamodb)
+    activationId = usr.addUserAndSendEmail(httpOrigin, teacherEmail,password,mail,dynamodb)
     usr.activate(activationId, dynamodb)
 
     classData = {
@@ -310,7 +314,7 @@ class UserControlDBTests(unittest.TestCase):
 
     joinEmail2 = 'join2@mentii.me'
     password = 'password'
-    activationId = usr.addUserAndSendEmail(joinEmail2,password,mail,dynamodb)
+    activationId = usr.addUserAndSendEmail(httpOrigin, joinEmail2,password,mail,dynamodb)
     usr.activate(activationId, dynamodb)
 
     badJoinData = { 'bad' : 'data' }

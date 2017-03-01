@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { UserService } from '../../user/user.service';
 
 @Component({
@@ -15,7 +15,7 @@ export class ClassListItemComponent {
   @Input() joinClassButtonShown;
   isJoinClassInprogress = false;
 
-  constructor(public toastr: ToastsManager, public router: Router, public userService: UserService ){
+  constructor(public toastr: ToastrService, public router: Router, public userService: UserService ){
   }
 
   joinClass(classCode) {

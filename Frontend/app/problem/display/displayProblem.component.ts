@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ProblemService } from '../problem.service';
 import { UserService } from '../../user/user.service';
 import { ToastsManager } from 'ng2-toastr/ng2-toastr';
@@ -12,7 +12,7 @@ import { Router } from '@angular/router'
   templateUrl: 'displayProblem.html'
 })
 
-export class DisplayProblemComponent implements OnInit {
+export class DisplayProblemComponent implements OnInit, OnDestroy {
 
   /*
   Display problem works by showing "good" steps that are less than the current active step count. The

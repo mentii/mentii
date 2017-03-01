@@ -36,16 +36,16 @@ def getProblemTree(problem):
   problemPath = mathsteps.getStepsForProblem(problem)
   if len(problemPath) <= 1:
     #We couldn't get a path for the problem
-    response.addError("Problem Solve Error", "Could not generate path for problem {0}".format(problem))
+    response.addError('Problem Solve Error', 'Could not generate path for problem {0}'.format(problem))
   else:
-    problemTree = generateBadSteps(problemPath, numberOfFailurePoints)
-    response.addToPayload("problemTree", problemTree)
+    problemTree = generateTreeWithBadSteps(problemPath, numberOfFailurePoints)
+    response.addToPayload('problemTree', problemTree)
 
   return response
 
 
 
-def generateBadSteps(problemSolutionPath, numOfFailurePoints, failurePoints=None):
+def generateTreeWithBadSteps(problemSolutionPath, numOfFailurePoints, failurePoints=None):
   # if testing failure points can be passed in
   # randomly pick failure points from problem solution path
   if not failurePoints and numOfFailurePoints < (len(problemSolutionPath) - 1):

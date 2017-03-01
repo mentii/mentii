@@ -1,10 +1,3 @@
-import boto3
-from boto3.dynamodb.conditions import Key, Attr
-from utils.ResponseCreation import ControllerResponse
-from utils import db_utils as dbUtils
-import utils.MentiiLogging as MentiiLogging
-from flask import g
-  
 problemBank = {'a1': '5x=10', 'a2':'2x + 3x - 5 = 5', 'a3': '2x = -3x + 15'}
 
 def getProblemTemplate(classId, activity):

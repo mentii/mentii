@@ -18,13 +18,13 @@ class MentiiMathstepsTests(unittest.TestCase):
     steps = mathstepsWrapper.getStepsForProblem(problem2)
     self.assertEqual(sol2, steps)
 
-  def test_generateBadSteps(self):
-    print('Running generateBadSteps test case')
+  def test_generateTreeWithBadSteps(self):
+    print('Running generateTreeWithBadSteps test case')
     problem = '11+x=55/5'
     path = mathstepsWrapper.getStepsForProblem(problem)
 
     failurePoints = [u'11 + x = 11']
-    badSteps = algebra.generateBadSteps(path,1, failurePoints)
+    badSteps = algebra.generateTreeWithBadSteps(path,1, failurePoints)
 
     response = [
       {'correctStep' : u'11+x=55/5'},

@@ -33,7 +33,7 @@ export const routes: Routes = [
   { path: 'class/:id', component: ClassDetailComponent, canActivate: [AuthRouteGuard] },
   { path: 'admin', component: AdminComponent, canActivate: [AuthRouteGuard, AdminRouteGuard]},
   { path: 'create/class', component: CreateClassComponent, canActivate: [AuthRouteGuard, TeacherRouteGuard] },
-  { path: 'problem/display/:classCode/:problemCode', component: DisplayProblemComponent },
+  { path: 'problem/display/:classCode/:problemCode', component: DisplayProblemComponent, canActivate: [AuthRouteGuard] },
 
   // The PageNotFound route MUST be last in this list
   { path: '**', component: PageNotFoundComponent } // Page Not Found

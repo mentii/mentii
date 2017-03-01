@@ -11,6 +11,7 @@ import { routing } from './app.routes';
 /* Services */
 import { UserService } from './user/user.service';
 import { ClassService } from './class/class.service';
+import { ProblemService } from './problem/problem.service';
 import { ToastModule } from 'ng2-toastr/ng2-toastr';
 /* Components */
 import { AdminComponent } from './admin/admin.component';
@@ -27,6 +28,7 @@ import { ClassDetailComponent } from './class/detail/detail.component';
 import { CreateClassComponent } from './class/create/create.component';
 import { ClassBrowseComponent } from './class/browse/browse.component';
 import { ActivityListComponent } from './activity/list/list.component';
+import { DisplayProblemComponent } from './problem/display/displayProblem.component';
 import { UserListComponent } from './user/list/list.component';
 /* Directives */
 import { EqualValidator } from './directives/equal-validator.directive';
@@ -55,6 +57,7 @@ import { LaddaModule } from 'angular2-ladda';
   declarations: [
     AdminComponent,
     ActivityListComponent,
+    DisplayProblemComponent,
     AppComponent,
     RegistrationComponent,
     RootComponent,
@@ -76,6 +79,7 @@ import { LaddaModule } from 'angular2-ladda';
   providers:  [
     UserService,
     ClassService,
+    ProblemService,
     AuthRouteGuard,
     TeacherRouteGuard,
     AdminRouteGuard

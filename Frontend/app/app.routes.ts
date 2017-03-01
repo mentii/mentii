@@ -15,6 +15,7 @@ import { ClassListComponent } from './class/list/list.component';
 import { ClassDetailComponent } from './class/detail/detail.component';
 import { CreateClassComponent } from './class/create/create.component';
 import { ClassBrowseComponent } from './class/browse/browse.component';
+import { DisplayProblemComponent } from './problem/display/displayProblem.component';
 
 // Route Guards
 import { AuthRouteGuard } from './utils/AuthRouteGuard.service';
@@ -32,6 +33,7 @@ export const routes: Routes = [
   { path: 'class/:id', component: ClassDetailComponent, canActivate: [AuthRouteGuard] },
   { path: 'admin', component: AdminComponent, canActivate: [AuthRouteGuard, AdminRouteGuard]},
   { path: 'create/class', component: CreateClassComponent, canActivate: [AuthRouteGuard, TeacherRouteGuard] },
+  { path: 'problem/display/:classCode/:problemCode', component: DisplayProblemComponent, canActivate: [AuthRouteGuard] },
 
   // The PageNotFound route MUST be last in this list
   { path: '**', component: PageNotFoundComponent } // Page Not Found

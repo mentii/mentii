@@ -14,6 +14,7 @@ import { ClassService } from './class/class.service';
 import { ToastrModule } from 'ngx-toastr';
 import { ProblemService } from './problem/problem.service';
 /* Components */
+import { ActivationComponent } from './user/activation/activation.component';
 import { AdminComponent } from './admin/admin.component';
 import { AppComponent } from './app.component';
 import { RegistrationComponent } from './user/registration/registration.component';
@@ -56,6 +57,7 @@ import { LaddaModule } from 'angular2-ladda';
   ],
 
   declarations: [
+    ActivationComponent,
     AdminComponent,
     ActivityListComponent,
     DisplayProblemComponent,

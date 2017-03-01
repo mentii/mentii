@@ -92,7 +92,9 @@ def register():
     logger.info(str(flaskResponse))
     return flaskResponse
   dynamoDBInstance = getDatabaseClient()
-  res = user_ctrl.register(request.json, mail, dynamoDBInstance)
+  httpOrigin = request.environ.get('HTTP_ORIGIN')
+  jsonData = request.json
+  res = user_ctrl.register(httpOrigin, jsonData, mail, dynamoDBInstance)
   status = 201
   if res.hasErrors():
     status = 400

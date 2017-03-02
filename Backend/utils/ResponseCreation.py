@@ -49,6 +49,9 @@ class ControllerResponse:
   def hasErrors(self):
     return self.hasError
 
+  def updateUserRole(self, role):
+    self.user['userRole'] = role
+
   def getResponseString(self):
     responseDict = {'user': self.user, 'payload': self.payload, 'errors': self.errors}
     return json.dumps(responseDict)

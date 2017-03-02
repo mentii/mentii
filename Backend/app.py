@@ -68,6 +68,15 @@ def getDatabaseClient():
     logger.info("Using Local Dev Database")
     return boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
 
+def updateRoleDecorate(func):
+  def updateResponseWithRole(response):
+    userEmail = request.authorization.username
+    role = user_ctrl.getRole(userEmail, getDatabaseClient())
+    print(role)
+    response.updateUserRole(role)
+    return response
+  return updateResponseWithRole
+
 @auth.verify_password
 def verify_password(email_or_token, password):
   logger.info(str(request))
@@ -164,6 +173,7 @@ def secure():
   logger.info(str(flaskResponse))
   return flaskResponse
 
+@updateRoleDecorate
 @app.route('/user/classes/', methods=['GET', 'OPTIONS'])
 @auth.login_required
 def class_list():
@@ -176,6 +186,7 @@ def class_list():
     status = 400
   return ResponseCreation.createResponse(res, status)
 
+@updateRoleDecorate
 @app.route('/user/classes/', methods=['POST'])
 @auth.login_required
 def joinClass():
@@ -186,6 +197,7 @@ def joinClass():
     status = 400
   return ResponseCreation.createResponse(res, status)
 
+@updateRoleDecorate
 @app.route('/teacher/classes/', methods=['GET', 'OPTIONS'])
 @auth.login_required
 def taughtClassList():
@@ -204,6 +216,7 @@ def taughtClassList():
       status = 400
   return ResponseCreation.createResponse(res, status)
 
+@updateRoleDecorate
 @app.route('/class', methods=['POST', 'OPTIONS'])
 @auth.login_required
 def create_class():
@@ -223,6 +236,7 @@ def create_class():
       status = 400
   return ResponseCreation.createResponse(res, status)
 
+@updateRoleDecorate
 @app.route('/classes/', methods=['GET', 'OPTIONS'])
 @auth.login_required
 def public_class_list():
@@ -235,6 +249,7 @@ def public_class_list():
     status = 400
   return ResponseCreation.createResponse(res, status)
 
+@updateRoleDecorate
 @app.route('/classes/<classCode>', methods=['GET', 'OPTIONS'])
 @auth.login_required
 def getClass(classCode):

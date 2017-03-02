@@ -68,14 +68,12 @@ def getDatabaseClient():
     logger.info("Using Local Dev Database")
     return boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
 
-def updateRoleDecorate(func):
-  def updateResponseWithRole(response):
-    userEmail = request.authorization.username
-    role = user_ctrl.getRole(userEmail, getDatabaseClient())
-    print(role)
+def updateResponseWithRole(response):
+  userEmail = g.authenticatedUser['email']
+  role = user_ctrl.getRole(userEmail, getDatabaseClient())
+  if role is not None
     response.updateUserRole(role)
-    return response
-  return updateResponseWithRole
+  return response
 
 @auth.verify_password
 def verify_password(email_or_token, password):
@@ -171,9 +169,9 @@ def secure():
   response.addToPayload('user', g.authenticatedUser)
   flaskResponse = ResponseCreation.createResponse(response, status)
   logger.info(str(flaskResponse))
+  updateResponseWithRole(flaskResponse)
   return flaskResponse
 
-@updateRoleDecorate
 @app.route('/user/classes/', methods=['GET', 'OPTIONS'])
 @auth.login_required
 def class_list():
@@ -184,9 +182,9 @@ def class_list():
   res = class_ctrl.getActiveClassList(dynamoDBInstance)
   if res.hasErrors():
     status = 400
+  updateResponseWithRole(res)
   return ResponseCreation.createResponse(res, status)
 
-@updateRoleDecorate
 @app.route('/user/classes/', methods=['POST'])
 @auth.login_required
 def joinClass():
@@ -195,9 +193,9 @@ def joinClass():
   res = user_ctrl.joinClass(request.json, dynamoDBInstance)
   if res.hasErrors():
     status = 400
+  updateResponseWithRole(res)
   return ResponseCreation.createResponse(res, status)
 
-@updateRoleDecorate
 @app.route('/teacher/classes/', methods=['GET', 'OPTIONS'])
 @auth.login_required
 def taughtClassList():
@@ -205,6 +203,7 @@ def taughtClassList():
   if request.method =='OPTIONS':
     return ResponseCreation.createEmptyResponse(status)
   res = ResponseCreation.ControllerResponse()
+  updateResponseWithRole(res)
   role = g.authenticatedUser['userRole']
   if role != 'teacher' and role != 'admin' :
     res.addError('Role error', 'Only teachers can view a list of classes they are teaching')
@@ -216,7 +215,6 @@ def taughtClassList():
       status = 400
   return ResponseCreation.createResponse(res, status)
 
-@updateRoleDecorate
 @app.route('/class', methods=['POST', 'OPTIONS'])
 @auth.login_required
 def create_class():
@@ -224,9 +222,11 @@ def create_class():
   if request.method =='OPTIONS':
     return ResponseCreation.createEmptyResponse(status)
 
+  res = ResponseCreation.ControllerResponse()
+  updateResponseWithRole(res)
+
   role = g.authenticatedUser['userRole']
   if role != "teacher" and role != "admin" :
-    res = ResponseCreation.ControllerResponse()
     res.addError('Role error', 'Only teachers can create classes')
     status = 403
   else:
@@ -236,7 +236,6 @@ def create_class():
       status = 400
   return ResponseCreation.createResponse(res, status)
 
-@updateRoleDecorate
 @app.route('/classes/', methods=['GET', 'OPTIONS'])
 @auth.login_required
 def public_class_list():
@@ -247,9 +246,9 @@ def public_class_list():
   res = class_ctrl.getPublicClassList(dynamoDBInstance)
   if res.hasErrors():
     status = 400
+  updateResponseWithRole(res)
   return ResponseCreation.createResponse(res, status)
 
-@updateRoleDecorate
 @app.route('/classes/<classCode>', methods=['GET', 'OPTIONS'])
 @auth.login_required
 def getClass(classCode):
@@ -260,6 +259,7 @@ def getClass(classCode):
   res = class_ctrl.getClass(classCode, dynamoDBInstance)
   if res.hasErrors():
     status = 400
+  updateResponseWithRole(res)
   return ResponseCreation.createResponse(res, status)
 
 @app.route('/admin/changerole/', methods=['POST', 'OPTIONS'])
@@ -270,6 +270,7 @@ def changeUserRole():
     return ResponseCreation.createEmptyResponse(status)
 
   res = ResponseCreation.ControllerResponse()
+  updateResponseWithRole(res)
   if g.authenticatedUser['userRole'] != "admin":
     res.addError('Role Error', 'Only admins can change user roles')
     status = 403

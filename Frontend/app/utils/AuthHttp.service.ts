@@ -45,6 +45,10 @@ export class AuthHttp extends Http {
       url.headers.set('Authorization', authHeaderString);
     }
     let response = super.request(url, options).catch(this.catchAuthError(this));
+    response.subscribe(
+      data => this.handleSuccess(data.json()),
+      err => this.handleError(err)
+    );
     return response;
   }
 
@@ -65,6 +69,19 @@ export class AuthHttp extends Http {
       }
       return Observable.throw(res);
     };
+  }
+
+  /**
+    Role should be updated and propagated regardless of specific functional errors
+  */
+  handleSuccess(data) {
+    this.saveRole(data.user['userRole'])
+    this.propagateRole()
+  }
+
+  handleError(data) {
+    this.saveRole(data.user['userRole'])
+    this.propagateRole()
   }
 
   /**

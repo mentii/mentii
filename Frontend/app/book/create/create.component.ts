@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
+import { Validators, FormGroup, FormArray, FormBuilder } from '@angular/forms';
 import { BookModel } from '../book.model';
 import { Router } from '@angular/router';
 import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 import { BookService } from '../book.service';
+
 
 @Component({
   moduleId: module.id,
@@ -11,7 +13,8 @@ import { BookService } from '../book.service';
 })
 
 export class CreateBookComponent {
-  model = new BookModel('', '', {});
+  public createBookForm: FormGroup;
+  model = new BookModel('', '', []);
 
   constructor(public bookService: BookService, public toastr: ToastsManager, public router: Router){
   }

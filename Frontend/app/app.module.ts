@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CoreModule } from './core.module';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule, RequestOptions, XHRBackend } from '@angular/http';
 import { Router } from '@angular/router';
 /* App Config */
@@ -35,6 +35,7 @@ import { UserListComponent } from './user/list/list.component';
 import { ChangeRole } from './admin/changeRole/changeRole.component'
 import { CreateBookComponent } from './book/create/create.component';
 import { ChapterListComponent } from './book/chapterList/list.component';
+import { ChapterListItemComponent } from './book/chapterList/listItem.component';
 /* Directives */
 import { EqualValidator } from './directives/equal-validator.directive';
 import { DeleteValue } from './directives/delete-value-validator.directive';
@@ -51,6 +52,7 @@ import { LaddaModule } from 'angular2-ladda';
   imports:      [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpModule,
     ToastModule,
     LaddaModule.forRoot({style: "zoom-in"}),
@@ -82,7 +84,8 @@ import { LaddaModule } from 'angular2-ladda';
     UserListComponent,
     ChangeRole,
     CreateBookComponent,
-    ChapterListComponent
+    ChapterListComponent,
+    ChapterListItemComponent
   ],
 
   providers:  [

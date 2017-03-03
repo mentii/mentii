@@ -2,20 +2,13 @@
   <div class="col-xs-12">
     <!-- Only show if there are chapter -->
     <div *ngIf="chapters && chapters.length">
-      <div class="row" *ngFor="let chapter of chapters">
+      <div class="row" *ngFor="let chapter of chapters; let i = index; trackByFn">
         <div class="col-xs-12">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h3 class="panel-title">
-                {{chapter.title}}
-              </h3>
-            </div>
-            <div class="panel-body">
-              <p *ngIf="chapter.description">
-                {{chapter.description}}
-              </p>
-            </div>
-          </div>
+          <chapterListItem
+            [model]="chapter"
+            [index]="i"
+            (onDelete)="onDelete($event)">
+          </chapterListItem>
         </div>
       </div>
     </div>
@@ -29,8 +22,8 @@
       </div>
     </div>
     <!-- Add more chapters -->
-    <button type="button" class="btn btn-primary" (click)="addChapter()" [ladda]='isLoading'>
-      <span class="ladda-label">Add New Chapter</span>
+    <button type="button" class="btn btn-primary" (click)="addChapter()">
+      <span>Add New Chapter</span>
     </button>
   </div>
 </div>

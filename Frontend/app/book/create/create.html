@@ -5,8 +5,8 @@
   </div>
 </div>
 <div class="row">
-  <div class="col-xs-12 col-md-10">
-    <form #createBookForm="ngForm" autocomplete="off">
+  <div class="col-xs-12 col-md-11">
+    <form [formGroup]="createBookForm" novalidate (ngSubmit)="save(myForm)">
       <div class="form-group">
         <label class="required" for="title">Title</label>
         <input type="text" placeholder="Algebra" class="form-control" id="title" required minlength=3 [(ngModel)]="model.title" name="title" #title="ngModel" clearPlaceholder>
@@ -23,10 +23,12 @@
       </div>
       <label>Chapters</label>
       <div class="panel panel-default">
-        <chapterList [chapters]="model.chapters"></chapterList>
+        <div class="panel-body">
+          <chapterList [chapters]="model.chapters"></chapterList>
+        </div>
       </div>
       <p class="text-danger" *ngIf="!createBookForm.form.valid">* Required Fields</p>
-      <button type="submit" class="btn btn-primary" [disabled]="!createBookForm.form.valid" (click)="submit()">
+      <button type="submit" class="btn btn-primary" [disabled]="!createBookForm.valid">
         Create Book
       </button>
     </form>

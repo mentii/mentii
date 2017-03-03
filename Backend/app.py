@@ -71,7 +71,7 @@ def getDatabaseClient():
 def updateResponseWithRole(response):
   userEmail = g.authenticatedUser['email']
   role = user_ctrl.getRole(userEmail, getDatabaseClient())
-  if role is not None
+  if role is not None:
     response.updateUserRole(role)
   return response
 

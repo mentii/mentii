@@ -44,7 +44,7 @@ export class AuthHttp extends Http {
       // Probably won't be used but in place in case we use query strings
       url.headers.set('Authorization', authHeaderString);
     }
-    let response = super.request(url, options).catch(this.catchAuthError(this));
+    let response = super.request(url, options).share().catch(this.catchAuthError(this));
     response.subscribe(
       data => this.handleSuccess(data.json()),
       err => this.handleError(err)

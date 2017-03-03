@@ -75,13 +75,13 @@ export class AuthHttp extends Http {
     Role should be updated and propagated regardless of specific functional errors
   */
   handleSuccess(data) {
-    this.saveRole(data.user['userRole'])
-    this.propagateRole()
+    this.saveRole(data.user['userRole']);
+    this.propagateRole();
   }
 
   handleError(data) {
-    this.saveRole(data.user['userRole'])
-    this.propagateRole()
+    this.saveRole(data.user['userRole']);
+    this.propagateRole();
   }
 
   /**

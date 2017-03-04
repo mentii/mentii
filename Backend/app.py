@@ -12,7 +12,7 @@ from problems import mathstepsWrapper
 from problems import algebra
 from utils import MentiiAuth
 from utils.ResponseCreation import ControllerResponse
-import functools
+from utils.decorators import *
 import utils.ResponseCreation as ResponseCreation
 import utils.MentiiLogging as MentiiLogging
 import boto3
@@ -70,14 +70,6 @@ def getDatabaseClient():
     return boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
 
 
-def handleOptionsRequest(endpoint):
-  @functools.wraps(endpoint)
-  def optionsDecorator(*args, **kws):
-    if request.method =='OPTIONS':
-      return ResponseCreation.createEmptyResponse(statusCode=200)
-    else:
-      return endpoint(*args, **kws)
-  return optionsDecorator
 
 @auth.verify_password
 def verify_password(email_or_token, password):

@@ -70,7 +70,7 @@ def getDatabaseClient():
     return boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
 
 
-def optionsHandler(endpoint):
+def handleOptionsRequest(endpoint):
   @functools.wraps(endpoint)
   def optionsDecorator(*args, **kws):
     if request.method =='OPTIONS':
@@ -97,7 +97,7 @@ def index():
   return response
 
 @app.route('/register/', methods=['POST', 'OPTIONS'])
-@optionsHandler
+@handleOptionsRequest
 def register():
   logger.info(str(request))
   status = 200
@@ -126,7 +126,7 @@ def activate(activationid):
 
 @app.route('/signin/', methods=['POST', 'OPTIONS'])
 @auth.login_required
-@optionsHandler
+@handleOptionsRequest
 def signin():
   logger.info(str(request))
   status = 200
@@ -153,7 +153,7 @@ def signin():
 
 @app.route('/user/classes/', methods=['GET', 'OPTIONS'])
 @auth.login_required
-@optionsHandler
+@handleOptionsRequest
 def class_list():
   status = 200
   dynamoDBInstance = getDatabaseClient()
@@ -174,7 +174,7 @@ def joinClass():
 
 @app.route('/teacher/classes/', methods=['GET', 'OPTIONS'])
 @auth.login_required
-@optionsHandler
+@handleOptionsRequest
 def taughtClassList():
   status = 200
   res = ResponseCreation.ControllerResponse()
@@ -191,7 +191,7 @@ def taughtClassList():
 
 @app.route('/class', methods=['POST', 'OPTIONS'])
 @auth.login_required
-@optionsHandler
+@handleOptionsRequest
 def create_class():
   status = 200
 
@@ -209,7 +209,7 @@ def create_class():
 
 @app.route('/classes/', methods=['GET', 'OPTIONS'])
 @auth.login_required
-@optionsHandler
+@handleOptionsRequest
 def public_class_list():
   status = 200
   dynamoDBInstance = getDatabaseClient()
@@ -220,7 +220,7 @@ def public_class_list():
 
 @app.route('/classes/<classCode>', methods=['GET', 'OPTIONS'])
 @auth.login_required
-@optionsHandler
+@handleOptionsRequest
 def getClass(classCode):
   status = 200
   dynamoDBInstance = getDatabaseClient()
@@ -231,7 +231,7 @@ def getClass(classCode):
 
 @app.route('/admin/changerole/', methods=['POST', 'OPTIONS'])
 @auth.login_required
-@optionsHandler
+@handleOptionsRequest
 def changeUserRole():
   status = 200
 
@@ -247,7 +247,7 @@ def changeUserRole():
   return ResponseCreation.createResponse(res,status)
 
 @app.route('/ms-test/', methods=['POST', 'OPTIONS'])
-@optionsHandler
+@handleOptionsRequest
 def mathsteps():
   status = 200
   res = ResponseCreation.ControllerResponse()
@@ -259,7 +259,7 @@ def mathsteps():
   return ResponseCreation.createResponse(res,status)
 
 @app.route('/ms-bad-test/', methods=['POST', 'OPTIONS'])
-@optionsHandler
+@handleOptionsRequest
 def badsteps():
   status = 200
   res = ResponseCreation.ControllerResponse()
@@ -273,7 +273,7 @@ def badsteps():
 
 @app.route('/problem/<classId>/<activity>/', methods=['GET', 'OPTIONS'])
 @auth.login_required
-@optionsHandler
+@handleOptionsRequest
 def problemSteps(classId, activity):
   status = 200
   problem = problem_ctrl.getProblemTemplate(classId, activity)

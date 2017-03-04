@@ -1,0 +1,83 @@
+<div class="row">
+  <div class="col-xs-12">
+    <h2>
+      Solving a Problem
+    </h2>
+    <p class="lead" *ngIf="problem">
+      Equation I'm trying to solve: <em>{{problem}}</em>
+    </p>
+  </div>
+</div>
+<!-- show if the problem has loaded -->
+<div *ngIf="!isLoading">
+  <!-- loop through the the list of steps that is contained in the problem tree
+    and keep track of the index we are at -->
+  <div *ngFor="let step of problemTree; let goodStepIndex = index;">
+    <div class="row">
+      <div class="col-xs-12">
+        <!-- Only show this step if the index we are at is less than the current step the user is on and 
+          we are not currently showing a bad step. The reason we use less than is so that each step that
+          has been taken will be shown -->
+        <div class="panel panel-default" *ngIf="goodStepIndex <= activeStepCount && !step.badStepShown">
+          <div class="panel-heading">
+            <h3 class="panel-title">
+              {{step.correctStep}}
+            </h3>
+          </div>
+          <!-- Only show the buttons in the panel for the current step -->
+          <div class="panel-body" *ngIf="goodStepIndex == activeStepCount">
+            <button class="btn btn-primary btn-sm" (click)="showNextStep()" *ngIf="goodStepIndex==activeStepCount">
+              Conintue to Next Step
+            </button>
+            <!-- Don't show this button if we are on the first good step, that's the problem declaration -->
+            <button class="btn btn-danger btn-sm" (click)="incorrectGoodStep()" *ngIf="goodStepIndex==activeStepCount && goodStepIndex != 0">
+              This Step is Incorrect
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- loop through the bad steps for this step if they exist -->
+    <div *ngFor="let badStep of step.badStepPath; let badStepIndex = index;">
+      <div class="row" *ngIf="goodStepIndex == activeStepCount && step.badStepShown">
+        <div class="col-xs-12">
+          <!-- Show all of the bad steps upto the current active bad step, similar to how we show the overall steps in the above loop -->
+          <div class="panel panel-danger" *ngIf="badStepIndex <= activeBadStepCount">
+            <div class="panel-heading">
+              <h3 class="panel-title">
+                {{badStep}}
+              </h3>
+            </div>
+            <!-- Only show the buttons on the active bad step -->
+            <div class="panel-body" *ngIf="badStepIndex == activeBadStepCount">
+              <button class="btn btn-primary btn-sm" (click)="showNextBadStep()" *ngIf="badStepIndex==activeBadStepCount">
+                Conintue to Next Step
+              </button>
+              <button class="btn btn-danger btn-sm" (click)="incorrectBadStep()" *ngIf="badStepIndex==activeBadStepCount">
+                This Step is Incorrect
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- show if there are no other steps to take on the good branch -->
+<div *ngIf="problemIsComplete">
+  <div class="row">
+    <div class="col-xs-12">
+      <h4 class="text-success">
+        <i class="fa fa-check"></i> You've Successfully Completed this Problem
+      </h4>
+    </div>
+  </div>
+</div>
+<!-- show if still loading -->
+<div *ngIf="isLoading">
+  <div class="row">
+    <div class="col-xs-12">
+      <i class="fa fa-spinner fa-spin"></i> Loading the problem...
+    </div>
+  </div>
+</div>

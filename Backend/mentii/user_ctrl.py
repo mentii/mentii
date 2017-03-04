@@ -1,5 +1,6 @@
 import boto3
 import re
+from flask import render_template
 from flask_mail import Message
 from boto3.dynamodb.conditions import Key, Attr
 from utils.ResponseCreation import ControllerResponse
@@ -10,31 +11,28 @@ import hashlib
 from flask import g
 
 
-def register(jsonData, mailer, dbInstance):
+def register(httpOrigin, jsonData, mailer, dbInstance):
   response = ControllerResponse()
   if not validateRegistrationJSON(jsonData):
     response.addError('Register Validation Error', 'The json data did not have an email or did not have a password')
-    return response
+  else:
+    email = parseEmail(jsonData)
+    password = parsePassword(jsonData)
 
-  email = parseEmail(jsonData)
-  password = parsePassword(jsonData)
+    if not isEmailValid(email):
+      response.addError('Email invalid', 'The email is invalid')
 
-  if not isEmailValid(email):
-    response.addError('Email invalid', 'The email is invalid')
+    if not isPasswordValid(password):
+      response.addError('Password Invalid', 'The password is invalid')
 
-  if not isPasswordValid(password):
-    response.addError('Password Invalid', 'The password is invalid')
+    if isEmailInSystem(email, dbInstance) and isUserActive(getUserByEmail(email, dbInstance)):
+      response.addError('Registration Failed', 'We were unable to register this user')
 
-  if isEmailInSystem(email, dbInstance) and isUserActive(getUserByEmail(email, dbInstance)):
-    response.addError('Registration Failed', 'We were unable to register this user')
-
-  if not response.hasErrors():
-    hashedPassword = hashPassword(parsePassword(jsonData))
-    activationId = addUserAndSendEmail(email, hashedPassword, mailer, dbInstance)
-    if activationId is not None:
-      response.addToPayload('activationId', activationId)
-    else:
-      response.addError('Activation Id is None', 'Could not create an activation Id')
+    if not response.hasErrors():
+      hashedPassword = hashPassword(parsePassword(jsonData))
+      activationId = addUserAndSendEmail(httpOrigin, email, hashedPassword, mailer, dbInstance)
+      if activationId is None:
+        response.addError('Activation Id is None', 'Could not create an activation Id')
 
   return response
 
@@ -77,7 +75,7 @@ def isEmailValid(email):
 def isPasswordValid(password):
   return len(password) >= 8
 
-def addUserAndSendEmail(email, password, mailer, dbInstance):
+def addUserAndSendEmail(httpOrigin, email, password, mailer, dbInstance):
   activationId = str(uuid.uuid4())
   table = dbUtils.getTable('users', dbInstance)
 
@@ -90,20 +88,19 @@ def addUserAndSendEmail(email, password, mailer, dbInstance):
   }
   if table is None:
     MentiiLogging.getLogger().error('Unable to get table users in addUserAndSendEmail')
-    return None
+    activationId = None
 
   #This will change an existing user with the same email.
   response = dbUtils.putItem(jsonData,table)
 
   if response is None:
     MentiiLogging.getLogger().error('Unable to add user to table users in addUserAndSendEmail')
-    return None
+    activationId = None
 
   try:
-    sendEmail(email, activationId, mailer)
+    sendEmail(httpOrigin, email, activationId, mailer)
   except Exception as e:
     MentiiLogging.getLogger().exception(e)
-    return None
 
   return activationId
 
@@ -113,15 +110,31 @@ def deleteUser(email, dbInstance):
   response = dbUtils.deleteItem(key, table)
   return response
 
-def sendEmail(email, activationId, mailer):
+def sendEmail(httpOrigin, email, activationId, mailer):
   '''
   Create a message and send it from our email to
   the passed in email. The message should contain
   a link built with the activationId
   '''
+  if activationId is None:
+    return
+
+  #Change the URL to the appropriate environment
+  host = ''
+  if httpOrigin.find('stapp') != -1:
+    host = 'http://stapp.mentii.me'
+  elif httpOrigin.find('app') != -1:
+    host = 'http://app.mentii.me'
+  else:
+    host = 'http://localhost:3000'
+
+  url = host + '/activation/{0}'.format(activationId)
+
+  message = render_template('registrationEmail.html', url=url)
+
   #Build Message
-  msg = Message('Mentii: Thank You for Creating an Account!', recipients=[email])
-  msg.body = 'Here is your activationId link: api.mentii.me/activate/{0}'.format(activationId)
+  msg = Message('Mentii: Thank You for Creating an Account!', recipients=[email],
+      extra_headers={'Content-Transfer-Encoding': 'quoted-printable'}, html=message)
 
   #Send Email
   mailer.send(msg)
@@ -174,15 +187,13 @@ def getUserByEmail(email, dbInstance):
   table = dbUtils.getTable('users', dbInstance)
   if table is None:
     MentiiLogging.getLogger().error('Unable to get table users in getUserByEmail')
-    return None
-
-  key = {'Key' : {'email': email}}
-  result = dbUtils.getItem(key, table)
-  if result is None:
-    MentiiLogging.getLogger().error('Unable to get the user with email: ' + email + ' in getUserByEmail ')
-
-  if 'Item' in result.keys():
-    user = result['Item']
+  else:
+    key = {'Key' : {'email': email}}
+    result = dbUtils.getItem(key, table)
+    if result is None:
+      MentiiLogging.getLogger().error('Unable to get the user with email: ' + email + ' in getUserByEmail ')
+    elif 'Item' in result.keys():
+      user = result['Item']
 
   return user
 

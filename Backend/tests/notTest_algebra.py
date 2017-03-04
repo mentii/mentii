@@ -18,14 +18,13 @@ class MentiiMathstepsTests(unittest.TestCase):
     steps = mathstepsWrapper.getStepsForProblem(problem2)
     self.assertEqual(sol2, steps)
 
-  def test_generateBadSteps(self):
-    print('Running generateBadSteps test case')
+  def test_generateTreeWithBadSteps(self):
+    print('Running generateTreeWithBadSteps test case')
     problem = '11+x=55/5'
     path = mathstepsWrapper.getStepsForProblem(problem)
-    [u'11+x=55/5', u'11 + x = 11', u'(11 + x) - 11 = 11 - 11', u'x + 0 = 11 - 11', u'x = 11 - 11', u'x = 0']
 
     failurePoints = [u'11 + x = 11']
-    badSteps = algebra.generateBadSteps(path,1, failurePoints)
+    badSteps = algebra.generateTreeWithBadSteps(path,1, failurePoints)
 
     response = [
       {'correctStep' : u'11+x=55/5'},
@@ -39,7 +38,33 @@ class MentiiMathstepsTests(unittest.TestCase):
       { 'correctStep' : u'x = 11 - 11'},
       { 'correctStep' : u'x = 0'}
     ]
+
+    
     self.assertEqual(response, badSteps)
+
+  def test_getProblem(self):
+    print('Running getProblem test case')
+    activity1 = 'a1'
+    activity1Result = '5x=10'
+    activity2 = 'bad'
+    activity2Result = 'Bad Problem'
+
+    res1 = algebra.getProblem(activity1)
+    res2 = algebra.getProblem(activity2)
+
+    self.assertEqual(activity1Result, res1)
+    self.assertEqual(activity2Result, res2)
+
+  def test_getProblemTree(self):
+    print('Running getProblemTree test case')
+    activity1 = '5x=10'
+    activity2 = 'bad'
+
+    res1 = algebra.getProblemTree(activity1)
+    self.assertFalse(res1.hasErrors())
+    res2 = algebra.getProblemTree(activity2)
+    self.assertTrue(res2.hasErrors())
+
 
 
 if __name__ == '__main__':

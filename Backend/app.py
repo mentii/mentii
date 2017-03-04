@@ -7,21 +7,16 @@ from flask_httpauth import HTTPBasicAuth
 from flask import g
 from mentii import user_ctrl
 from mentii import class_ctrl
-from utils import MentiiAuth
+from mentii import problem_ctrl
 from problems import mathstepsWrapper
 from problems import algebra
-import utils.ResponseCreation as ResponseCreation
+from utils import MentiiAuth
 from utils.ResponseCreation import ControllerResponse
+import utils.ResponseCreation as ResponseCreation
 import utils.MentiiLogging as MentiiLogging
-import ConfigParser as cp
 import boto3
+import ConfigParser as cp
 import sys
-
-
-app = Flask(__name__)
-cors = CORS(app, resources={r"/*": {"origins": "*"}})
-mail = Mail(app)
-auth = HTTPBasicAuth()
 
 #Configuration setup
 configPath = "/config/prodConfig.ini"
@@ -32,9 +27,16 @@ if len(sys.argv) == 2:
 parser = cp.ConfigParser()
 parser.read(configPath)
 
-logPath = parser.get('MentiiData', 'path') + '/logs'
+#Setup logfile
+logPath = parser.get('LogfileLocation', 'path') + '/logs'
 MentiiLogging.setupLogger(logPath)
 logger = MentiiLogging.getLogger()
+
+#Start Flask App
+app = Flask(__name__)
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
+mail = Mail(app)
+auth = HTTPBasicAuth()
 
 #Email setup
 address = parser.get('EmailData', 'address')
@@ -90,7 +92,9 @@ def register():
     logger.info(str(flaskResponse))
     return flaskResponse
   dynamoDBInstance = getDatabaseClient()
-  res = user_ctrl.register(request.json, mail, dynamoDBInstance)
+  httpOrigin = request.environ.get('HTTP_ORIGIN')
+  jsonData = request.json
+  res = user_ctrl.register(httpOrigin, jsonData, mail, dynamoDBInstance)
   status = 201
   if res.hasErrors():
     status = 400
@@ -282,8 +286,18 @@ def badsteps():
   res = ResponseCreation.ControllerResponse()
   problem = request.json['problem']
   steps = mathstepsWrapper.getStepsForProblem(problem)
-  respon = algebra.generateBadSteps(steps,3)
+  respon = algebra.generateTreeWithBadSteps(steps,3)
   res.addToPayload('steps', respon)
+  if res.hasErrors():
+    status = 400
+  return ResponseCreation.createResponse(res,status)
+
+@app.route('/problem/<classId>/<activity>/', methods=['GET', 'OPTIONS'])
+@auth.login_required
+def problemSteps(classId, activity):
+  status = 200
+  problem = problem_ctrl.getProblemTemplate(classId, activity)
+  res = algebra.getProblemTree(problem)
   if res.hasErrors():
     status = 400
   return ResponseCreation.createResponse(res,status)

@@ -1,0 +1,49 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div class="welcome">
+      <h1 class="text-brand">
+        mentii<br/>
+        <hr class="hr-half">
+      </h1>
+    </div>
+  </div>
+</div>
+<div class="row" *ngIf="isLoading">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class='text-center'>
+        <h1 class="text-brand">
+          <i class="fa fa-spinner fa-2x fa-spin" aria-hidden="true"></i>
+          Activating Account...
+        </h1>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row" *ngIf="!isLoading && !activationSuccessful">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class='text-center'>
+        <h1 class="text-danger">
+          <i class="fa fa-frown-o fa-4x" aria-hidden="true"></i><br/>
+          We were unable to activate this account.
+        </h1>
+        <p>Please try creating an account again</p>
+        <a [routerLink]="['/register']">Return to Registration Page</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row" *ngIf="!isLoading && activationSuccessful">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class='text-center'>
+        <h1 class="text-brand">
+          <i class="fa fa-smile-o fa-4x" aria-hidden="true"></i><br/>
+          Your account is now activated!
+        </h1>
+        <a [routerLink]="['']">Return to Sign In</a>
+      </div>
+    </div>
+  </div>
+</div>

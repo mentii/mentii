@@ -1,6 +1,6 @@
 // ====== ./app/app.component.ts ======
-import { Component, ViewContainerRef, OnInit } from '@angular/core';
-import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { Component, OnInit } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 import { AuthHttp } from './utils/AuthHttp.service';
 import { Router } from '@angular/router';
 
@@ -16,8 +16,7 @@ export class AppComponent implements OnInit {
   isAuthenticated = false;
   role;
 
-  constructor(public toastr: ToastsManager, public authHttpService: AuthHttp, public router: Router, vRef: ViewContainerRef) {
-    this.toastr.setRootViewContainerRef(vRef);
+  constructor(public toastr: ToastrService, public authHttpService: AuthHttp, public router: Router) {
   }
 
   ngOnInit() {
@@ -36,7 +35,7 @@ export class AppComponent implements OnInit {
         this.role = data;
       }
     );
-    
+
     // Initialize the check on the role and authentication
     // Used mostly when opening the app to a weird page such as /create/class directly
     this.authHttpService.propagateRole();

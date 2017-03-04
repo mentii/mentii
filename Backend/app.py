@@ -74,9 +74,7 @@ def handleOptionsRequest(endpoint):
   @functools.wraps(endpoint)
   def optionsDecorator(*args, **kws):
     if request.method =='OPTIONS':
-      status = 200
-      flaskResponse = ResponseCreation.createEmptyResponse(status)
-      return flaskResponse
+      return ResponseCreation.createEmptyResponse(statusCode=200)
     else:
       return endpoint(*args, **kws)
   return optionsDecorator
@@ -244,31 +242,6 @@ def changeUserRole():
     res = user_ctrl.changeUserRole(request.json, dynamoDBInstance)
     if res.hasErrors():
       status = 400
-  return ResponseCreation.createResponse(res,status)
-
-@app.route('/ms-test/', methods=['POST', 'OPTIONS'])
-@handleOptionsRequest
-def mathsteps():
-  status = 200
-  res = ResponseCreation.ControllerResponse()
-  problem = request.json['problem']
-  steps = mathstepsWrapper.getStepsForProblem(problem)
-  res.addToPayload('steps', steps)
-  if res.hasErrors():
-    status = 400
-  return ResponseCreation.createResponse(res,status)
-
-@app.route('/ms-bad-test/', methods=['POST', 'OPTIONS'])
-@handleOptionsRequest
-def badsteps():
-  status = 200
-  res = ResponseCreation.ControllerResponse()
-  problem = request.json['problem']
-  steps = mathstepsWrapper.getStepsForProblem(problem)
-  respon = algebra.generateTreeWithBadSteps(steps,3)
-  res.addToPayload('steps', respon)
-  if res.hasErrors():
-    status = 400
   return ResponseCreation.createResponse(res,status)
 
 @app.route('/problem/<classId>/<activity>/', methods=['GET', 'OPTIONS'])

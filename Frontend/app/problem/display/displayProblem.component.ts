@@ -31,8 +31,17 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   activeBadStepCount = 0;
   badStepShown = false;
   problemIsComplete = false;
+  testmodel = '';
 
   constructor(public problemService: ProblemService, public toastr: ToastrService, public router: Router, private activatedRoute: ActivatedRoute){
+  }
+
+  stepExistsInProblemTree(step: String, problemTree = this.problemTree) {
+    Object.keys(problemTree).forEach(function(key) {
+      if (problemTree[key].correctStep.trim() == step) {
+        alert('step exists in problemTree');
+      }
+    });
   }
 
   showNextStep(){
@@ -95,6 +104,7 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     this.problemTree = data.payload.problemTree;
     //save the equation being solved as different variable
     this.problem = data.payload.problemTree[0].correctStep;
+    console.log(this.problemTree);
     this.isLoading = false;
   }
 

@@ -15,10 +15,10 @@
   <div *ngFor="let step of problemTree; let goodStepIndex = index;">
     <div class="row">
       <div class="col-xs-12">
-        <!-- Only show this step if the index we are at is less than the current step the user is on and 
+        <!-- Only show this step if the index we are at is less than the current step the user is on and
           we are not currently showing a bad step. The reason we use less than is so that each step that
           has been taken will be shown -->
-        <div class="panel panel-default" *ngIf="goodStepIndex <= activeStepCount && !step.badStepShown">
+        <div class="panel panel-default" [attr.data-good-index]="goodStepIndex" *ngIf="goodStepIndex <= activeStepCount && !step.badStepShown">
           <div class="panel-heading">
             <h3 class="panel-title">
               {{step.correctStep}}
@@ -39,7 +39,7 @@
     </div>
     <!-- loop through the bad steps for this step if they exist -->
     <div *ngFor="let badStep of step.badStepPath; let badStepIndex = index;">
-      <div class="row" *ngIf="goodStepIndex == activeStepCount && step.badStepShown">
+      <div class="row" [attr.data-bad-index]="badStepIndex" *ngIf="goodStepIndex == activeStepCount && step.badStepShown">
         <div class="col-xs-12">
           <!-- Show all of the bad steps upto the current active bad step, similar to how we show the overall steps in the above loop -->
           <div class="panel panel-danger" *ngIf="badStepIndex <= activeBadStepCount">
@@ -50,6 +50,9 @@
             </div>
             <!-- Only show the buttons on the active bad step -->
             <div class="panel-body" *ngIf="badStepIndex == activeBadStepCount">
+              {{testmodel}}<br/>
+              <input type="text" class="form-control" [(ngModel)]="testmodel"/>
+              <button class="btn btn-default btn-sm" (click)="stepExistsInProblemTree(testmodel)">Test</button>
               <button class="btn btn-primary btn-sm" (click)="showNextBadStep()" *ngIf="badStepIndex==activeBadStepCount">
                 Conintue to Next Step
               </button>

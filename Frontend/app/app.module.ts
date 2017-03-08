@@ -33,9 +33,9 @@ import { ActivityListComponent } from './activity/list/list.component';
 import { DisplayProblemComponent } from './problem/display/displayProblem.component';
 import { UserListComponent } from './user/list/list.component';
 import { ChangeRole } from './admin/changeRole/changeRole.component'
-import { CreateBookComponent } from './book/create/create.component';
-import { ChapterListComponent } from './book/chapterList/list.component';
-import { ChapterListItemComponent } from './book/chapterList/listItem.component';
+import { CreateBookComponent } from './book/create/createBook.component';
+import { ChapterListComponent } from './book/chapterList/chapterList.component';
+import { ChapterListItemComponent } from './book/chapterList/chapterListItem.component';
 /* Directives */
 import { EqualValidator } from './directives/equal-validator.directive';
 import { DeleteValue } from './directives/delete-value-validator.directive';

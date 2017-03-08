@@ -1,11 +1,12 @@
-<div class="row">
-  <div class="col-xs-12">
+<form class="row" [formGroup]="parentBookForm">
+  <div class="col-xs-12" formArrayName="chapters">
     <!-- Only show if there are chapter -->
     <div *ngIf="chapters && chapters.length">
-      <div class="row" *ngFor="let chapter of chapters; let i = index; trackByFn">
+      <div *ngFor="let chapter of chapters; let i=index">
         <div class="col-xs-12">
           <chapterListItem
-            [model]="chapter"
+            [chapters]="parentBookForm.controls.chapters"
+            [chapter]="chapter"
             [index]="i"
             (onDelete)="onDelete($event)">
           </chapterListItem>
@@ -26,4 +27,4 @@
       <span>Add New Chapter</span>
     </button>
   </div>
-</div>
+</form>

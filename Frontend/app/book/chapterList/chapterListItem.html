@@ -1,4 +1,4 @@
-<div class="panel panel-default">
+<form class="panel panel-default" [formGroup]="chapterForm">
   <div class="panel-heading">
     <label>Chapter&nbsp;{{this.index + 1}}</label>
     <a (click)="delete()" class="logout pull-right">
@@ -9,14 +9,14 @@
     <div class="form-group">
       <label for="title" class="required">Title</label>
       <input  type="text"
-              id="title"
-              name="title"
+              formControlName="title"
               placeholder="Foundations for Algebra"
               class="form-control"
-              [(ngModel)]="model.title"
-              #title="ngModel"
-              clearPlaceholder>
-
+              clearPlaceholder/>
+      <!-- <sectionList
+        [parentChapterForm]="chapterForm"
+        [sections]="chapter.sections"
+      </sectionList> -->
     </div>
   </div>
-</div>
+</form>

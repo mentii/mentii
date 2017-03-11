@@ -36,6 +36,9 @@ import { ChangeRole } from './admin/changeRole/changeRole.component'
 import { CreateBookComponent } from './book/create/createBook.component';
 import { ChapterListComponent } from './book/chapterList/chapterList.component';
 import { ChapterListItemComponent } from './book/chapterList/chapterListItem.component';
+import { SectionListComponent } from './book/sectionList/sectionList.component';
+import { SectionListItemComponent } from './book/sectionList/sectionListItem.component';
+import { ProblemListComponent } from './book/problemList/problemList.component';
 /* Directives */
 import { EqualValidator } from './directives/equal-validator.directive';
 import { DeleteValue } from './directives/delete-value-validator.directive';
@@ -85,7 +88,10 @@ import { LaddaModule } from 'angular2-ladda';
     ChangeRole,
     CreateBookComponent,
     ChapterListComponent,
-    ChapterListItemComponent
+    ChapterListItemComponent,
+    SectionListComponent,
+    SectionListItemComponent,
+    ProblemListComponent
   ],
 
   providers:  [

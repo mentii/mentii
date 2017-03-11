@@ -22,14 +22,10 @@
         </span>
       </div>
       <label>Chapters</label>
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <chapterList
-            [parentBookForm]="createBookForm"
-            [chapters]="book.chapters">
-          </chapterList>
-        </div>
-      </div>
+      <chapterList
+        [parentBookForm]="createBookForm"
+        [chapters]="book.chapters">
+      </chapterList>
       <p class="text-danger" *ngIf="!createBookForm.valid">* Required Fields</p>
       <button type="submit" class="btn btn-primary" [disabled]="!createBookForm.valid">
         Create Book

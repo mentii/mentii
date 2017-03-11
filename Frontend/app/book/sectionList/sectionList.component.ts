@@ -1,31 +1,31 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ChapterModel } from '../chapter.model';
+import { SectionModel } from '../section.model';
 import { Validators, FormGroup, FormArray, FormBuilder } from '@angular/forms';
 
 @Component({
   moduleId: module.id,
-  selector: 'chapterList',
-  templateUrl: 'chapterList.html'
+  selector: 'sectionList',
+  templateUrl: 'sectionList.html'
 })
 
-export class ChapterListComponent implements OnInit {
-  @Input('parentBookForm')
-  public parentBookForm: FormGroup;
-  @Input('chapters')
-  public chapters: ChapterModel[];
+export class SectionListComponent implements OnInit {
+  @Input('parentChapterForm')
+  public parentChapterForm: FormGroup;
+  @Input('sections')
+  public sections: SectionModel[];
 
   constructor(private _formBuilder: FormBuilder){}
 
   ngOnInit() {
-    this.parentBookForm.addControl('chapters', new FormArray([]));
+    this.parentChapterForm.addControl('sections', new FormArray([]));
   }
 
-  addChapter() {
-    this.chapters.push(new ChapterModel('', []));
+  addSection() {
+    this.sections.push(new SectionModel('', []));
   }
 
   onDelete(index: number) {
-    this.chapters.splice(index, 1);
+    this.sections.splice(index, 1);
   }
 
 }

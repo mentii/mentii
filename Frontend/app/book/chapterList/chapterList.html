@@ -3,7 +3,7 @@
     <!-- Only show if there are chapter -->
     <div *ngIf="chapters && chapters.length">
       <div *ngFor="let chapter of chapters; let i=index">
-        <div class="col-xs-12">
+        <div>
           <chapterListItem
             [chapters]="parentBookForm.controls.chapters"
             [chapter]="chapter"

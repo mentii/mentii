@@ -11,8 +11,7 @@ from mentii import problem_ctrl
 from problems import mathstepsWrapper
 from problems import algebra
 from utils import MentiiAuth
-from utils.ResponseCreation import ControllerResponse
-from utils.decorators import *
+from utils.Decorators import *
 import utils.ResponseCreation as ResponseCreation
 import utils.MentiiLogging as MentiiLogging
 import boto3
@@ -133,7 +132,7 @@ def signin():
     'password': password
   }
 
-  response = ControllerResponse()
+  response = ResponseCreation.ControllerResponse()
   token = MentiiAuth.generateAuthToken(userCredentials, appSecret)
   response.addToPayload('token', token)
   flaskResponse = ResponseCreation.createResponse(response, status)

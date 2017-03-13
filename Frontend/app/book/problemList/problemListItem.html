@@ -1,0 +1,15 @@
+<div [formGroup]="problemForm">
+    <div class="form-group">
+      <label for="problemString" class="required">Problem {{this.index + 1}}</label>
+      <div class="form-inline">
+      <input  type="text"
+              formControlName="problemString"
+              placeholder="6x+2=13"
+              class="form-control"
+              clearPlaceholder/>
+      <a (click)="delete()" class="logout pull-right">
+        <i class="fa fa-times-circle fa-2x" aria-hidden="true"></i>
+      </a>
+      </div>
+    </div>
+</div>

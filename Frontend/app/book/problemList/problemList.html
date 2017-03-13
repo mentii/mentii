@@ -3,23 +3,12 @@
     <!-- Only show if there are problems -->
     <div *ngIf="problems && problems.length">
       <div *ngFor="let problem of problems; let i=index">
-        <div>
-            <label>Problem&nbsp;-&nbsp;{{i + 1}}</label>
-            <div class="panel-body">
-              <div class="form-group">
-                <input  name="problem"
-                        type="text"
-                        placeholder="6x + 1 = 7"
-                        class="form-control"
-                        clearPlaceholder/>
-                <span>
-                <a (click)="delete()" class="logout pull-right">
-                  <i class="fa fa-times-circle fa-2x" aria-hidden="true"></i>
-                </a>
-                </span>
-              </div>
-          </div>
-        </div>
+          <problemListItem
+            [problems]="parentSectionForm.controls.problems"
+            [problem]="problem"
+            [index]="i"
+            (onDelete)="onDelete($event)">
+          </problemListItem>
       </div>
     </div>
     <!-- Only show if there are no problems -->

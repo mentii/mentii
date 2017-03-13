@@ -39,6 +39,7 @@ import { ChapterListItemComponent } from './book/chapterList/chapterListItem.com
 import { SectionListComponent } from './book/sectionList/sectionList.component';
 import { SectionListItemComponent } from './book/sectionList/sectionListItem.component';
 import { ProblemListComponent } from './book/problemList/problemList.component';
+import { ProblemListItemComponent } from './book/problemList/problemListItem.component';
 /* Directives */
 import { EqualValidator } from './directives/equal-validator.directive';
 import { DeleteValue } from './directives/delete-value-validator.directive';
@@ -91,7 +92,8 @@ import { LaddaModule } from 'angular2-ladda';
     ChapterListItemComponent,
     SectionListComponent,
     SectionListItemComponent,
-    ProblemListComponent
+    ProblemListComponent,
+    ProblemListItemComponent
   ],
 
   providers:  [

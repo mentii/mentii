@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ProblemModel } from '../problem.model';
 import { Validators, FormGroup, FormArray, FormBuilder } from '@angular/forms';
 
@@ -14,35 +14,17 @@ export class ProblemListComponent implements OnInit {
   @Input('problems')
   public problems: ProblemModel[];
 
-  public problemForm: FormGroup;
-
-  public problemFormArray : FormArray;
-
-
   constructor(private _formBuilder: FormBuilder){}
 
   ngOnInit() {
-    this.parentSectionForm.addControl('problems', new FormArray([])); //bind to section.problems
-    console.log(this.parentSectionForm)
+    this.parentSectionForm.addControl('problems', new FormArray([]));
   }
-
-  private toFormGroup(data: ProblemModel) {
-    const formGroup = this._formBuilder.group({
-        problemString: [ data.problemString ],
-    });
-    return formGroup;
-  }
-
 
   addProblem() {
-    let problem = new ProblemModel('');
-    //console.log('Before Push' + this.problems)
-    this.problems.push(problem);
-    //console.log('After Push' + this.problems)
-
+    this.problems.push(new ProblemModel(''));
   }
 
-  delete(index:number) {
+  onDelete(index: number) {
     this.problems.splice(index, 1);
   }
 

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { ClassService } from '../class.service';
-import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { ClassModel } from '../class.model';
 
 @Component({
@@ -21,7 +21,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private classService: ClassService,
-    private toastr: ToastsManager
+    private toastr: ToastrService
   ){}
 
   ngOnInit() {

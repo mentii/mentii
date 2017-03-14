@@ -91,4 +91,18 @@ export class UserService {
     .map((res:Response) => res)
     .catch((error:any) => Observable.throw(error));
   }
+
+  /**
+  * Service method to activate a user
+  * @param  {string} activationId
+  * @return {Observable<any>} data.json() will contain status "Success" in payload or errors
+  */
+  activation(activationId) : Observable<any> {
+    let activateUrl = this.mentiiConfig.getRootUrl() + '/activate/' + activationId;
+    let body = {}
+    return this.http.get(activateUrl, body)
+    .map((res:Response) => res)
+    .catch((error:any) => Observable.throw(error));
+  }
+
 }

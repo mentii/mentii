@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { MentiiConfig } from '../../mentii.config';
 import { Router } from '@angular/router';
 import { SigninModel } from './signin.model';
-import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { UserService } from '../user.service';
 
 @Component({
@@ -17,7 +17,7 @@ export class SigninComponent {
   mentiiConfig = new MentiiConfig();
   isLoading = false;
 
-  constructor(public userService: UserService, public authHttpService: AuthHttp , public router: Router, public toastr: ToastsManager){
+  constructor(public userService: UserService, public authHttpService: AuthHttp , public router: Router, public toastr: ToastrService){
   }
 
   handleSuccess(data) {

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { Validators, FormGroup, FormArray, FormBuilder } from '@angular/forms';
 import { BookModel } from '../book.model';
 import { BookService } from '../book.service';
@@ -15,7 +15,7 @@ export class CreateBookComponent {
   public book: BookModel;
   public createBookForm: FormGroup;
 
-  constructor(private _formBuilder: FormBuilder, public bookService: BookService, public toastr: ToastsManager, public router: Router){
+  constructor(private _formBuilder: FormBuilder, public bookService: BookService, public toastr: ToastrService, public router: Router){
   }
 
   ngOnInit() {

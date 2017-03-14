@@ -112,9 +112,34 @@ def preloadClassData(jsonData, table):
           }
         )
   except IOError as e:
-    message = "Unable to load data into table"
+    message = "Unable to load data into classes table"
     MentiiLogging.getLogger().exception(message + '\nJSON:\n' + jsonData + '\n' + str(e))
     return
+
+def preloadBookData(jsonData, table):
+  try:
+    with open(jsonData) as json_file:
+      data = json_file.read()
+      item = json.loads(data)
+
+      bookId = item['id']
+      title = item['title']
+      chapters = item['chapters']
+      description = item['description']
+
+      table.put_item(
+        Item={
+          'id': bookId,
+          'title': title,
+          'chapters' : chapters,
+          'description' : description
+        }
+      )
+  except IOError as e:
+    message = "Unable to load data into books table"
+    MentiiLogging.getLogger().exception(message + '\nJSON:\n' + jsonData + '\n' + str(e))
+    return
+
 
 def preloadDataFromJson(jsonData, table):
   if (type(jsonData) == str):

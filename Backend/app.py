@@ -246,6 +246,22 @@ def problemSteps(classId, activity):
     status = 400
   return ResponseCreation.createResponse(res,status)
 
+@app.route('/book/', methods=['POST', 'OPTIONS'])
+@auth.login_required
+@handleOptionsRequest
+def problemSteps():
+  status = 200
+  res = ResponseCreation.ControllerResponse()
+  if g.authenticatedUser['userRole'] != "admin":
+    res.addError('Role Error', 'Only admins can create books')
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    res = book_ctrl.createBook(request.json, dynamoDBInstance)
+    if res.hasErrors():
+      status = 400
+  return ResponseCreation.createResponse(res,status)
+
 if __name__ == '__main__':
   logger.info('mentii app starting')
   try:

@@ -278,6 +278,28 @@ class DbUtilsTest(unittest.TestCase):
     self.assertIsNotNone(self.table.get_item(Key={"email":"sharks@mentii.me"}).get("Item"))
     self.assertIsNotNone(self.table.get_item(Key={"email":"lizards@mentii.me"}).get("Item"))
 
+  def test_preloadClassData(self):
+    print("Running preloadClassData test case")
+    classesSetting = 'classes_settings.json'
+    classesMockData = 'mock_classes.json'
+
+    classesTable = db.createTableFromFile('./tests/'+classesSetting, self.dynamodb)
+
+    db.preloadClassData('./tests/'+classesMockData, classesTable)
+    self.assertIsNotNone(classesTable.get_item(Key={'code':'d26713cc-f02d-4fd6-80f0-026784d1ab9b'}).get('Item'))
+    self.assertIsNotNone(classesTable.get_item(Key={'code':'d93cd63f-6eda-4644-b603-60f51142749e'}).get('Item'))
+    self.assertIsNotNone(classesTable.get_item(Key={'code':'93211750-a753-41cc-b8dc-904d6ed2f931'}).get('Item'))
+
+  def test_preloadBookData(self):
+    print("Running preloadBookData test case")
+    booksSetting = 'book_settings.json'
+    bookMockData = 'mock_book.json'
+
+    booksTable = db.createTableFromFile('./tests/'+booksSetting, self.dynamodb)
+
+    db.preloadBookData('./tests/'+bookMockData, booksTable)
+    self.assertIsNotNone(booksTable.get_item(Key={'id':'abcdefg123456'}).get('Item'))
+
 #################### Get Table Tests #################################
 
   def test_getTable(self):

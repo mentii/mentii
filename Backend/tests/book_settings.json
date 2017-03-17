@@ -2,13 +2,13 @@
   "TableName" :"books",
   "KeySchema":[
     {
-      "AttributeName": "id",
+      "AttributeName": "bookId",
       "KeyType": "HASH"
     }
   ],
   "AttributeDefinitions":[
     {
-      "AttributeName": "id",
+      "AttributeName": "bookId",
       "AttributeType": "S"
     }
   ],

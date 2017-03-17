@@ -1,5 +1,5 @@
 {
-  "id":"abcdefg123456",
+  "bookId":"abcdefg123456",
   "title":"book title",
   "description":"book description",
   "chapters": [

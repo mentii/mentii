@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ChapterModel } from '../chapter.model';
-import { Validators, FormGroup, FormArray, FormBuilder } from '@angular/forms';
+import { Validators, FormGroup, FormArray } from '@angular/forms';
 
 @Component({
   moduleId: module.id,
@@ -14,7 +14,7 @@ export class ChapterListComponent implements OnInit {
   @Input('chapters')
   public chapters: ChapterModel[];
 
-  constructor(private _formBuilder: FormBuilder){}
+  constructor(){}
 
   ngOnInit() {
     this.parentBookForm.addControl('chapters', new FormArray([]));

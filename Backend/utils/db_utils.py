@@ -122,14 +122,14 @@ def preloadBookData(jsonData, table):
       data = json_file.read()
       item = json.loads(data)
 
-      bookId = item['id']
+      bookId = item['bookId']
       title = item['title']
       chapters = item['chapters']
       description = item['description']
 
       table.put_item(
         Item={
-          'id': bookId,
+          'bookId': bookId,
           'title': title,
           'chapters' : chapters,
           'description' : description

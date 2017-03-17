@@ -13,6 +13,9 @@
               placeholder="Chapter 1 - Foundations for Algebra"
               class="form-control"
               clearPlaceholder/>
+      <span [hidden]="chapterForm.controls.title.pristine || chapterForm.controls.title.valid" class="text-danger">
+          Chapter title must be at least 5 characters long.
+      </span>
     </div>
     <sectionList
       [parentChapterForm]="chapterForm"

@@ -19,7 +19,7 @@ export class BookService {
   }
 
   addBook(bookModel: BookModel):Observable<any> {
-    let createClassListUrl = this.mentiiConfig.getRootUrl() + '/book';
+    let createBookUrl = this.mentiiConfig.getRootUrl() + '/book';
     let headers = new Headers({ 'Content-Type': 'application/json' });
     let options = new RequestOptions({ headers: headers })
     let body = {
@@ -27,7 +27,7 @@ export class BookService {
       "description": bookModel.description,
       "chapters": bookModel.chapters
     }
-    return this.authHttp.post(createClassListUrl, body)
+    return this.authHttp.post(createBookUrl, body)
     .map((res:Response) => res)
     .catch((error:any) => Observable.throw(error));
   }

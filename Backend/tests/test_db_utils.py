@@ -298,7 +298,7 @@ class DbUtilsTest(unittest.TestCase):
     booksTable = db.createTableFromFile('./tests/'+booksSetting, self.dynamodb)
 
     db.preloadBookData('./tests/'+bookMockData, booksTable)
-    self.assertIsNotNone(booksTable.get_item(Key={'id':'abcdefg123456'}).get('Item'))
+    self.assertIsNotNone(booksTable.get_item(Key={'bookId':'abcdefg123456'}).get('Item'))
 
 #################### Get Table Tests #################################
 

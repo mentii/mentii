@@ -27,7 +27,7 @@ def createBook(bookData, dynamoDBInstance, userRole=None):
       bookId = str(uuid.uuid4())
       # prep json data
       book = {
-        'id': bookId,
+        'bookId': bookId,
         'title': bookData['title'],
         'description': bookData['description'],
         'chapters': bookData['chapters']

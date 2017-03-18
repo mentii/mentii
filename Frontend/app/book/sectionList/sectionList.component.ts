@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { SectionModel } from '../section.model';
-import { Validators, FormGroup, FormArray, FormBuilder } from '@angular/forms';
+import { Component, Input } from '@angular/core';
+import { Validators, FormArray } from '@angular/forms';
+import { SectionListItemComponent } from './sectionListItem.component';
 
 @Component({
   moduleId: module.id,
@@ -8,24 +8,17 @@ import { Validators, FormGroup, FormArray, FormBuilder } from '@angular/forms';
   templateUrl: 'sectionList.html'
 })
 
-export class SectionListComponent implements OnInit {
-  @Input('parentChapterForm')
-  public parentChapterForm: FormGroup;
-  @Input('sections')
-  public sections: SectionModel[];
+export class SectionListComponent {
 
-  constructor(private _formBuilder: FormBuilder){}
-
-  ngOnInit() {
-    this.parentChapterForm.addControl('sections', new FormArray([]));
-  }
+  @Input('sectionsArray')
+  public sectionsArray: FormArray;
 
   addSection() {
-    this.sections.push(new SectionModel('', []));
+    this.sectionsArray.push(SectionListItemComponent.buildItem());
   }
 
-  onDelete(index: number) {
-    this.sections.splice(index, 1);
+  static buildItems() {
+    return new FormArray([]);
   }
 
 }

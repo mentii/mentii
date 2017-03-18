@@ -1,4 +1,4 @@
-<form class="panel panel-default" [formGroup]="chapterForm">
+<form class="panel panel-default" [formGroup]="chapter">
   <div class="panel-heading">
     <label>Chapter&nbsp;-&nbsp;{{this.index + 1}}</label>
     <a (click)="delete()" class="logout pull-right">
@@ -7,19 +7,20 @@
   </div>
   <div class="panel-body">
     <div class="form-group">
-      <label for="title" class="required">Chapter Title</label>
+      <label for="chapterTitle" class="required">Chapter Title</label>
       <input  type="text"
-              formControlName="title"
+              formControlName="chapterTitle"
               placeholder="Chapter 1 - Foundations for Algebra"
               class="form-control"
               clearPlaceholder/>
-      <span [hidden]="chapterForm.controls.title.pristine || chapterForm.controls.title.valid" class="text-danger">
-          Chapter title must be at least 5 characters long.
+      <span [hidden]="chapter.controls.chapterTitle.pristine || chapter.controls.chapterTitle.valid" class="text-danger">
+          Chapter title required
       </span>
     </div>
     <sectionList
-      [parentChapterForm]="chapterForm"
-      [sections]="chapter.sections">
+      formArrayName="sections"
+      [sectionsArray]="chapter.get('sections')"
+      hideNgInvalid>
     </sectionList>
   </div>
 </form>

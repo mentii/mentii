@@ -5,8 +5,7 @@ import { Attribute, Directive, ElementRef, Renderer, AfterViewInit } from '@angu
 })
 
 export class HideNgInvalid implements AfterViewInit {
-  plText : string = '';
-  element;
+  private element;
 
   constructor(public el: ElementRef, public renderer: Renderer) {
     // get element
@@ -22,7 +21,7 @@ export class HideNgInvalid implements AfterViewInit {
       }
     })
 
-    // remove ng-invalid attribute from class after user clicks Add New __
+    // remove ng-invalid attribute from class after user clicks "Add New __"
     this.renderer.listen(this.element, 'click', (event) => {
       let isInvalid = this.element.getAttribute('class').search('ng-invalid');
 

@@ -8,6 +8,7 @@ import { FormGroup, Validators, FormControl } from '@angular/forms';
 })
 
 export class ProblemListItemComponent {
+
   @Input('problem')
   public problem: FormGroup;
 
@@ -24,6 +25,6 @@ export class ProblemListItemComponent {
   static buildItem() {
     return new FormGroup({
       problemString : new FormControl('', Validators.required)
-    })
+    });
   }
 }

@@ -18,6 +18,6 @@ export class ChapterListComponent {
   }
 
   static buildItems() {
-    return new FormArray([])
+    return new FormArray([]);
   }
 }

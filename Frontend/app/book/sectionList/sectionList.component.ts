@@ -9,6 +9,7 @@ import { SectionListItemComponent } from './sectionListItem.component';
 })
 
 export class SectionListComponent {
+
   @Input('sectionsArray')
   public sectionsArray: FormArray;
 
@@ -17,7 +18,7 @@ export class SectionListComponent {
   }
 
   static buildItems() {
-    return new FormArray([])
+    return new FormArray([]);
   }
 
 }

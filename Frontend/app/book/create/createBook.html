@@ -26,9 +26,9 @@
       <div class="form-group">
         <label class="required">Chapters</label>
         <chapterList
-          hideNgInvalid
           formArrayName="chapters"
-          [chaptersArray]="createBookForm.get('chapters')">
+          [chaptersArray]="createBookForm.get('chapters')"
+          hideNgInvalid>
         </chapterList>
       </div>
       <p class="text-danger">* Required Fields</p>

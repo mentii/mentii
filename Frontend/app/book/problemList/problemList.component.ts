@@ -18,6 +18,6 @@ export class ProblemListComponent{
   }
 
   static buildItems() {
-    return new FormArray([])
+    return new FormArray([]);
   }
 }

@@ -9,6 +9,7 @@ import { ProblemListComponent } from '../problemList/problemList.component';
 })
 
 export class SectionListItemComponent {
+
   @Input('section')
   public section: FormGroup;
 
@@ -26,6 +27,6 @@ export class SectionListItemComponent {
     return new FormGroup({
       sectionTitle : new FormControl('', [Validators.required]),
       problems: ProblemListComponent.buildItems()
-    })
+    });
   }
 }

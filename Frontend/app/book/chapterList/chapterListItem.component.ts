@@ -9,6 +9,7 @@ import { SectionListComponent } from '../sectionList/sectionList.component';
 })
 
 export class ChapterListItemComponent {
+
   @Input('chapter')
   public chapter: FormGroup;
 
@@ -26,6 +27,6 @@ export class ChapterListItemComponent {
     return new FormGroup({
       chapterTitle: new FormControl('', [Validators.required]),
       sections: SectionListComponent.buildItems()
-    })
+    });
   }
 }

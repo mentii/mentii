@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Validators, FormGroup, FormArray, FormBuilder } from '@angular/forms';
 import { BookModel } from '../book.model';
 import { BookService } from '../book.service';
+import { ChapterListComponent } from '../chapterList/chapterList.component';
 
 @Component({
   moduleId: module.id,
@@ -27,15 +28,17 @@ export class CreateBookComponent {
     const formGroup = this._formBuilder.group({
       title: ['', [Validators.required, Validators.minLength(5)]],
       description: ['',[Validators.required]],
+      chapters: ChapterListComponent.buildItems()
     });
     return formGroup;
   }
 
   submit(model: FormGroup) {
-    this.bookService.addBook(model.value).subscribe(
+    console.log(this.createBookForm.controls);
+    /*this.bookService.addBook(model.value).subscribe(
       data => this.handleSuccess(model.value),
       err => this.handleError(err)
-    );
+    );*/
   }
 
   handleSuccess(model) {

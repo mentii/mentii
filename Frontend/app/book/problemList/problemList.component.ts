@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ProblemModel } from '../problem.model';
 import { Validators, FormGroup, FormArray, FormBuilder } from '@angular/forms';
+import { ProblemListItemComponent } from './problemListItem.component';
 
 @Component({
   moduleId: module.id,
@@ -9,23 +10,20 @@ import { Validators, FormGroup, FormArray, FormBuilder } from '@angular/forms';
 })
 
 export class ProblemListComponent implements OnInit {
-  @Input('parentSectionForm')
-  public parentSectionForm: FormGroup;
-  @Input('problems')
-  public problems: ProblemModel[];
+  @Input()
+  public problemsArray: FormArray;
 
   constructor(private _formBuilder: FormBuilder){}
 
   ngOnInit() {
-    this.parentSectionForm.addControl('problems', new FormArray([]));
+    //this.parentSectionForm.addControl('problems', new FormArray([]));
   }
 
   addProblem() {
-    this.problems.push(new ProblemModel(''));
+    this.problemsArray.push(ProblemListItemComponent.buildItem());
   }
 
-  onDelete(index: number) {
-    this.problems.splice(index, 1);
+  static buildItems() {
+    return new FormArray([], Validators.required)
   }
-
 }

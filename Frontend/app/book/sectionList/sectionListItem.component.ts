@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SectionModel } from '../section.model';
-import { FormGroup, FormArray, FormBuilder } from '@angular/forms';
+import { FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
+import { ProblemListComponent } from '../problemList/problemList.component';
 
 @Component({
   moduleId: module.id,
@@ -9,31 +10,23 @@ import { FormGroup, FormArray, FormBuilder } from '@angular/forms';
 })
 
 export class SectionListItemComponent {
-  @Input('sections')
-  public sections: FormArray;
-  @Input('section')
-  public section: SectionModel;
-  @Input('index')
+  @Input()
+  public section: FormGroup;
+
+  @Input()
   public index: number;
-  @Output() onDelete = new EventEmitter<number>();
 
-  public sectionForm: FormGroup;
-
-  constructor(private  _formBuilder: FormBuilder){}
-
-  ngOnInit() {
-    this.sectionForm = this.toFormGroup(this.section);
-    this.sections.push(this.sectionForm);
-  }
-
-  private toFormGroup(data: SectionModel) {
-    const formGroup = this._formBuilder.group({
-        title: [ data.title ],
-    });
-    return formGroup;
-  }
+  @Output()
+  onDelete = new EventEmitter<number>();
 
   delete() {
     this.onDelete.emit(this.index);
+  }
+
+  static buildItem() {
+    return new FormGroup({
+      sectionTitle : new FormControl('', Validators.required),
+      problems: ProblemListComponent.buildItems()
+    })
   }
 }

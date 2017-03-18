@@ -22,10 +22,12 @@
         </span>
       </div>
       <label class="required">Chapters</label>
-      <chapterList
-        [parentBookForm]="createBookForm"
-        [chapters]="book.chapters">
-      </chapterList>
+      <div class="form-group">
+        <chapterList
+          formArrayName="chapters"
+          [chaptersArray]="createBookForm.get('chapters')">
+        </chapterList>
+      </div>
       <p class="text-danger">* Required Fields</p>
       <button type="submit" class="btn btn-primary" [disabled]="!createBookForm.valid">
         Create Book

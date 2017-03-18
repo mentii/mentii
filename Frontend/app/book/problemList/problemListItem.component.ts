@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ProblemModel } from '../problem.model';
-import { FormGroup, FormArray, FormBuilder } from '@angular/forms';
+import { FormGroup, Validators, FormControl } from '@angular/forms';
 
 @Component({
   moduleId: module.id,
@@ -9,31 +9,22 @@ import { FormGroup, FormArray, FormBuilder } from '@angular/forms';
 })
 
 export class ProblemListItemComponent {
-  @Input('problems')
-  public problems: FormArray;
-  @Input('problem')
-  public problem: ProblemModel;
-  @Input('index')
+  @Input()
+  public problem: FormGroup;
+
+  @Input()
   public index: number;
-  @Output() onDelete = new EventEmitter<number>();
 
-  public problemForm: FormGroup;
-
-  constructor(private  _formBuilder: FormBuilder){}
-
-  ngOnInit() {
-    this.problemForm = this.toFormGroup(this.problem);
-    this.problems.push(this.problemForm);
-  }
-
-  private toFormGroup(data: ProblemModel) {
-    const formGroup = this._formBuilder.group({
-        problemString: [ data.problemString ],
-    });
-    return formGroup;
-  }
+  @Output()
+  onDelete = new EventEmitter<number>();
 
   delete() {
     this.onDelete.emit(this.index);
+  }
+
+  static buildItem() {
+    return new FormGroup({
+      problemString : new FormControl('', Validators.required)
+    })
   }
 }

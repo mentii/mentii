@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ChapterModel } from '../chapter.model';
 import { Validators, FormGroup, FormArray } from '@angular/forms';
+import { ChapterListItemComponent } from './chapterListItem.component';
 
 @Component({
   moduleId: module.id,
@@ -8,24 +9,16 @@ import { Validators, FormGroup, FormArray } from '@angular/forms';
   templateUrl: 'chapterList.html'
 })
 
-export class ChapterListComponent implements OnInit {
-  @Input('parentBookForm')
-  public parentBookForm: FormGroup;
-  @Input('chapters')
-  public chapters: ChapterModel[];
+export class ChapterListComponent {
 
-  constructor(){}
-
-  ngOnInit() {
-    this.parentBookForm.addControl('chapters', new FormArray([]));
-  }
+  @Input()
+  public chaptersArray: FormArray;
 
   addChapter() {
-    this.chapters.push(new ChapterModel('', []));
+    this.chaptersArray.push(ChapterListItemComponent.buildItem());
   }
 
-  onDelete(index: number) {
-    this.chapters.splice(index, 1);
+  static buildItems() {
+    return new FormArray([], Validators.required)
   }
-
 }

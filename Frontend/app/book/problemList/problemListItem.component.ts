@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ProblemModel } from '../problem.model';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 
 @Component({
@@ -9,10 +8,10 @@ import { FormGroup, Validators, FormControl } from '@angular/forms';
 })
 
 export class ProblemListItemComponent {
-  @Input()
+  @Input('problem')
   public problem: FormGroup;
 
-  @Input()
+  @Input('index')
   public index: number;
 
   @Output()

@@ -14,10 +14,11 @@
               class="form-control"
               clearPlaceholder/>
       <span [hidden]="chapter.controls.chapterTitle.pristine || chapter.controls.chapterTitle.valid" class="text-danger">
-          Chapter title must be at least 5 characters long.
+          Chapter title required
       </span>
     </div>
     <sectionList
+      hideNgInvalid
       formArrayName="sections"
       [sectionsArray]="chapter.get('sections')">
     </sectionList>

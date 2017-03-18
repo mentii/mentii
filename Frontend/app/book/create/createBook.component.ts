@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Validators, FormGroup, FormArray, FormBuilder } from '@angular/forms';
-import { BookModel } from '../book.model';
+import { Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { BookService } from '../book.service';
 import { ChapterListComponent } from '../chapterList/chapterList.component';
 
@@ -13,18 +12,16 @@ import { ChapterListComponent } from '../chapterList/chapterList.component';
 })
 
 export class CreateBookComponent {
-  public book: BookModel;
   public createBookForm: FormGroup;
 
   constructor(private _formBuilder: FormBuilder, public bookService: BookService, public toastr: ToastrService, public router: Router){
   }
 
   ngOnInit() {
-    this.book = new BookModel('', '', []);
-    this.createBookForm = this.getFormFromBook(this.book);
+    this.createBookForm = this.getFormFromBook();
   }
 
-  getFormFromBook(data: BookModel): FormGroup {
+  getFormFromBook(): FormGroup {
     const formGroup = this._formBuilder.group({
       title: ['', [Validators.required, Validators.minLength(5)]],
       description: ['',[Validators.required]],
@@ -34,11 +31,10 @@ export class CreateBookComponent {
   }
 
   submit(model: FormGroup) {
-    console.log(this.createBookForm.controls);
-    /*this.bookService.addBook(model.value).subscribe(
+    this.bookService.addBook(model.value).subscribe(
       data => this.handleSuccess(model.value),
       err => this.handleError(err)
-    );*/
+    );
   }
 
   handleSuccess(model) {

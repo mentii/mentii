@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { SectionModel } from '../section.model';
-import { FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ProblemListComponent } from '../problemList/problemList.component';
 
 @Component({
@@ -10,10 +9,10 @@ import { ProblemListComponent } from '../problemList/problemList.component';
 })
 
 export class SectionListItemComponent {
-  @Input()
+  @Input('section')
   public section: FormGroup;
 
-  @Input()
+  @Input('index')
   public index: number;
 
   @Output()
@@ -25,7 +24,7 @@ export class SectionListItemComponent {
 
   static buildItem() {
     return new FormGroup({
-      sectionTitle : new FormControl('', Validators.required),
+      sectionTitle : new FormControl('', [Validators.required]),
       problems: ProblemListComponent.buildItems()
     })
   }

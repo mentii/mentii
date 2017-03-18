@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ChapterModel } from '../chapter.model';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { SectionListComponent } from '../sectionList/sectionList.component';
 

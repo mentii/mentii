@@ -1,6 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { SectionModel } from '../section.model';
-import { Validators, FormGroup, FormArray, FormBuilder } from '@angular/forms';
+import { Component, Input } from '@angular/core';
+import { Validators, FormArray } from '@angular/forms';
 import { SectionListItemComponent } from './sectionListItem.component';
 
 @Component({
@@ -9,22 +8,16 @@ import { SectionListItemComponent } from './sectionListItem.component';
   templateUrl: 'sectionList.html'
 })
 
-export class SectionListComponent implements OnInit {
-  @Input()
+export class SectionListComponent {
+  @Input('sectionsArray')
   public sectionsArray: FormArray;
-
-  constructor(private _formBuilder: FormBuilder){}
-
-  ngOnInit() {
-    //this.parentChapterForm.addControl('sectionsArray', new FormArray([]));
-  }
 
   addSection() {
     this.sectionsArray.push(SectionListItemComponent.buildItem());
   }
 
   static buildItems() {
-    return new FormArray([], Validators.required)
+    return new FormArray([])
   }
 
 }

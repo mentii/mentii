@@ -1,6 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ChapterModel } from '../chapter.model';
-import { Validators, FormGroup, FormArray } from '@angular/forms';
+import { Component, Input } from '@angular/core';
+import { Validators, FormArray } from '@angular/forms';
 import { ChapterListItemComponent } from './chapterListItem.component';
 
 @Component({
@@ -11,7 +10,7 @@ import { ChapterListItemComponent } from './chapterListItem.component';
 
 export class ChapterListComponent {
 
-  @Input()
+  @Input('chaptersArray')
   public chaptersArray: FormArray;
 
   addChapter() {
@@ -19,6 +18,6 @@ export class ChapterListComponent {
   }
 
   static buildItems() {
-    return new FormArray([], Validators.required)
+    return new FormArray([])
   }
 }

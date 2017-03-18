@@ -45,6 +45,7 @@ import { ProblemListItemComponent } from './book/problemList/problemListItem.com
 import { EqualValidator } from './directives/equal-validator.directive';
 import { DeleteValue } from './directives/delete-value-validator.directive';
 import { ClearPlaceholder } from './directives/clearPlaceholderOnFocus.directive';
+import { HideNgInvalid } from './directives/hideNgInvalid.directive';
 /* Route Guards */
 import { AuthRouteGuard } from './utils/AuthRouteGuard.service';
 import { TeacherRouteGuard } from './utils/TeacherRouteGuard.service';
@@ -95,7 +96,8 @@ import { LaddaModule } from 'angular2-ladda';
     SectionListComponent,
     SectionListItemComponent,
     ProblemListComponent,
-    ProblemListItemComponent
+    ProblemListItemComponent,
+    HideNgInvalid
   ],
 
   providers:  [

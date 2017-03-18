@@ -13,8 +13,12 @@
               placeholder="Section 1.1 - Addition"
               class="form-control"
               clearPlaceholder/>
+      <span [hidden]="section.controls.sectionTitle.pristine || section.controls.sectionTitle.valid" class="text-danger">
+          Section title required
+      </span>
     </div>
     <problemList
+      hideNgInvalid
       formArrayName="problems"
       [problemsArray]="section.get('problems')">
     </problemList>

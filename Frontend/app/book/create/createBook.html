@@ -1,4 +1,3 @@
-
 <div class="row">
   <div class="col-xs-12">
     <h2>Create a New Book</h2>
@@ -7,6 +6,7 @@
 <div class="row">
   <div class="col-xs-12 col-md-12">
     <form [formGroup]="createBookForm" (ngSubmit)="submit(createBookForm)">
+      <!-- Title -->
       <div class="form-group">
         <label class="required" for="title">Title</label>
         <input type="text" class="form-control" formControlName="title" placeholder="Algebra" clearPlaceholder>
@@ -14,6 +14,7 @@
           Book title must be at least 5 characters long.
         </span>
       </div>
+      <!-- Description -->
       <div class="form-group">
         <label class="required" for="description">Description</label>
         <textarea class="form-control" rows="3" formControlName="description" placeholder="Common Core Highschool Algebra" clearPlaceholder></textarea>
@@ -21,9 +22,11 @@
           Book description is required.
         </span>
       </div>
-      <label class="required">Chapters</label>
+      <!-- Chapters -->
       <div class="form-group">
+        <label class="required">Chapters</label>
         <chapterList
+          hideNgInvalid
           formArrayName="chapters"
           [chaptersArray]="createBookForm.get('chapters')">
         </chapterList>

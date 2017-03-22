@@ -104,8 +104,8 @@ class BookControlDBTests(unittest.TestCase):
     scan = self.booksTable.scan()
     self.assertEqual(scan['Count'] , count+1)
 
-  def test_createBook_fail(self):
-    print('Running createBook fail test case')
+  def test_createBook_role_fail(self):
+    print('Running createBook role fail test case')
     userRole = 'student'
     bookData = {'title' : 'Title'}
 
@@ -117,6 +117,35 @@ class BookControlDBTests(unittest.TestCase):
     # check response message
     error = response.errors[0]
     self.assertEqual(error, {'message': 'Only admins can create books', 'title': 'Role error'})
+
+    # check number of books in table stayed the same
+    scan = self.booksTable.scan()
+    self.assertEqual(scan['Count'] , count)
+
+  def test_createBook_data_fail(self):
+    print('Running createBook data fail test case')
+    userRole = 'admin'
+    bookData = {'title' : 'missing description', 'chapters' : []}
+
+    # check number of books in table before creating
+    scan = self.booksTable.scan()
+    count = scan['Count']
+
+    response = book_ctrl.createBook(bookData, dynamodb, userRole)
+    # check response message
+    error = response.errors[0]
+    self.assertEqual(error, {'message': 'Invalid book data given.', 'title': 'Book creation failed.'})
+
+    # check number of books in table stayed the same
+    scan = self.booksTable.scan()
+    self.assertEqual(scan['Count'] , count)
+
+    bookData = {'description' : 'missing title', 'chapters' : []}
+
+    response = book_ctrl.createBook(bookData, dynamodb, userRole)
+    # check response message
+    error = response.errors[0]
+    self.assertEqual(error, {'message': 'Invalid book data given.', 'title': 'Book creation failed.'})
 
     # check number of books in table stayed the same
     scan = self.booksTable.scan()

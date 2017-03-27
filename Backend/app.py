@@ -246,6 +246,26 @@ def problemSteps(classId, activity):
     status = 400
   return ResponseCreation.createResponse(res,status)
 
+@app.route('/classes/remove', methods=['POST', 'OPTIONS'])
+@auth.login_required
+@handleOptionsRequest
+def removeStudentFromClass():
+  status = 200
+  role = g.authenticatedUser['userRole']
+  if role != "teacher" and role != "admin" :
+    res = ResponseCreation.ControllerResponse()
+    res.addError('Role error', 'Only those with teacher privileges can remove students from classes')
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    res = class_ctrl.removeStudent(dynamoDBInstance, request.json)
+    if res.hasErrors():
+      status = 400
+    else:
+      #send email
+      class_ctrl.sendClassRemovalEmail(dynamoDBInstance, mail, request.json)
+  return ResponseCreation.createResponse(res, status)
+
 if __name__ == '__main__':
   logger.info('mentii app starting')
   try:

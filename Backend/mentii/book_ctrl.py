@@ -15,6 +15,7 @@ def createBook(bookData, dynamoDBInstance, userRole=None):
   #than app.py createBook()
   if userRole != 'admin':
     response.addError('Role error', 'Only admins can create books')
+  # check for required options
   elif 'title' not in bookData.keys() or 'description' not in bookData.keys():
     response.addError('Book creation failed.', 'Invalid book data given.')
   else:
@@ -30,7 +31,7 @@ def createBook(bookData, dynamoDBInstance, userRole=None):
         'bookId': bookId,
         'title': bookData['title'],
         'description': bookData['description'],
-        'chapters': bookData['chapters']
+        'chapters': bookData.get('chapters', [])
       }
       # put item into table
       result = dbUtils.putItem(book, booksTable)

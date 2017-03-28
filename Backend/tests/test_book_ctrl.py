@@ -104,6 +104,14 @@ class BookControlDBTests(unittest.TestCase):
     scan = self.booksTable.scan()
     self.assertEqual(scan['Count'] , count+1)
 
+    #check that if no chapters are given, an empty chapters array is given
+    bookData = {'description' : 'so many books', 'title' : 'books galore'}
+
+    response = book_ctrl.createBook(bookData, dynamodb, userRole)
+    self.assertFalse(response.hasErrors())
+    res = db.scanFilter('title','books galore', self.booksTable)
+    self.assertEqual(res.get('Items')[0].get('chapters'), [])
+
   def test_createBook_role_fail(self):
     print('Running createBook role fail test case')
     userRole = 'student'
@@ -150,3 +158,4 @@ class BookControlDBTests(unittest.TestCase):
     # check number of books in table stayed the same
     scan = self.booksTable.scan()
     self.assertEqual(scan['Count'] , count)
+

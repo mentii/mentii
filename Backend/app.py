@@ -240,7 +240,7 @@ def changeUserRole():
 @handleOptionsRequest
 def problemSteps(classId, activity):
   status = 200
-  problem = problem_ctrl.getProblemTemplate(classId, activity)
+  problem = problem_ctrl.getProblem(classId, activity)
   res = algebra.getProblemTree(problem)
   if res.hasErrors():
     status = 400

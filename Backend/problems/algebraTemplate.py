@@ -5,10 +5,10 @@ import random
 
 class ProblemGenerator:
 
-  def __init__(self, seed=None, opVals=None):
+  def __init__(self, seed=None, opVals=None, minVal=-20, maxVal=20):
     self.randomGen = random.Random(seed)
-    self.intMax = 20
-    self.intMin = -20
+    self.intMax = maxVal
+    self.intMin = minVal
     if opVals:
       self.operationValues = opVals
     else:
@@ -21,12 +21,8 @@ class ProblemGenerator:
     c = 0
     d = 0
     while a == 0 or b == 0 or c == 0 or d == 0:
-      a = self.randomGen.randint(self.intMin, self.intMax)
-      b = self.randomGen.randint(self.intMin, self.intMax)
-      c = self.randomGen.randint(self.intMin, self.intMax)
-      d = self.randomGen.randint(self.intMin, self.intMax)
+      a, b, c, d = self.randomGen.sample(xrange(self.intMin, self.intMax), 4)
     op = self.randomGen.choice(self.operationValues)
-    print("{0}, {1}, {2}, {3}".format(a, b, c, d))
     self.templateMap = {
         'a': a,
         'b': b,
@@ -63,3 +59,6 @@ class ProblemGenerator:
     template = Template(templateString)
     problem = template.substitute(self.templateMap)
     return problem
+
+if __name__ == '__main__':
+  pg = ProblemGenerator()

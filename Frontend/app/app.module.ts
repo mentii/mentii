@@ -42,6 +42,7 @@ import { TeacherRouteGuard } from './utils/TeacherRouteGuard.service';
 import { AdminRouteGuard } from './utils/AdminRouteGuard.service';
 /* Vendor */
 import { LaddaModule } from 'angular2-ladda';
+import { ModalModule } from 'ng2-bootstrap';
 
 @NgModule({
 
@@ -51,6 +52,7 @@ import { LaddaModule } from 'angular2-ladda';
     HttpModule,
     ToastrModule.forRoot({preventDuplicates: true}),
     LaddaModule.forRoot({style: "zoom-in"}),
+    [ModalModule.forRoot()],
     routing,
     CommonModule,
     CoreModule

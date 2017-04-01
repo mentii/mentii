@@ -11,13 +11,13 @@
 <!-- show if the problem has loaded -->
 <div *ngIf="!isLoading">
   <!-- loop through the the list of steps that is contained in the problem tree
-    and keep track of the index we are at -->
+  and keep track of the index we are at -->
   <div *ngFor="let step of problemTree; let goodStepIndex = index;">
     <div class="row">
       <div class="col-xs-12">
         <!-- Only show this step if the index we are at is less than the current step the user is on and
-          we are not currently showing a bad step. The reason we use less than is so that each step that
-          has been taken will be shown -->
+        we are not currently showing a bad step. The reason we use less than is so that each step that
+        has been taken will be shown -->
         <div class="panel panel-default" [attr.data-good-index]="goodStepIndex" *ngIf="goodStepIndex <= activeStepCount && !step.badStepShown">
           <div class="panel-heading">
             <h3 class="panel-title">
@@ -25,12 +25,12 @@
             </h3>
           </div>
           <!-- Only show the buttons in the panel for the current step -->
-          <div class="panel-body" *ngIf="goodStepIndex == activeStepCount">
+          <div class="panel-body">
             <button class="btn btn-primary btn-sm" (click)="showNextStep()" *ngIf="goodStepIndex==activeStepCount">
               Conintue to Next Step
             </button>
             <!-- Don't show this button if we are on the first good step, that's the problem declaration -->
-            <button class="btn btn-danger btn-sm" (click)="incorrectGoodStep()" *ngIf="goodStepIndex==activeStepCount && goodStepIndex != 0">
+            <button class="btn btn-danger btn-sm" (click)="incorrectGoodStep()" *ngIf="goodStepIndex != 0">
               This Step is Incorrect
             </button>
           </div>
@@ -49,14 +49,11 @@
               </h3>
             </div>
             <!-- Only show the buttons on the active bad step -->
-            <div class="panel-body" *ngIf="badStepIndex == activeBadStepCount">
-              {{testmodel}}<br/>
-              <input type="text" class="form-control" [(ngModel)]="testmodel"/>
-              <button class="btn btn-default btn-sm" (click)="stepExistsInProblemTree(testmodel)">Test</button>
+            <div class="panel-body">
               <button class="btn btn-primary btn-sm" (click)="showNextBadStep()" *ngIf="badStepIndex==activeBadStepCount">
                 Conintue to Next Step
               </button>
-              <button class="btn btn-danger btn-sm" (click)="incorrectBadStep()" *ngIf="badStepIndex==activeBadStepCount">
+              <button class="btn btn-danger btn-sm" (click)="incorrectBadStep(badStepIndex,badStep)">
                 This Step is Incorrect
               </button>
             </div>
@@ -66,6 +63,7 @@
     </div>
   </div>
 </div>
+
 <!-- show if there are no other steps to take on the good branch -->
 <div *ngIf="problemIsComplete">
   <div class="row">
@@ -76,11 +74,39 @@
     </div>
   </div>
 </div>
-<!-- show if still loading -->
+
+<!-- show if problem is still loading -->
 <div *ngIf="isLoading">
   <div class="row">
     <div class="col-xs-12">
       <i class="fa fa-spinner fa-spin"></i> Loading the problem...
+    </div>
+  </div>
+</div>
+
+<!-- Edit Correction Modal -->
+<div *ngIf="isModalShown" [config]="{ show: true }" (onHidden)="onHidden()" bsModal #editProblemModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Enter your Correction</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="hideCorrectionModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>The step you are applying the correction to is: <strong>{{correctionModel.stepToCorrect}}</strong></p>
+        <form #applyCorrectionForm="ngForm" autocomplete="off">
+          <div class="form-group">
+            <label class="required" for="correction">Correction</label>
+            <input type="text" required placeholder="Enter your correction for this step here" class="form-control" id="correction" [(ngModel)]="correctionModel.correction" name="correction" #correction="ngModel" clearPlaceholder>
+          </div>
+          <p class="text-danger" *ngIf="!applyCorrectionForm.form.valid">* Required Fields</p>
+          <button type="submit" class="btn btn-primary" [disabled]="!applyCorrectionForm.form.valid" (click)="applyCorrection()">
+            <span class="ladda-label">Apply Correction</span>
+          </button>
+        </form>
+      </div>
     </div>
   </div>
 </div>

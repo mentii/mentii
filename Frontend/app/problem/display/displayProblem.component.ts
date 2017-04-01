@@ -1,9 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ProblemService } from '../problem.service';
 import { UserService } from '../../user/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute } from '@angular/router';
-import { Router } from '@angular/router'
+import { Router } from '@angular/router';
+import { ModalDirective } from 'ng2-bootstrap';
 
 
 @Component({
@@ -13,7 +14,8 @@ import { Router } from '@angular/router'
 })
 
 export class DisplayProblemComponent implements OnInit, OnDestroy {
-
+  @ViewChild('editProblemModal') public autoShownModal:ModalDirective;
+  public isModalShown:boolean = false;
   /*
   Display problem works by showing "good" steps that are less than the current active step count. The
   logic beind the actual showing the step is in displayProblem.html
@@ -31,18 +33,40 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   activeBadStepCount = 0;
   badStepShown = false;
   problemIsComplete = false;
-  testmodel = '';
+
+  correctionModel = {
+    correction: '',
+    stepToCorrect: ''
+  }
 
   constructor(public problemService: ProblemService, public toastr: ToastrService, public router: Router, private activatedRoute: ActivatedRoute){
   }
-
-  stepExistsInProblemTree(step: String, problemTree = this.problemTree) {
-    Object.keys(problemTree).forEach(function(key) {
-      if (problemTree[key].correctStep.trim() == step) {
-        alert('step exists in problemTree');
-      }
-    });
+  /* Modal Methods */
+  public showCorrectionModal(problemStep: string):void {
+    this.correctionModel.correction = '';
+    this.correctionModel.stepToCorrect = problemStep;
+    this.isModalShown = true;
   }
+
+  public hideCorrectionModal():void {
+    this.autoShownModal.hide();
+  }
+
+  public onHidden():void {
+    this.isModalShown = false;
+  }
+
+  applyCorrection() {
+    if (this.correctionModel.correction == this.problemTree[this.activeStepCount].correctStep) {
+      this.toastr.success("Your correction got Mentii back on the right path", "Good Job");
+      this.problemTree[this.activeStepCount]['badStepShown'] = false; // Close the bad step subtree
+      this.hideCorrectionModal();
+      this.showNextStep(); // Progress to the next step, after the correction
+    } else {
+      this.toastr.error("Your correction won't help Mentii get back on the right path", "Not Quite...");
+    }
+  }
+  /* End Modal Methods */
 
   showNextStep(){
     this.activeBadStepCount = 0;
@@ -73,9 +97,13 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     }
   }
 
-  incorrectBadStep() {
-    this.toastr.success("This was an incorrect step, that you corrected", "Good Job");
-    this.problemTree[this.activeStepCount]['badStepShown'] = false;
+  incorrectBadStep(badStepIndex: number, problemStep: string) {
+    if (badStepIndex == 0) {
+      // If it is the root bad step allow the user to correct it
+      this.showCorrectionModal(problemStep);
+    } else {
+      this.toastr.warning("This is part of an incorrect step, but the problem is in a different step", "Almost...");
+    }
   }
 
   incorrectGoodStep() {
@@ -104,7 +132,6 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     this.problemTree = data.payload.problemTree;
     //save the equation being solved as different variable
     this.problem = data.payload.problemTree[0].correctStep;
-    console.log(this.problemTree);
     this.isLoading = false;
   }
 

@@ -1,0 +1,26 @@
+<form class="panel panel-default" [formGroup]="section">
+  <div class="panel-heading">
+    <label>Section&nbsp;-&nbsp;{{this.index + 1}}</label>
+    <a (click)="delete()" class="logout pull-right">
+      <i class="fa fa-times-circle fa-2x" aria-hidden="true"></i>
+    </a>
+  </div>
+  <div class="panel-body">
+    <div class="form-group">
+      <label for="sectionTitle" class="required">Section Title</label>
+      <input  type="text"
+              formControlName="sectionTitle"
+              placeholder="Section 1.1 - Addition"
+              class="form-control"
+              clearPlaceholder/>
+      <span [hidden]="section.controls.sectionTitle.pristine || section.controls.sectionTitle.valid" class="text-danger">
+          Section title required
+      </span>
+    </div>
+    <problemList
+      formArrayName="problems"
+      [problemsArray]="section.get('problems')"
+      hideNgInvalid>
+    </problemList>
+  </div>
+</form>

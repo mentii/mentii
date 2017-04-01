@@ -1,0 +1,26 @@
+<form class="panel panel-default" [formGroup]="chapter">
+  <div class="panel-heading">
+    <label>Chapter&nbsp;-&nbsp;{{this.index + 1}}</label>
+    <a (click)="delete()" class="logout pull-right">
+      <i class="fa fa-times-circle fa-2x" aria-hidden="true"></i>
+    </a>
+  </div>
+  <div class="panel-body">
+    <div class="form-group">
+      <label for="chapterTitle" class="required">Chapter Title</label>
+      <input  type="text"
+              formControlName="chapterTitle"
+              placeholder="Chapter 1 - Foundations for Algebra"
+              class="form-control"
+              clearPlaceholder/>
+      <span [hidden]="chapter.controls.chapterTitle.pristine || chapter.controls.chapterTitle.valid" class="text-danger">
+          Chapter title required
+      </span>
+    </div>
+    <sectionList
+      formArrayName="sections"
+      [sectionsArray]="chapter.get('sections')"
+      hideNgInvalid>
+    </sectionList>
+  </div>
+</form>

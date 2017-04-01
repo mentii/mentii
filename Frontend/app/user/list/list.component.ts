@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { ClassService } from '../../class/class.service';
 import { ToastrService } from 'ngx-toastr';
-import { Location } from '@angular/common';
 
 @Component({
   moduleId: module.id,
@@ -11,16 +10,11 @@ import { Location } from '@angular/common';
 
 export class UserListComponent {
   @Input('users') users;
+  @Input('classCode') classCode;
 
   private selected:string;
-  private classCode:string;
 
-  constructor(private classService: ClassService, private toastr: ToastrService, private location: Location){}
-
-  ngOnInit(){
-    let path = this.location.path().split('/')
-    this.classCode = path[path.length-1]
-  }
+  constructor(private classService: ClassService, private toastr: ToastrService){}
 
   selectedUser(user:string){
   	this.selected = user;

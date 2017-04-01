@@ -249,7 +249,7 @@ def removeClassFromStudent(dynamoDBInstance, response, email, classCode):
           MentiiLogging.getLogger().error('Unable to update classes in removeStudentFromClass')
           response.addError('Failed to remove student from class', 'Unable to update user data')
         else:
-          response.addToPayload('Class removal success', 'Removed class from student')
+          MentiiLogging.getLogger().info('Class removal success. Removed class from student')
   return response
 
 def removeStudentFromClass(dynamoDBInstance, response, email, classCode):
@@ -308,7 +308,7 @@ def removeStudentFromClass(dynamoDBInstance, response, email, classCode):
             }
           dbUtils.updateItem(jsonData, usersTable)
         else:
-          response.addToPayload('Student removal success', 'Removed student from class')
+          MentiiLogging.getLogger().info('Student removal success. Removed student from class')
   return response
 
 def sendClassRemovalEmail(dynamoDBInstance, mailer, jsonData):

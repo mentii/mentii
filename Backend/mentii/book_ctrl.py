@@ -41,3 +41,16 @@ def createBook(bookData, dynamoDBInstance, userRole=None):
         response.addToPayload('Success', 'Book Created')
 
   return response
+
+def getBook(bookId, dynamoDBInstance):
+  response = {}
+  booksTable = dbUtils.getTable('books', dynamoDBInstance)
+  if booksTable is None:
+    pass
+  else:
+    bookQuery = {'Key': {'bookId': bookId}}
+    res = dbUtils.getItem(bookQuery, booksTable)
+    if res is not None and 'Item' in res.keys():
+      response = res['Item']
+
+  return response

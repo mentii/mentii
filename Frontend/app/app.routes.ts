@@ -34,6 +34,7 @@ export const routes: Routes = [
   { path: 'class', component: ClassBrowseComponent, canActivate: [AuthRouteGuard] },
   { path: 'class/:id', component: ClassDetailComponent, canActivate: [AuthRouteGuard] },
   { path: 'admin', component: AdminComponent, canActivate: [AuthRouteGuard, AdminRouteGuard]},
+  { path: 'admin/:control', component: AdminComponent, canActivate: [AuthRouteGuard, AdminRouteGuard]},
   { path: 'create/class', component: CreateClassComponent, canActivate: [AuthRouteGuard, TeacherRouteGuard] },
   { path: 'problem/display/:classCode/:problemCode', component: DisplayProblemComponent, canActivate: [AuthRouteGuard] },
 

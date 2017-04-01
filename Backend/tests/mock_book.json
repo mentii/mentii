@@ -1,0 +1,79 @@
+{
+  "bookId":"abcdefg123456",
+  "title":"book title",
+  "description":"book description",
+  "chapters": [
+    {
+      "title": "Chapter 1",
+      "sections" : [
+        {
+          "title": "Section 1",
+          "problems" : [
+            {
+              "problemString" : "8x-9=3"
+            },
+            {
+              "problemString" : "87x*7=11"
+            },
+            {
+              "problemString" : "5x/12=63"
+            }
+          ]
+        },
+        {
+          "title": "Section 2",
+          "problems" : [
+            {
+              "problemString" : "6x-2=1"
+            },
+            {
+              "problemString" : "4x+3=20"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Chapter 2",
+      "sections" : [
+        {
+          "title": "Section 1",
+          "problems" : [
+            {
+              "problemString" : "81x*11=123"
+            }
+          ]
+        },
+        {
+          "title": "Section 2",
+          "problems" : [
+            {
+              "problemString" : "8x-9x=7"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Chapter 3",
+      "sections" : [
+        {
+          "title": "Section 1",
+          "problems" : [
+            {
+              "problemString" : "6+9x=53"
+            }
+          ]
+        },
+        {
+          "title": "Section 2",
+          "problems" : [
+            {
+              "problemString" : "7+4x=77"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

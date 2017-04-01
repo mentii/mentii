@@ -14,7 +14,8 @@
         <li class="dropdown" *ngIf="role == 'admin'">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin Portal <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a [routerLink]="['/admin']">Change User Role</a></li>
+            <li><a [routerLink]="['/admin/changeRole']">Change User Role</a></li>
+            <li><a [routerLink]="['/admin/addBook']">Create a New Book</a></li>
           </ul>
         </li>
         <li *ngIf="role == 'teacher' || role == 'admin'"><a [routerLink]="['/create/class']">Create a Class</a></li>

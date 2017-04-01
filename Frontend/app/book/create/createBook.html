@@ -1,0 +1,43 @@
+<div class="row">
+  <div class="col-xs-12">
+    <h2>Create a New Book</h2>
+    <p>
+      <strong>Note: </strong>Form will reset if you navigate away from this page before creating a book
+    </p>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12 col-md-12">
+    <form [formGroup]="createBookForm" (ngSubmit)="submit(createBookForm)">
+      <!-- Title -->
+      <div class="form-group">
+        <label class="required" for="title">Title</label>
+        <input type="text" class="form-control" formControlName="title" placeholder="Algebra" clearPlaceholder>
+        <span [hidden]="createBookForm.controls.title.pristine || createBookForm.controls.title.valid" class="text-danger">
+          Book title must be at least 5 characters long.
+        </span>
+      </div>
+      <!-- Description -->
+      <div class="form-group">
+        <label class="required" for="description">Description</label>
+        <textarea class="form-control" rows="3" formControlName="description" placeholder="Common Core Highschool Algebra" clearPlaceholder></textarea>
+        <span [hidden]="createBookForm.controls.description.pristine || createBookForm.controls.description.valid" class="text-danger">
+          Book description is required.
+        </span>
+      </div>
+      <!-- Chapters -->
+      <div class="form-group">
+        <label>Chapters</label>
+        <chapterList
+          formArrayName="chapters"
+          [chaptersArray]="createBookForm.get('chapters')"
+          hideNgInvalid>
+        </chapterList>
+      </div>
+      <p class="text-danger">* Required Fields</p>
+      <button type="submit" class="btn btn-primary" [disabled]="!createBookForm.valid">
+        Create Book
+      </button>
+    </form>
+  </div>
+</div>

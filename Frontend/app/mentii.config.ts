@@ -28,4 +28,12 @@ export class MentiiConfig {
     }
     return _isProd;
   }
+
+  isOnAws():boolean {
+    let _enableNgProd:boolean = false;
+    if (this.isProd() || this.isStaging()){
+      _enableNgProd = true;
+    }
+    return _enableNgProd;
+  }
 }

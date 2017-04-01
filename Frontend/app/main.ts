@@ -3,7 +3,7 @@ import { enableProdMode } from '@angular/core';
 import { AppModule } from './app.module';
 import { MentiiConfig } from './mentii.config';
 
-if (new MentiiConfig().isProd() == true) {
+if (new MentiiConfig().isOnAws() == true) {
   enableProdMode();
 }
 

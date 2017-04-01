@@ -5,3 +5,8 @@
 .ng-invalid:not(form)  {
   border-left: 5px solid #a94442; /* red */
 }
+
+#deleteProblem {
+  padding: 2px 12px;
+  color: #8cb3c9;
+}

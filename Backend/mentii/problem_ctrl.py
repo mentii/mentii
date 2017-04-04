@@ -3,17 +3,35 @@ import utils.MentiiLogging as MentiiLogging
 import random
 import book_ctrl
 
-problemBank = {'a1': '5x=10', 'a2':'2x + 3x - 5 = 5', 'a3': '2x = -3x + 15'}
 
-def getProblemTemplate(classId, activity):
-  global problemBank
-  #Get massive data object from class table
-  #Parse through it and grab a problem template
-  #For now just return a problem and pretend its a template
-  problemTemplate = 'Bad Problem'
-  if activity in problemBank.keys():
-    problemTemplate = problemBank[activity]
+def getProblemTemplate(classId, activity, dynamoDBInstance):
+  bookId, chapterTitle, sectionTitle = getBookInfoFromActivity(classId, activity, dynamoDBInstance)
+  problemTemplate = getProblemFromBook(bookId, chapterTitle, sectionTitle, dynamoDBInstance)
   return problemTemplate
+
+
+def getBookInfoFromActivity(classId, activityTitle, dynamoDBInstance):
+  classItem = {}
+  bookId = ''
+  chapterTitle = ''
+  sectionTitle = ''
+  classTable = dbUtils.getTable('classes', dynamoDBInstance)
+  if classTable is None:
+    pass
+  else:
+    classQuery = {'Key': {'code': classId}}
+    res = dbUtils.getItem(classQuery, classTable)
+    if res is not None and 'Item' in res.keys():
+      classItem = res['Item']
+
+  for activity in classItem.get('activities', []):
+    if activity.get('title', '') == activityTitle:
+      bookId = activity.get('bookId', '')
+      chapterTitle = activity.get('chapterTitle', '')
+      sectionTitle = activity.get('sectionTitle', '')
+      break #Only get the first activity with this title
+
+  return (bookId, chapterTitle, sectionTitle)
 
 
 def getProblemFromBook(bookId, chapterTitle, sectionTitle, dynamoDBInstance):
@@ -27,7 +45,7 @@ def getProblemFromBook(bookId, chapterTitle, sectionTitle, dynamoDBInstance):
         sections = chapter.get('sections', [])
         for section in sections:
           if section.get('title', '') == sectionTitle:
-            problem = random.choice(section['problems'])
+            problem = random.choice(section['problems']).get('problemString')
             break #Break out of section loop
         break #Break out of chapter loop
 

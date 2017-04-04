@@ -8,6 +8,7 @@ from flask import g
 from mentii import user_ctrl
 from mentii import class_ctrl
 from mentii import problem_ctrl
+from mentii import book_ctrl
 from problems import mathstepsWrapper
 from problems import algebra
 from utils import MentiiAuth
@@ -244,6 +245,22 @@ def problemSteps(classId, activity):
   res = algebra.getProblemTree(problem)
   if res.hasErrors():
     status = 400
+  return ResponseCreation.createResponse(res,status)
+
+@app.route('/book', methods=['POST', 'OPTIONS'])
+@auth.login_required
+@handleOptionsRequest
+def createBook():
+  status = 200
+  res = ResponseCreation.ControllerResponse()
+  if g.authenticatedUser['userRole'] != "admin":
+    res.addError('Role Error', 'Only admins can create books')
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    res = book_ctrl.createBook(request.json, dynamoDBInstance)
+    if res.hasErrors():
+      status = 400
   return ResponseCreation.createResponse(res,status)
 
 if __name__ == '__main__':

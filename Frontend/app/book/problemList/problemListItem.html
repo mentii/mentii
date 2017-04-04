@@ -1,0 +1,18 @@
+<div [formGroup]="problem" hideNgInvalid>
+    <div class="form-group">
+      <label for="problemString" class="required">Problem {{this.index + 1}}</label>
+      <div class="input-group">
+        <input  type="text"
+                formControlName="problemString"
+                placeholder="6x+2=13"
+                class="form-control"
+                clearPlaceholder/>
+        <a id="deleteProblem" class="logout input-group-addon" (click)="delete()">
+          <i class="fa fa-times-circle fa-2x" aria-hidden="true"></i>
+        </a>
+      </div>
+      <span [hidden]="problem.controls.problemString.pristine || problem.controls.problemString.valid" class="text-danger">
+          Problem field cannot be empty
+      </span>
+    </div>
+</div>

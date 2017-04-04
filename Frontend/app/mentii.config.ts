@@ -4,7 +4,7 @@ export class MentiiConfig {
 
   getRootUrl():string {
     var url:string = 'http://api.mentii.me';
-    if (!this.isProd() && !this.isStaging()) {
+    if (!this.isOnAws()) {
       url = 'http://127.0.0.1:5000';
     }
     if (this.isStaging()){
@@ -27,5 +27,13 @@ export class MentiiConfig {
       _isProd = true;
     }
     return _isProd;
+  }
+
+  isOnAws():boolean {
+    let _enableNgProd:boolean = false;
+    if (this.isProd() || this.isStaging()){
+      _enableNgProd = true;
+    }
+    return _enableNgProd;
   }
 }

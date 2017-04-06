@@ -3,7 +3,12 @@
   "title": "Algebra 1",
   "department": "Mathematics",
   "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque hendrerit mi at massa suscipit, sollicitudin euismod felis lacinia. Phasellus malesuada, enim vitae ultricies ullamcorper, orci eros vestibulum sem, vel tristique justo est ac nisl. Ut sagittis orci feugiat nisi pharetra, ac iaculis odio placerat. Duis ornare congue ultricies. Ut sed commodo neque.",
-  "code": "d26713cc-f02d-4fd6-80f0-026784d1ab9b"
+  "code": "d26713cc-f02d-4fd6-80f0-026784d1ab9b",
+  "activities": [
+    {"title": "Week 1", "bookId": "d6742cc-f02d-4fd6-80f0-026784g1ab9b", "chapterTitle": "Chapter 1", "sectionTitle": "Section 2"},
+    {"title": "Week 2", "description": "These got fractions", "bookId": "d6742cc-f02d-4fd6-80f0-026784g1ab9b", "chapterTitle": "Chapter 1", "sectionTitle": "Section 2"},
+    {"title": "Week 3", "description": "These got roots", "targetDate": "Mon Mar 13 2017 17:13:04 GMT-0500 (EST)","bookId": "d6742cc-f02d-4fd6-80f0-026784g1ab9b", "chapterTitle": "Chapter 1", "sectionTitle": "Section 2"}
+  ]
 },
 {
   "title": "Biology 121",

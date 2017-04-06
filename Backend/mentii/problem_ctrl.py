@@ -40,7 +40,7 @@ def getProblemFromBook(bookId, chapterTitle, sectionTitle, dynamoDBInstance):
   problem = 'Bad Problem'
   
   if book is not None:
-    for chapter in book['chapters']:
+    for chapter in book.get('chapters', []):
       if chapter.get('title', '') == chapterTitle:
         sections = chapter.get('sections', [])
         for section in sections:

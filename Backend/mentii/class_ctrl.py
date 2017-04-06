@@ -211,6 +211,25 @@ def removeStudent(dynamoDBInstance, jsonData, userRole=None):
       removeStudentFromClass(dynamoDBInstance, response, email, classCode)
   return response
 
+def buildUpdateJsonData(keyName, keyValue, attributeName, attributeValue):
+  jsonData = {}
+  if len(attributeValue) == 0:
+    #remove attribute
+    jsonData = {
+      'Key': {keyName : keyValue},
+      'UpdateExpression': 'REMOVE '+ attributeName,
+      'ReturnValues' : 'UPDATED_NEW'
+    }
+  else:
+    #update attribute
+    jsonData = {
+      'Key': {keyName : keyValue},
+      'UpdateExpression': 'SET ' + attributeName + ' = :v',
+      'ExpressionAttributeValues': { ':v': attributeValue },
+      'ReturnValues' : 'UPDATED_NEW'
+    }
+  return jsonData
+
 def removeClassFromStudent(dynamoDBInstance, response, email, classCode):
   usersTable = dbUtils.getTable('users', dynamoDBInstance)
   if usersTable is None:
@@ -223,34 +242,40 @@ def removeClassFromStudent(dynamoDBInstance, response, email, classCode):
       MentiiLogging.getLogger().error('Unable to get user by email in removeStudentFromClass')
       response.addError('Failed to remove student from class', 'Unable to find user')
     else:
-      classes = user['classCodes'] #set
-      if classCode not in classes:
+      classCodes = user['classCodes'] #set
+      if classCode not in classCodes:
         response.addError('Failed to remove class from student', 'Class not found')
       else:
-        classes.remove(classCode)
-        jsonData = {}
-        if len(classes) == 0:
-          #remove attribute
-          jsonData = {
-            'Key': {'email': email},
-            'UpdateExpression': 'REMOVE classCodes',
-            'ReturnValues' : 'UPDATED_NEW'
-          }
-        else:
-          #update attribute
-          jsonData = {
-            'Key': {'email': email},
-            'UpdateExpression': 'SET classCodes = :cc',
-            'ExpressionAttributeValues': { ':cc': classes },
-            'ReturnValues' : 'UPDATED_NEW'
-          }
-        res = dbUtils.updateItem(jsonData, usersTable)
+        classCodes.remove(classCode)
+        jsonData = buildUpdateJsonData('email', email, 'classCodes', classCodes)
+        res = dbUtils.updateItem( jsonData, usersTable)
         if res is None:
           MentiiLogging.getLogger().error('Unable to update classes in removeStudentFromClass')
           response.addError('Failed to remove student from class', 'Unable to update user data')
         else:
           MentiiLogging.getLogger().info('Class removal success. Removed class from student')
   return response
+
+def undoClassCodeRemoval(dynamoDBInstance, email, classCode):
+  # add classCode back to student if there was an error removing student from class
+  usersTable = dbUtils.getTable('users', dynamoDBInstance)
+  user = user_ctrl.getUserByEmail(email, dynamoDBInstance)
+  jsonData = {}
+  # if the classCodes attribute was removed, add the attribute
+  if user.get('classCodes') is None:
+    user_ctrl.addClassCodeToStudent(email, classCode, dynamoDBInstance)
+  # update classCodes attribute
+  else:
+    classes = user.get('classCodes') #set
+    classes.add(classCode)
+    #update item
+    jsonData = {
+      'Key': {'email': email},
+      'UpdateExpression': 'SET classCodes = :cc',
+      'ExpressionAttributeValues': { ':cc': classes },
+      'ReturnValues' : 'UPDATED_NEW'
+    }
+  dbUtils.updateItem(jsonData, usersTable)
 
 def removeStudentFromClass(dynamoDBInstance, response, email, classCode):
   classesTable = dbUtils.getTable('classes', dynamoDBInstance)
@@ -269,44 +294,13 @@ def removeStudentFromClass(dynamoDBInstance, response, email, classCode):
         response.addError('Failed to remove student from class', 'Student not found')
       else:
         students.remove(email)
-        jsonData = {}
-        if len(students) == 0:
-          #remove attribute
-          jsonData = {
-            'Key': {'code': classCode},
-            'UpdateExpression': 'REMOVE students',
-            'ReturnValues' : 'UPDATED_NEW'
-          }
-        else:
-          #update attribute
-          jsonData = {
-            'Key': {'code': classCode},
-            'UpdateExpression': 'SET students = :s',
-            'ExpressionAttributeValues': { ':s': students },
-            'ReturnValues' : 'UPDATED_NEW'
-          }
+        jsonData = buildUpdateJsonData('code', classCode, 'students', students)
         res = dbUtils.updateItem(jsonData, classesTable)
         if res is None:
           MentiiLogging.getLogger().error('Unable to update classes in removeStudentFromClass')
           response.addError('Failed to remove student from class', 'Unable to update classes data')
         if response.hasErrors():
-          # add classCode back to student if there was an error removing student from class
-          usersTable = dbUtils.getTable('users', dynamoDBInstance)
-          user = user_ctrl.getUserByEmail(email, dynamoDBInstance)
-          jsonData = {}
-          if user.get('classCodes') is None:
-            user_ctrl.addClassCodeToStudent(email, classCode, dynamoDBInstance)
-          else:
-            classes = user.get('classCodes') #set
-            classes.add(classCode)
-            #update item
-            jsonData = {
-              'Key': {'email': email},
-              'UpdateExpression': 'SET classCodes = :cc',
-              'ExpressionAttributeValues': { ':cc': classes },
-              'ReturnValues' : 'UPDATED_NEW'
-            }
-          dbUtils.updateItem(jsonData, usersTable)
+          undoClassCodeRemoval(dynamoDBInstance, email, classCode)
         else:
           MentiiLogging.getLogger().info('Student removal success. Removed student from class')
   return response

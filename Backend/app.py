@@ -8,10 +8,11 @@ from flask import g
 from mentii import user_ctrl
 from mentii import class_ctrl
 from mentii import problem_ctrl
+from mentii import book_ctrl
 from problems import mathstepsWrapper
 from problems import algebra
 from utils import MentiiAuth
-from utils.ResponseCreation import ControllerResponse
+from utils.Decorators import *
 import utils.ResponseCreation as ResponseCreation
 import utils.MentiiLogging as MentiiLogging
 import boto3
@@ -68,6 +69,8 @@ def getDatabaseClient():
     logger.info("Using Local Dev Database")
     return boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
 
+
+
 @auth.verify_password
 def verify_password(email_or_token, password):
   logger.info(str(request))
@@ -84,13 +87,10 @@ def index():
   return response
 
 @app.route('/register/', methods=['POST', 'OPTIONS'])
+@handleOptionsRequest
 def register():
   logger.info(str(request))
   status = 200
-  if request.method =='OPTIONS':
-    flaskResponse = ResponseCreation.createEmptyResponse(status)
-    logger.info(str(flaskResponse))
-    return flaskResponse
   dynamoDBInstance = getDatabaseClient()
   httpOrigin = request.environ.get('HTTP_ORIGIN')
   jsonData = request.json
@@ -116,13 +116,10 @@ def activate(activationid):
 
 @app.route('/signin/', methods=['POST', 'OPTIONS'])
 @auth.login_required
+@handleOptionsRequest
 def signin():
   logger.info(str(request))
   status = 200
-  if request.method =='OPTIONS':
-    flaskResponse = ResponseCreation.createEmptyResponse(status)
-    logger.info(str(flaskResponse))
-    return flaskResponse
 
   email = request.authorization.username
   password = request.authorization.password
@@ -136,7 +133,7 @@ def signin():
     'password': password
   }
 
-  response = ControllerResponse()
+  response = ResponseCreation.ControllerResponse()
   token = MentiiAuth.generateAuthToken(userCredentials, appSecret)
   response.addToPayload('token', token)
   flaskResponse = ResponseCreation.createResponse(response, status)
@@ -144,32 +141,11 @@ def signin():
   logger.info(str(flaskResponse))
   return flaskResponse
 
-@app.route('/secure/', methods=['POST', 'OPTIONS'])
-@auth.login_required
-def secure():
-  '''
-  This is an endpoint for testing authentication
-  '''
-  logger.info(str(request))
-  status = 200
-  if request.method =='OPTIONS':
-    flaskResponse = ResponseCreation.createEmptyResponse(status)
-    logger.info(str(flaskResponse))
-    return flaskResponse
-    # Do ya thang for the endpoint here. call another class/function etc
-    # testing function just returns data on the authenticated user
-  response = ControllerResponse()
-  response.addToPayload('user', g.authenticatedUser)
-  flaskResponse = ResponseCreation.createResponse(response, status)
-  logger.info(str(flaskResponse))
-  return flaskResponse
-
 @app.route('/user/classes/', methods=['GET', 'OPTIONS'])
 @auth.login_required
+@handleOptionsRequest
 def class_list():
   status = 200
-  if request.method =='OPTIONS':
-    return ResponseCreation.createEmptyResponse(status)
   dynamoDBInstance = getDatabaseClient()
   res = class_ctrl.getActiveClassList(dynamoDBInstance)
   if res.hasErrors():
@@ -188,10 +164,9 @@ def joinClass():
 
 @app.route('/teacher/classes/', methods=['GET', 'OPTIONS'])
 @auth.login_required
+@handleOptionsRequest
 def taughtClassList():
   status = 200
-  if request.method =='OPTIONS':
-    return ResponseCreation.createEmptyResponse(status)
   res = ResponseCreation.ControllerResponse()
   role = g.authenticatedUser['userRole']
   if role != 'teacher' and role != 'admin' :
@@ -206,10 +181,9 @@ def taughtClassList():
 
 @app.route('/class', methods=['POST', 'OPTIONS'])
 @auth.login_required
+@handleOptionsRequest
 def create_class():
   status = 200
-  if request.method =='OPTIONS':
-    return ResponseCreation.createEmptyResponse(status)
 
   role = g.authenticatedUser['userRole']
   if role != "teacher" and role != "admin" :
@@ -225,10 +199,9 @@ def create_class():
 
 @app.route('/classes/', methods=['GET', 'OPTIONS'])
 @auth.login_required
+@handleOptionsRequest
 def public_class_list():
   status = 200
-  if request.method =='OPTIONS':
-    return ResponseCreation.createEmptyResponse(status)
   dynamoDBInstance = getDatabaseClient()
   res = class_ctrl.getPublicClassList(dynamoDBInstance)
   if res.hasErrors():
@@ -237,10 +210,9 @@ def public_class_list():
 
 @app.route('/classes/<classCode>', methods=['GET', 'OPTIONS'])
 @auth.login_required
+@handleOptionsRequest
 def getClass(classCode):
   status = 200
-  if request.method =='OPTIONS':
-    return ResponseCreation.createEmptyResponse(status)
   dynamoDBInstance = getDatabaseClient()
   res = class_ctrl.getClass(classCode, dynamoDBInstance)
   if res.hasErrors():
@@ -249,10 +221,9 @@ def getClass(classCode):
 
 @app.route('/admin/changerole/', methods=['POST', 'OPTIONS'])
 @auth.login_required
+@handleOptionsRequest
 def changeUserRole():
   status = 200
-  if request.method =='OPTIONS':
-    return ResponseCreation.createEmptyResponse(status)
 
   res = ResponseCreation.ControllerResponse()
   if g.authenticatedUser['userRole'] != "admin":
@@ -265,41 +236,31 @@ def changeUserRole():
       status = 400
   return ResponseCreation.createResponse(res,status)
 
-@app.route('/ms-test/', methods=['POST', 'OPTIONS'])
-def mathsteps():
-  status = 200
-  if request.method =='OPTIONS':
-    return ResponseCreation.createEmptyResponse(status)
-  res = ResponseCreation.ControllerResponse()
-  problem = request.json['problem']
-  steps = mathstepsWrapper.getStepsForProblem(problem)
-  res.addToPayload('steps', steps)
-  if res.hasErrors():
-    status = 400
-  return ResponseCreation.createResponse(res,status)
-
-@app.route('/ms-bad-test/', methods=['POST', 'OPTIONS'])
-def badsteps():
-  status = 200
-  if request.method =='OPTIONS':
-    return ResponseCreation.createEmptyResponse(status)
-  res = ResponseCreation.ControllerResponse()
-  problem = request.json['problem']
-  steps = mathstepsWrapper.getStepsForProblem(problem)
-  respon = algebra.generateTreeWithBadSteps(steps,3)
-  res.addToPayload('steps', respon)
-  if res.hasErrors():
-    status = 400
-  return ResponseCreation.createResponse(res,status)
-
 @app.route('/problem/<classId>/<activity>/', methods=['GET', 'OPTIONS'])
 @auth.login_required
+@handleOptionsRequest
 def problemSteps(classId, activity):
   status = 200
   problem = problem_ctrl.getProblemTemplate(classId, activity)
   res = algebra.getProblemTree(problem)
   if res.hasErrors():
     status = 400
+  return ResponseCreation.createResponse(res,status)
+
+@app.route('/book', methods=['POST', 'OPTIONS'])
+@auth.login_required
+@handleOptionsRequest
+def createBook():
+  status = 200
+  res = ResponseCreation.ControllerResponse()
+  if g.authenticatedUser['userRole'] != "admin":
+    res.addError('Role Error', 'Only admins can create books')
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    res = book_ctrl.createBook(request.json, dynamoDBInstance)
+    if res.hasErrors():
+      status = 400
   return ResponseCreation.createResponse(res,status)
 
 if __name__ == '__main__':

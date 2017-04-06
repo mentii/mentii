@@ -100,6 +100,13 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     this.toastr.error("This is actually a correct step to take.", "Sorry");
   }
 
+  returnToClassPage() {
+    this.activatedRoute.params.subscribe(params => {
+      let classCode = params['classCode'];
+      this.router.navigateByUrl('/class/' + classCode);
+    });
+  }
+
   ngOnInit() {
     this.routeSub = this.activatedRoute.params.subscribe(params => {
       // grab codes out of the URL

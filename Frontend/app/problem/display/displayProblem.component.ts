@@ -4,7 +4,6 @@ import { UserService } from '../../user/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
-import { ModalDirective } from 'ng2-bootstrap';
 
 
 @Component({
@@ -14,8 +13,6 @@ import { ModalDirective } from 'ng2-bootstrap';
 })
 
 export class DisplayProblemComponent implements OnInit, OnDestroy {
-  @ViewChild('editProblemModal') public autoShownModal:ModalDirective;
-  public isModalShown:boolean = false;
   /*
   Display problem works by showing "good" steps that are less than the current active step count. The
   logic beind the actual showing the step is in displayProblem.html

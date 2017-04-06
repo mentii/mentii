@@ -34,26 +34,13 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   badStepShown = false;
   problemIsComplete = false;
 
+  stepIsBeingCorrected = false;
   correctionModel = {
     correction: '',
     stepToCorrect: ''
   }
 
   constructor(public problemService: ProblemService, public toastr: ToastrService, public router: Router, private activatedRoute: ActivatedRoute){
-  }
-  /* Modal Methods */
-  public showCorrectionModal(problemStep: string):void {
-    this.correctionModel.correction = '';
-    this.correctionModel.stepToCorrect = problemStep;
-    this.isModalShown = true;
-  }
-
-  public hideCorrectionModal():void {
-    this.autoShownModal.hide();
-  }
-
-  public onHidden():void {
-    this.isModalShown = false;
   }
 
   applyCorrection() {
@@ -62,13 +49,17 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     if (trimmedCorrection == trimmedActual) {
       this.toastr.success("Your correction got Mentii back on the right path", "Good Job");
       this.problemTree[this.activeStepCount]['badStepShown'] = false; // Close the bad step subtree
-      this.hideCorrectionModal();
+      this.stepIsBeingCorrected = false;
       this.showNextStep(); // Progress to the next step, after the correction
     } else {
       this.toastr.error("Your correction won't help Mentii get back on the right path", "Not Quite...");
     }
   }
-  /* End Modal Methods */
+
+  cancelCorrection() {
+    this.stepIsBeingCorrected = false;
+    this.correctionModel.correction = ''; //clear the correction from the text box
+  }
 
   showNextStep(){
     this.activeBadStepCount = 0;
@@ -101,8 +92,8 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
 
   incorrectBadStep(badStepIndex: number, problemStep: string) {
     if (badStepIndex == 0) {
-      // If it is the root bad step allow the user to correct it
-      this.showCorrectionModal(problemStep);
+      this.correctionModel.correction = '';
+      this.stepIsBeingCorrected = true;
     } else {
       this.toastr.warning("This is part of an incorrect step, but the problem is in a different step", "Almost...");
     }

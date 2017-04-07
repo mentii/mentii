@@ -4,4 +4,4 @@ pip install virtualenv
 virtualenv -p /usr/bin/python env
 source env/bin/activate
 pip install -r requirements.txt
-nose2 -c unittest.cfg
+nose2 -c config/unittest.cfg

@@ -64,4 +64,17 @@ export class ClassService {
     .map((res:Response) => res)
     .catch((error:any) => Observable.throw(error));
   }
+
+  removeStudentFromClass(email:string, classCode:string):Observable<any> {
+    let removeStudentUrl = this.mentiiConfig.getRootUrl() + '/classes/remove';
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let options = new RequestOptions({ headers: headers })
+    let body = {
+      'email': email,
+      'classCode': classCode
+    }
+    return this.authHttp.post(removeStudentUrl, body, options)
+    .map((res:Response) => res)
+    .catch((error:any) => Observable.throw(error));
+  }
 }

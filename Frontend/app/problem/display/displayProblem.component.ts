@@ -89,7 +89,7 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
 
   incorrectBadStep(badStepIndex: number, problemStep: string) {
     if (badStepIndex == 0) {
-      this.correctionModel.correction = '';
+      this.correctionModel.correction = this.badStepProblem[0]; //set the model to the current bad step
       this.stepIsBeingCorrected = true;
     } else {
       this.toastr.warning("This is part of an incorrect step, but the problem is in a different step", "Almost...");

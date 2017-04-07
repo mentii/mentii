@@ -64,10 +64,10 @@
                   <input type="text" required placeholder="Enter your correction for this step here" class="form-control" id="correction" [(ngModel)]="correctionModel.correction" name="correction" #correction="ngModel" clearPlaceholder>
                 </div>
 
-                <button type="submit" class="btn btn-primary" [disabled]="!applyCorrectionForm.form.valid" (click)="applyCorrection()">
+                <button type='button' class="btn btn-primary" [disabled]="!applyCorrectionForm.form.valid" (click)="applyCorrection()">
                   Apply Correction
                 </button>
-                <button class="btn btn-default" (click)="cancelCorrection()">
+                <button type='button' class="btn btn-default" (click)="cancelCorrection()">
                   Cancel
                 </button>
               </form>

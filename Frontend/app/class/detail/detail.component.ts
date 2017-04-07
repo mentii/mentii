@@ -46,7 +46,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
       data.title,
       data.department,
       data.description,
-      data.section,
+      data.classSection,
       data.code,
       data.activities,
       data.students
@@ -70,6 +70,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
     this.model.section = form.value.section;
     this.model.description = form.value.description;
     this.toggleEditMode();
+    this.toastr.success("Class successfully updated.");
   }
 
   handleUpdateError(err){

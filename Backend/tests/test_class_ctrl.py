@@ -121,7 +121,7 @@ class ClassCtrlDBTests(unittest.TestCase):
     self.assertTrue('Item' in classItem.keys())
     self.assertEqual(classItem['Item']['title'], 'PSY')
     self.assertEqual(classItem['Item']['department'], 'science')
-    self.assertEqual(classItem['Item']['section'], '25')
+    self.assertEqual(classItem['Item']['classSection'], '25')
     self.assertEqual(classItem['Item']['description'], 'How our brain works')
 
   def test_createMultipleClasses(self):
@@ -166,12 +166,12 @@ class ClassCtrlDBTests(unittest.TestCase):
       self.assertTrue('Item' in classItem.keys())
       if (classItem['Item']['title'] == 'ENG' and
           classItem['Item']['department'] == 'arts' and
-          classItem['Item']['section'] == '12' and
+          classItem['Item']['classSection'] == '12' and
           classItem['Item']['description'] == 'english'):
         class1Found = True
       elif (classItem['Item']['title'] == 'PE' and
           classItem['Item']['department'] == 'science' and
-          classItem['Item']['section'] == '1' and
+          classItem['Item']['classSection'] == '1' and
           classItem['Item']['description'] == 'physical education'):
         class2Found = True
 
@@ -663,7 +663,7 @@ class ClassCtrlDBTests(unittest.TestCase):
       'title': 'before update title',
       'department': 'before update department',
       'description': 'before update description',
-      'section': 'before update section',
+      'classSection': 'before update section',
       'code': 'before update code'
     }
 
@@ -689,8 +689,86 @@ class ClassCtrlDBTests(unittest.TestCase):
     self.assertTrue('Item' in c.keys())
     self.assertEqual(c['Item']['title'], 'after update title')
     self.assertEqual(c['Item']['department'], 'after update department')
-    self.assertEqual(c['Item']['section'], 'after update section')
+    self.assertEqual(c['Item']['classSection'], 'after update section')
     self.assertEqual(c['Item']['description'], 'after update description')
+
+  def test_updateClassDetails_len_zero(self):
+    print('Running updateClassDetails length zero test')
+
+    classesTable = db.getTable('classes', dynamodb)
+
+    # put data into db first
+    beforeData = {
+      'title': 'before update title',
+      'department': 'before update department',
+      'description': 'before update description',
+      'classSection': 'before update section',
+      'code': 'before update code'
+    }
+
+    db.putItem(beforeData, classesTable)
+
+    # check item was placed successfully
+    code = {'Key': {'code': 'before update code'}}
+    c = db.getItem(code, classesTable)
+    self.assertTrue('Item' in c.keys())
+
+    ##### update class details removing both optional attributes
+    afterData = {
+      'title': 'after update title',
+      'department': '',
+      'description': 'after update description',
+      'section': '',
+      'code': 'before update code'
+    }
+
+    response = class_ctrl.updateClassDetails(afterData, dynamodb)
+    self.assertEqual(response.payload, {'Success': 'Class Details Updated'})
+    c = db.getItem(code, classesTable)
+    self.assertTrue('Item' in c.keys())
+    self.assertFalse('department' in c['Item'])
+    self.assertFalse('classSection' in c['Item'])
+
+    ##### update class details removing only one of the optional attributes
+    beforeData = {
+      'title': 'before update title',
+      'department': 'asdf',
+      'description': 'before update description',
+      'classSection': 'lkjh',
+      'code': 'before update code'
+    }
+
+    db.putItem(beforeData, classesTable)
+
+    afterData = {
+      'title': 'after update title',
+      'department': 'asdf',
+      'description': 'after update description',
+      'section': '',
+      'code': 'before update code'
+    }
+
+    response = class_ctrl.updateClassDetails(afterData, dynamodb)
+    self.assertEqual(response.payload, {'Success': 'Class Details Updated'})
+    c = db.getItem(code, classesTable)
+    self.assertTrue('Item' in c.keys())
+    self.assertFalse('classSection' in c['Item'])
+    self.assertEqual(c['Item']['department'], 'asdf')
+
+    afterData = {
+      'title': 'after update title',
+      'department': '',
+      'description': 'after update description',
+      'section': 'lkjh',
+      'code': 'before update code'
+    }
+
+    response = class_ctrl.updateClassDetails(afterData, dynamodb)
+    self.assertEqual(response.payload, {'Success': 'Class Details Updated'})
+    c = db.getItem(code, classesTable)
+    self.assertTrue('Item' in c.keys())
+    self.assertFalse('department' in c['Item'])
+    self.assertEqual(c['Item']['classSection'], 'lkjh')
 
 if __name__ == '__main__':
   if __package__ is None:

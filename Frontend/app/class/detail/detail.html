@@ -6,7 +6,7 @@
   <!-- Only show if the api done loading -->
   <div class="col-xs-12 col-md-8" *ngIf="!isLoading && !editMode">
     <div class="row">
-      <button class="btn btn-default pull-right" (click)="toggleEditMode()">Edit Class</button>
+      <button *ngIf="showTeacherView" class="btn btn-default pull-right" (click)="toggleEditMode()">Edit Class</button>
       <div class="col-xs-12">
         <h2>
           {{model.title}}
@@ -32,7 +32,7 @@
   </div>
 
   <!-- Only show if in edit mode -->
-  <div class="col-xs-12 col-md-8" *ngIf="editMode">
+  <div class="col-xs-12 col-md-8" *ngIf="editMode && showTeacherView">
     <h2>Edit Class Details</h2>
     <form #editClassForm="ngForm" autocomplete="off">
       <div class="form-group">

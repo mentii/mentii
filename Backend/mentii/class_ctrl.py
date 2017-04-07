@@ -104,7 +104,7 @@ def createClass(dynamoDBInstance, classData, email=None, userRole=None):
       if 'department' in classData.keys() and classData['department']:
         newClass['department'] = classData['department']
       if 'section' in classData.keys() and classData['section']:
-        newClass['section'] = classData['section']
+        newClass['classSection'] = classData['section']
 
       result = dbUtils.putItem(newClass, classTable)
 
@@ -332,19 +332,39 @@ def updateClassDetails(jsonData, dynamodb):
     # get data from request body
     code = jsonData.get('code')
     title = jsonData.get('title')
-    dept = jsonData.get('department')
     desc = jsonData.get('description')
-    sec = jsonData.get('section')
+    dept = jsonData.get('department') # optional
+    sec = jsonData.get('section') # optional
+
+    updateExprString = 'SET title =:t, description =:dn'
+    expresionAttrDict = { ':t': title, ':dn' : desc }
+
+    removeString = ''
+    # if empty string is given, remove the attribute
+    if dept == '' and sec == '':
+      removeString = removeString + ' REMOVE department, classSection'
+    else:
+      if dept == '':
+        removeString = removeString + ' REMOVE department'
+      else:
+        updateExprString = updateExprString + ', department = :dt'
+        expresionAttrDict[':dt'] = dept
+      if sec == '':
+        removeString = removeString + ' REMOVE classSection'
+      else:
+        updateExprString = updateExprString + ', classSection = :s'
+        expresionAttrDict[':s'] = sec
+
+    updateExprString = updateExprString + removeString
 
     # update item
     updateData = {
           'Key': {'code': code},
-          'UpdateExpression': 'SET title = :t, department = :dt, section = :s, description = :dn',
-          'ExpressionAttributeValues': { ':t': title, ':dt': dept, ':s' : sec, ':dn' : desc },
+          'UpdateExpression': updateExprString,
+          'ExpressionAttributeValues': expresionAttrDict,
           'ReturnValues' : 'UPDATED_NEW'
     }
 
-    #TODO change section attribute name
     res = dbUtils.updateItem(updateData, classesTable)
     if res is None:
       response.addError('updateClassDetails has error', 'Unable to update class details')

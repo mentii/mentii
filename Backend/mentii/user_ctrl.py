@@ -202,7 +202,7 @@ def changeUserRole(jsonData, dbInstance, adminRole=None):
 
   #g will be not be available during testing
   #and adminRole will need to be passed to the function
-  if g :
+  if g: # pragma: no cover
     adminRole = g.authenticatedUser['userRole']
   #adminRole is confirmed here incase changeUserRole is called from somewhere
   #other than app.py changeUserRole()
@@ -267,7 +267,7 @@ def joinClass(jsonData, dynamoDBInstance, email=None):
   response = ControllerResponse()
   #g will be not be available during testing
   #and email will need to be passed to the function
-  if g :
+  if g: # pragma: no cover
     email = g.authenticatedUser['email']
   if 'code' not in jsonData.keys() or not jsonData['code']:
     response.addError('Key Missing Error', 'class code missing from data')

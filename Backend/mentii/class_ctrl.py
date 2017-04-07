@@ -15,7 +15,7 @@ def getActiveClassList(dynamoDBInstance, email=None):
     response.addError(  'Get Active Class List Failed',
                         'Unable to access users and/or classes')
   else :
-    if email is None:
+    if email is None: # pragma: no cover
       email = g.authenticatedUser['email']
     classes = []
     classCodes = getClassCodesFromUser(dynamoDBInstance, email)
@@ -34,7 +34,7 @@ def getClass(classCode, dynamoDBInstance, email=None, userRole=None):
   if not classData:
       response.addError('Get Class Failed', 'Unable to load class data')
   else:
-    if g:
+    if g: # pragma: no cover
       email = g.authenticatedUser['email']
       userRole = g.authenticatedUser['userRole']
     #Checks that user is the teacher of the class w/ classCode
@@ -50,7 +50,7 @@ def getClass(classCode, dynamoDBInstance, email=None, userRole=None):
 
 def getTaughtClassList(dynamoDBInstance, email=None):
   response = ControllerResponse()
-  if email is None:
+  if email is None: # pragma: no cover
     email = g.authenticatedUser['email']
   usersTable = dbUtils.getTable('users', dynamoDBInstance)
   classTable = dbUtils.getTable('classes', dynamoDBInstance)
@@ -76,7 +76,7 @@ def createClass(dynamoDBInstance, classData, email=None, userRole=None):
 
   #g will be not be available during testing
   #and email and userRole will need to be passed to the function
-  if g:
+  if g: # pragma: no cover
     email = g.authenticatedUser['email']
     userRole = g.authenticatedUser['userRole']
   #role is confirmed here incase createClass is called from somewhere other
@@ -142,7 +142,7 @@ def getClassByCode(classCode, dynamoDBInstance):
 
 def getClassCodesFromUser(dynamoDBInstance, email=None):
   classCodes = set()
-  if email is None:
+  if email is None: # pragma: no cover
     email = g.authenticatedUser['email']
   usersTable = dbUtils.getTable('users', dynamoDBInstance)
   if usersTable is None:
@@ -161,7 +161,7 @@ def getClassCodesFromUser(dynamoDBInstance, email=None):
 
 def getTaughtClassCodesFromUser(dynamoDBInstance, email=None):
   classCodes = None
-  if email is None:
+  if email is None: # pragma: no cover
     email = g.authenticatedUser['email']
   usersTable = dbUtils.getTable('users', dynamoDBInstance)
   if usersTable is None:

@@ -1,3 +1,5 @@
 env/
 config/prodConfig.ini
 venv/
+htmlcov/
+.coverage

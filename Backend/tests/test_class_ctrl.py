@@ -303,6 +303,46 @@ class ClassCtrlDBTests(unittest.TestCase):
     mockTable.get_item.assert_called_with(Key={'code': 'code123'})
     self.assertEqual(res, classData)
 
+  def test_updateClassDetails(self):
+    print('Running updateClassDetails test')
+
+    classesTable = db.getTable('classes', dynamodb)
+
+    # put data into db first
+    beforeData = {
+      'title': 'before update title',
+      'department': 'before update department',
+      'description': 'before update description',
+      'section': 'before update section',
+      'code': 'before update code'
+    }
+
+    db.putItem(beforeData, classesTable)
+
+    # check item was placed successfully
+    code = {'Key': {'code': 'before update code'}}
+    c = db.getItem(code, classesTable)
+    self.assertTrue('Item' in c.keys())
+
+    # update class details
+    afterData = {
+      'title': 'after update title',
+      'department': 'after update department',
+      'description': 'after update description',
+      'section': 'after update section',
+      'code': 'before update code'
+    }
+
+    response = class_ctrl.updateClassDetails(afterData, dynamodb)
+    self.assertEqual(response.payload, {'Success': 'Class Details Updated'})
+    c = db.getItem(code, classesTable)
+    self.assertTrue('Item' in c.keys())
+    self.assertEqual(c['Item']['title'], 'after update title')
+    self.assertEqual(c['Item']['department'], 'after update department')
+    self.assertEqual(c['Item']['section'], 'after update section')
+    self.assertEqual(c['Item']['description'], 'after update description')
+
+
 if __name__ == '__main__':
   if __package__ is None:
     import sys

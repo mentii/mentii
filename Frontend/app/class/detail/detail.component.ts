@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ClassService } from '../class.service';
 import { ToastrService } from 'ngx-toastr';
 import { ClassModel } from '../class.model';
+import { NgForm } from '@angular/forms';
 
 @Component({
   moduleId: module.id,
@@ -16,6 +17,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   private routeSub: any;
   showTeacherView = false;
   isLoading = true;
+  editMode = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -56,6 +58,40 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   handleError(err){
     this.toastr.error("Unable to access class.");
     this.router.navigateByUrl('/dashboard');
+  }
+
+  toggleEditMode(){
+    this.editMode = !this.editMode;
+  }
+
+  updateModel(form){
+    this.model.title = form.value.title;
+    this.model.department = form.value.department;
+    this.model.section = form.value.section;
+    this.model.description = form.value.description;
+    this.toggleEditMode();
+  }
+
+  handleUpdateError(err){
+    this.toastr.error("Unable to update class details.");
+  }
+
+  saveChanges(form: NgForm){
+    var newModel = new ClassModel(
+      form.value.title,
+      form.value.department,
+      form.value.description,
+      form.value.section,
+      this.model.code,
+      this.model.activities,
+      this.model.students
+    );
+
+    this.classService.updateClassDetails(newModel)
+      .subscribe(
+        data => this.updateModel(form),
+        err => this.handleUpdateError(err)
+      );
   }
 
 }

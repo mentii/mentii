@@ -191,3 +191,33 @@ def getPublicClassList(dynamodb, email=None):
         classes.append(pclass)
     response.addToPayload('classes', classes)
   return response
+
+def updateClassDetails(jsonData, dynamodb):
+  response = ControllerResponse()
+  classesTable = dbUtils.getTable('classes', dynamodb)
+  if classesTable is None:
+    MentiiLogging.getLogger().error('Unable to get classes table in getPublicClassList')
+    response.addError('Failed to get class list', 'A database error occured');
+  else:
+    # get data from request body
+    code = jsonData.get('code')
+    title = jsonData.get('title')
+    dept = jsonData.get('department')
+    desc = jsonData.get('description')
+    sec = jsonData.get('section')
+
+    # update item
+    updateData = {
+          'Key': {'code': code},
+          'UpdateExpression': 'SET title = :t, department = :dt, section = :s, description = :dn',
+          'ExpressionAttributeValues': { ':t': title, ':dt': dept, ':s' : sec, ':dn' : desc },
+          'ReturnValues' : 'UPDATED_NEW'
+    }
+
+    #TODO change section attribute name
+    res = dbUtils.updateItem(updateData, classesTable)
+    if res is None:
+      response.addError('updateClassDetails has error', 'Unable to update class details')
+    else:
+      response.addToPayload('Success', 'Class Details Updated')
+  return response

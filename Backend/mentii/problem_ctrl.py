@@ -17,7 +17,7 @@ def getBookInfoFromActivity(classId, activityTitle, dynamoDBInstance):
   sectionTitle = ''
   classTable = dbUtils.getTable('classes', dynamoDBInstance)
   if classTable is None:
-    pass
+    MentiiLogging.getLogger().warning('Could not get the class table') 
   else:
     classQuery = {'Key': {'code': classId}}
     res = dbUtils.getItem(classQuery, classTable)

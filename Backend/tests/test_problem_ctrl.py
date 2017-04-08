@@ -42,7 +42,6 @@ class ProblemCtrlTests(unittest.TestCase):
     problem = problem_ctrl.getProblemFromBook(bookId, chapterTitle, sectionTitle, dynamodb)
     self.assertNotEqual(problem, 'Bad Problem') #Problem is a random problem. can't hard code it. 
 
-
   def test_getBookInfoFromActivity(self):
     classId = 'd26713cc-f02d-4fd6-80f0-026784d1ab9b'
     activityTitle = 'Week 1' 
@@ -51,11 +50,6 @@ class ProblemCtrlTests(unittest.TestCase):
     self.assertEqual(chapterTitle,'Chapter 1')
     self.assertEqual(sectionTitle, 'Section 2')
     
-
-
-
-
-
 if __name__ == '__main__':
   if __package__ is None:
     import sys

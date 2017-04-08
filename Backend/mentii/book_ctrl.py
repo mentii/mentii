@@ -46,11 +46,13 @@ def getBook(bookId, dynamoDBInstance):
   response = {}
   booksTable = dbUtils.getTable('books', dynamoDBInstance)
   if booksTable is None:
-    pass
+    MentiiLogging.getLogger().error('Could not get book table') 
   else:
     bookQuery = {'Key': {'bookId': bookId}}
     res = dbUtils.getItem(bookQuery, booksTable)
     if res is not None and 'Item' in res.keys():
       response = res['Item']
+    else:
+      MentiiLogging.getLogger().warning('Could not get an item from the books table') 
 
   return response

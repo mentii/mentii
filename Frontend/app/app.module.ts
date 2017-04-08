@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CoreModule } from './core.module';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule, RequestOptions, XHRBackend } from '@angular/http';
 import { Router } from '@angular/router';
 /* App Config */
@@ -13,6 +13,7 @@ import { UserService } from './user/user.service';
 import { ClassService } from './class/class.service';
 import { ToastrModule } from 'ngx-toastr';
 import { ProblemService } from './problem/problem.service';
+import { BookService } from './book/book.service';
 /* Components */
 import { ActivationComponent } from './user/activation/activation.component';
 import { AdminComponent } from './admin/admin.component';
@@ -32,25 +33,37 @@ import { ClassListItemComponent } from './class/listItem/classListItem.component
 import { ActivityListComponent } from './activity/list/list.component';
 import { DisplayProblemComponent } from './problem/display/displayProblem.component';
 import { UserListComponent } from './user/list/list.component';
+import { ChangeRole } from './admin/changeRole/changeRole.component'
+import { CreateBookComponent } from './book/create/createBook.component';
+import { ChapterListComponent } from './book/chapterList/chapterList.component';
+import { ChapterListItemComponent } from './book/chapterList/chapterListItem.component';
+import { SectionListComponent } from './book/sectionList/sectionList.component';
+import { SectionListItemComponent } from './book/sectionList/sectionListItem.component';
+import { ProblemListComponent } from './book/problemList/problemList.component';
+import { ProblemListItemComponent } from './book/problemList/problemListItem.component';
 /* Directives */
 import { EqualValidator } from './directives/equal-validator.directive';
 import { DeleteValue } from './directives/delete-value-validator.directive';
 import { ClearPlaceholder } from './directives/clearPlaceholderOnFocus.directive';
+import { HideNgInvalid } from './directives/hideNgInvalid.directive';
 /* Route Guards */
 import { AuthRouteGuard } from './utils/AuthRouteGuard.service';
 import { TeacherRouteGuard } from './utils/TeacherRouteGuard.service';
 import { AdminRouteGuard } from './utils/AdminRouteGuard.service';
 /* Vendor */
 import { LaddaModule } from 'angular2-ladda';
+import { ModalModule } from 'ng2-bootstrap';
 
 @NgModule({
 
   imports:      [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpModule,
     ToastrModule.forRoot({preventDuplicates: true}),
     LaddaModule.forRoot({style: "zoom-in"}),
+    [ModalModule.forRoot()],
     routing,
     CommonModule,
     CoreModule
@@ -77,7 +90,16 @@ import { LaddaModule } from 'angular2-ladda';
     ClassListItemComponent,
     TaughtClassListComponent,
     ClearPlaceholder,
-    UserListComponent
+    UserListComponent,
+    ChangeRole,
+    CreateBookComponent,
+    ChapterListComponent,
+    ChapterListItemComponent,
+    SectionListComponent,
+    SectionListItemComponent,
+    ProblemListComponent,
+    ProblemListItemComponent,
+    HideNgInvalid
   ],
 
   providers:  [
@@ -86,7 +108,8 @@ import { LaddaModule } from 'angular2-ladda';
     ProblemService,
     AuthRouteGuard,
     TeacherRouteGuard,
-    AdminRouteGuard
+    AdminRouteGuard,
+    BookService
   ],
 
   bootstrap: [

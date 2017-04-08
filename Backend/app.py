@@ -8,6 +8,7 @@ from flask import g
 from mentii import user_ctrl
 from mentii import class_ctrl
 from mentii import problem_ctrl
+from mentii import book_ctrl
 from problems import mathstepsWrapper
 from problems import algebra
 from utils import MentiiAuth
@@ -240,11 +241,66 @@ def changeUserRole():
 @handleOptionsRequest
 def problemSteps(classId, activity):
   status = 200
-  problem = problem_ctrl.getProblem(classId, activity)
+  dynamoDBInstance = getDatabaseClient()
+  problem = problem_ctrl.getProblemTemplate(classId, activity, dynamoDBInstance)
   res = algebra.getProblemTree(problem)
   if res.hasErrors():
     status = 400
   return ResponseCreation.createResponse(res,status)
+
+@app.route('/classes/remove', methods=['POST', 'OPTIONS'])
+@auth.login_required
+@handleOptionsRequest
+def removeStudentFromClass():
+  status = 200
+  role = g.authenticatedUser['userRole']
+  if role != "teacher" and role != "admin" :
+    res = ResponseCreation.ControllerResponse()
+    res.addError('Role error', 'Only those with teacher privileges can remove students from classes')
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    res = class_ctrl.removeStudent(dynamoDBInstance, request.json)
+    if res.hasErrors():
+      status = 400
+    else:
+      #send email
+      class_ctrl.sendClassRemovalEmail(dynamoDBInstance, mail, request.json)
+  return ResponseCreation.createResponse(res, status)
+
+@app.route('/book', methods=['POST', 'OPTIONS'])
+@auth.login_required
+@handleOptionsRequest
+def createBook():
+  status = 200
+  res = ResponseCreation.ControllerResponse()
+  if g.authenticatedUser['userRole'] != "admin":
+    res.addError('Role Error', 'Only admins can create books')
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    res = book_ctrl.createBook(request.json, dynamoDBInstance)
+    if res.hasErrors():
+      status = 400
+  return ResponseCreation.createResponse(res,status)
+
+@app.route('/class/details/update', methods=['POST', 'OPTIONS'])
+@auth.login_required
+@handleOptionsRequest
+def updateClassDetails():
+  status = 200
+  res = ResponseCreation.ControllerResponse()
+  role = g.authenticatedUser['userRole']
+  if role != 'admin' and role != 'teacher':
+    res.addError('Role Error', 'Only teachers or admins can update class details')
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    res = class_ctrl.updateClassDetails(request.json, dynamoDBInstance)
+    if res.hasErrors():
+      status = 400
+  return ResponseCreation.createResponse(res,status)
+
 
 if __name__ == '__main__':
   logger.info('mentii app starting')

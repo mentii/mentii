@@ -1,0 +1,30 @@
+<form class="row">
+  <div class="col-xs-12">
+    <!-- Only show if there are sections -->
+    <div *ngIf="sectionsArray && sectionsArray.length">
+      <div>
+        <div>
+          <sectionListItem
+            *ngFor="let section of sectionsArray.controls; let i=index"
+            [section]="section"
+            [index]="i"
+            (onDelete)="sectionsArray.removeAt($event)">
+          </sectionListItem>
+        </div>
+      </div>
+    </div>
+    <!-- Only show if there are no sections -->
+    <div *ngIf="!sectionsArray || !sectionsArray.length">
+      <div class="text-center">
+        <i class="fa fa-pencil fa-4x"></i>
+        <h4>
+          No Sections Have Been Created for this Chapter
+        </h4>
+      </div>
+    </div>
+    <!-- Add more sections -->
+    <button type="button" class="btn btn-primary" (click)="addSection()">
+      <span>Add New Section</span>
+    </button>
+  </div>
+</form>

@@ -4,6 +4,8 @@ import { Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import { NgForm } from '@angular/forms';
+
 // Services
 import { AuthHttp } from '../utils/AuthHttp.service'
 // Utilities
@@ -61,6 +63,35 @@ export class ClassService {
       "section": classModel.section
     }
     return this.authHttp.post(createClassListUrl, body)
+    .map((res:Response) => res)
+    .catch((error:any) => Observable.throw(error));
+  }
+
+  removeStudentFromClass(email:string, classCode:string):Observable<any> {
+    let removeStudentUrl = this.mentiiConfig.getRootUrl() + '/classes/remove';
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let options = new RequestOptions({ headers: headers })
+    let body = {
+      'email': email,
+      'classCode': classCode
+    }
+    return this.authHttp.post(removeStudentUrl, body, options)
+    .map((res:Response) => res)
+    .catch((error:any) => Observable.throw(error));
+  }
+
+  updateClassDetails(classModel: ClassModel):Observable<any> {
+    let updateClassDetailsUrl = this.mentiiConfig.getRootUrl() + '/class/details/update';
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let options = new RequestOptions({ headers: headers })
+    let body = {
+      'title': classModel.title,
+      'department': classModel.department,
+      'description': classModel.description,
+      'section': classModel.section,
+      'code': classModel.code
+    }
+    return this.authHttp.post(updateClassDetailsUrl, body)
     .map((res:Response) => res)
     .catch((error:any) => Observable.throw(error));
   }

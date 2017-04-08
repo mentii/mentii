@@ -278,6 +278,28 @@ class DbUtilsTest(unittest.TestCase):
     self.assertIsNotNone(self.table.get_item(Key={"email":"sharks@mentii.me"}).get("Item"))
     self.assertIsNotNone(self.table.get_item(Key={"email":"lizards@mentii.me"}).get("Item"))
 
+  def test_preloadClassData(self):
+    print("Running preloadClassData test case")
+    classesSetting = 'classes_settings.json'
+    classesMockData = 'mock_classes.json'
+
+    classesTable = db.createTableFromFile('./tests/'+classesSetting, self.dynamodb)
+
+    db.preloadClassData('./tests/'+classesMockData, classesTable)
+    self.assertIsNotNone(classesTable.get_item(Key={'code':'d26713cc-f02d-4fd6-80f0-026784d1ab9b'}).get('Item'))
+    self.assertIsNotNone(classesTable.get_item(Key={'code':'d93cd63f-6eda-4644-b603-60f51142749e'}).get('Item'))
+    self.assertIsNotNone(classesTable.get_item(Key={'code':'93211750-a753-41cc-b8dc-904d6ed2f931'}).get('Item'))
+
+  def test_preloadBookData(self):
+    print("Running preloadBookData test case")
+    booksSetting = 'book_settings.json'
+    bookMockData = 'mock_book.json'
+
+    booksTable = db.createTableFromFile('./tests/'+booksSetting, self.dynamodb)
+
+    db.preloadBookData('./tests/'+bookMockData, booksTable)
+    self.assertIsNotNone(booksTable.get_item(Key={'bookId':'d6742cc-f02d-4fd6-80f0-026784g1ab9b'}).get('Item'))
+
 #################### Get Table Tests #################################
 
   def test_getTable(self):
@@ -374,11 +396,45 @@ class DbUtilsTest(unittest.TestCase):
       "ReturnValues" : "UPDATED_NEW"
     }
 
-    db.updateItem(jsonData, self.table)
-    item = self.table.get_item(Key={"email":"test4@mentii.me"}).get("Item")
+    response = db.updateItem(jsonData, self.table)
+    self.assertIsNotNone(response.get('Attributes'))
+    self.assertEqual(response.get('Attributes').get('active'), 'T')
 
-    self.assertIsNotNone(item)
-    self.assertEqual(item.get("active"), "T")
+    # No ExpressionAttributeValues
+    jsonData = {
+      "Key": {"email": "test4@mentii.me"},
+      "UpdateExpression": "REMOVE active",
+      "ReturnValues" : "UPDATED_NEW"
+    }
+
+    db.updateItem(jsonData, self.table)
+    response = self.table.get_item(Key={"email":"test4@mentii.me"}).get("Item")
+    self.assertIsNone(response.get('active'))
+
+  def test_updateItem_none(self):
+    print("Running updateItem_none test case")
+    self.assertIsNotNone(self.table)
+    self.assertEqual(self.table.table_status,"ACTIVE")
+
+    # No Key
+    jsonData = {
+      "UpdateExpression": "SET active = :a",
+      "ExpressionAttributeValues": { ":a": "T" },
+      "ReturnValues" : "UPDATED_NEW"
+    }
+
+    response = db.updateItem(jsonData, self.table)
+    self.assertIsNone(response)
+
+    # Key not in table
+    jsonData = {
+      "Key": {"email": "fake@mentii.me"},
+      "UpdateExpression": "REMOVE active",
+      "ReturnValues" : "UPDATED_NEW"
+    }
+
+    response = db.updateItem(jsonData, self.table)
+    self.assertIsNone(response)
 
   def test_updateItem_string(self):
     print("Running updateItem_string test")
@@ -392,11 +448,9 @@ class DbUtilsTest(unittest.TestCase):
       "ReturnValues" : "UPDATED_NEW"\
     }'
 
-    db.updateItem(jsonData, self.table)
-    item = self.table.get_item(Key={"email":"test3@mentii.me"}).get("Item")
-
-    self.assertIsNotNone(item)
-    self.assertEqual(item.get("active"), "F")
+    response = db.updateItem(jsonData, self.table)
+    self.assertIsNotNone(response.get('Attributes'))
+    self.assertEqual(response.get('Attributes').get('active'), 'F')
 
   def test_updateItem_not_previously_existed(self):
     print("Running updateItem_not_previously_existed test")
@@ -410,10 +464,8 @@ class DbUtilsTest(unittest.TestCase):
       "ReturnValues" : "UPDATED_NEW"\
     }'
 
-    db.updateItem(jsonData, self.table)
-    item = self.table.get_item(Key={"email":"crab@mentii.me"}).get("Item")
-
-    self.assertIsNone(item)
+    response = db.updateItem(jsonData, self.table)
+    self.assertIsNone(response)
 
   def test_deleteItem_string(self):
     print("Running deleteItem_string test")

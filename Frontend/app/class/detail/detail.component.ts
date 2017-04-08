@@ -1,9 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { ClassService } from '../class.service';
 import { ToastrService } from 'ngx-toastr';
 import { ClassModel } from '../class.model';
+import { ModalDirective } from 'ng2-bootstrap';
 
 @Component({
   moduleId: module.id,
@@ -16,6 +17,8 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   private routeSub: any;
   showTeacherView = false;
   isLoading = true;
+  @ViewChild('addActivityModal') public autoShownModal:ModalDirective;
+  public isModalShown:boolean = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -56,6 +59,19 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   handleError(err){
     this.toastr.error("Unable to access class.");
     this.router.navigateByUrl('/dashboard');
+  }
+
+  /* Modal Methods */
+  public showCorrectionModal():void {
+    this.isModalShown = true;
+  }
+
+  public hideCorrectionModal():void {
+    this.autoShownModal.hide();
+  }
+
+  public onHidden():void {
+    this.isModalShown = false;
   }
 
 }

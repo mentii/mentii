@@ -1,8 +1,10 @@
 <div class="row">
+
   <!-- Only show if the api is currently loading -->
   <div class="col-xs-12 col-sm-offset-1 col-sm-10" *ngIf="isLoading">
     <i class="fa fa-spinner fa-spin"></i> Loading the class...
   </div>
+
   <!-- Only show if the api done loading -->
   <div class="col-xs-12 col-md-8" *ngIf="!isLoading">
     <div class="row">
@@ -26,9 +28,13 @@
       <div class="col-xs-12">
         <h3>Activities</h3>
         <activity-list [activities]="model.activities"></activity-list>
+        <button type="button" class="btn btn-primary" *ngIf="showTeacherView" (click)=showCorrectionModal()>
+          Add New Activity
+        </button>
       </div>
     </div>
   </div>
+
   <!-- Only show if the api done loading and the user is the teacher of this class-->
   <div class="col-xs-12 col-md-4"  *ngIf="!isLoading && showTeacherView">
     <div class="panel panel-default">
@@ -40,6 +46,33 @@
         </p>
         <h4>Students</h4>
         <user-list [classCode]="model.code" [users]="model.students"></user-list>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Activity Modal -->
+<div *ngIf="isModalShown" [config]="{ show: true }" (onHidden)="onHidden()" bsModal #addActivityModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Add New Activity</h4>
+        <button type="button" class="close pull-right" (click)="hideCorrectionModal()">
+          <small>Cancel & Close</small>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #createActivityForm="ngForm" autocomplete="off">
+          <div class="form-group">
+            <label class="required">Name</label>
+            <input type="text" required placeholder="Week 1 Problems" class="form-control" clearPlaceholder>
+          </div>
+          <div class="form-group">
+            <label>Due Date (Optional)</label>
+            <input type="date" class="form-control">
+          </div>
+        </form>
       </div>
     </div>
   </div>

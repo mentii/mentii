@@ -657,9 +657,17 @@ class ClassCtrlDBTests(unittest.TestCase):
     print('Running updateClassDetails test')
 
     classesTable = db.getTable('classes', dynamodb)
+    usersTable = db.getTable('users', dynamodb)
+    email = 'tester@mentii.me'
+    userRole = 'teacher'
 
     # put data into db first
-    beforeData = {
+    beforeUserData = {
+      'email': email,
+      'teaching' : ['before update code']
+    }
+
+    beforeClassData = {
       'title': 'before update title',
       'department': 'before update department',
       'description': 'before update description',
@@ -667,12 +675,17 @@ class ClassCtrlDBTests(unittest.TestCase):
       'code': 'before update code'
     }
 
-    db.putItem(beforeData, classesTable)
+    db.putItem(beforeClassData, classesTable)
+    db.putItem(beforeUserData, usersTable)
 
     # check item was placed successfully
     code = {'Key': {'code': 'before update code'}}
     c = db.getItem(code, classesTable)
     self.assertTrue('Item' in c.keys())
+
+    e = {'Key': {'email': email}}
+    user = db.getItem(e, usersTable)
+    self.assertTrue('Item' in user.keys())
 
     # update class details
     afterData = {
@@ -683,7 +696,7 @@ class ClassCtrlDBTests(unittest.TestCase):
       'code': 'before update code'
     }
 
-    response = class_ctrl.updateClassDetails(afterData, dynamodb)
+    response = class_ctrl.updateClassDetails(afterData, dynamodb, email, userRole)
     self.assertEqual(response.payload, {'Success': 'Class Details Updated'})
     c = db.getItem(code, classesTable)
     self.assertTrue('Item' in c.keys())
@@ -696,9 +709,17 @@ class ClassCtrlDBTests(unittest.TestCase):
     print('Running updateClassDetails length zero test')
 
     classesTable = db.getTable('classes', dynamodb)
+    usersTable = db.getTable('users', dynamodb)
+    email = 'tester2@mentii.me'
+    userRole = 'admin'
 
     # put data into db first
-    beforeData = {
+    beforeUserData = {
+      'email': email,
+      'teaching' : ['before update code']
+    }
+
+    beforeClassData = {
       'title': 'before update title',
       'department': 'before update department',
       'description': 'before update description',
@@ -706,12 +727,17 @@ class ClassCtrlDBTests(unittest.TestCase):
       'code': 'before update code'
     }
 
-    db.putItem(beforeData, classesTable)
+    db.putItem(beforeClassData, classesTable)
+    db.putItem(beforeUserData, usersTable)
 
     # check item was placed successfully
     code = {'Key': {'code': 'before update code'}}
     c = db.getItem(code, classesTable)
     self.assertTrue('Item' in c.keys())
+
+    e = {'Key': {'email': email}}
+    user = db.getItem(e, usersTable)
+    self.assertTrue('Item' in user.keys())
 
     ##### update class details removing both optional attributes
     afterData = {
@@ -722,7 +748,7 @@ class ClassCtrlDBTests(unittest.TestCase):
       'code': 'before update code'
     }
 
-    response = class_ctrl.updateClassDetails(afterData, dynamodb)
+    response = class_ctrl.updateClassDetails(afterData, dynamodb, email, userRole)
     self.assertEqual(response.payload, {'Success': 'Class Details Updated'})
     c = db.getItem(code, classesTable)
     self.assertTrue('Item' in c.keys())
@@ -748,7 +774,7 @@ class ClassCtrlDBTests(unittest.TestCase):
       'code': 'before update code'
     }
 
-    response = class_ctrl.updateClassDetails(afterData, dynamodb)
+    response = class_ctrl.updateClassDetails(afterData, dynamodb, email, userRole)
     self.assertEqual(response.payload, {'Success': 'Class Details Updated'})
     c = db.getItem(code, classesTable)
     self.assertTrue('Item' in c.keys())
@@ -763,7 +789,7 @@ class ClassCtrlDBTests(unittest.TestCase):
       'code': 'before update code'
     }
 
-    response = class_ctrl.updateClassDetails(afterData, dynamodb)
+    response = class_ctrl.updateClassDetails(afterData, dynamodb, email, userRole)
     self.assertEqual(response.payload, {'Success': 'Class Details Updated'})
     c = db.getItem(code, classesTable)
     self.assertTrue('Item' in c.keys())

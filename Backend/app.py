@@ -301,6 +301,16 @@ def updateClassDetails():
       status = 400
   return ResponseCreation.createResponse(res,status)
 
+@app.route('/forgotPassword/', methods=['POST', 'OPTIONS'])
+@handleOptionsRequest
+def forgotPassword():
+  status = 200
+  res = ResponseCreation.ControllerResponse()
+  dynamoDBInstance = getDatabaseClient()
+  httpOrigin = request.environ.get('HTTP_ORIGIN')
+  res = user_ctrl.sendForgotPasswordEmail(httpOrigin, request.json, mail, dynamoDBInstance)
+  return ResponseCreation.createResponse(res,status)
+
 
 if __name__ == '__main__':
   logger.info('mentii app starting')

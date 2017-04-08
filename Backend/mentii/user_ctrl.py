@@ -10,6 +10,24 @@ import uuid
 import hashlib
 from flask import g
 
+def sendForgotPasswordEmail(httpOrigin, jsonData, mailer, dbInstance):
+  email = jsonData['email']
+  resetPasswordId = str(uuid.uuid4())
+  response = ControllerResponse()
+  host = ''
+  if httpOrigin.find('stapp') != -1:
+    host = 'http://stapp.mentii.me'
+  elif httpOrigin.find('app') != -1:
+    host = 'http://app.mentii.me'
+  else:
+    host = 'http://localhost:3000'
+  url = host + '/resetPassword/?id={0}'.format(resetPasswordId)
+  message = render_template('forgotPasswordEmail.html', url=url)
+  #Build Message
+  msg = Message('Mentii: Reset Password', recipients=[email], extra_headers={'Content-Transfer-Encoding': 'quoted-printable'}, html=message)
+  #Send Email
+  mailer.send(msg)
+  return response
 
 def register(httpOrigin, jsonData, mailer, dbInstance):
   response = ControllerResponse()

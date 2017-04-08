@@ -9,9 +9,9 @@ import { AppComponent } from './app.component';
 import { RootComponent } from './root/root.component';
 import { DashboardComponent } from './root/dashboard.component';
 import { RegistrationComponent } from './user/registration/registration.component';
+import { ForgotPasswordComponent } from './user/forgotPassword/forgotPassword.component';
 import { SigninComponent } from './user/signin/signin.component';
 import { PageNotFoundComponent } from './pageNotFound/pageNotFound.component';
-import { SecureTestComponent } from './secureTest/secureTest.component';
 import { ClassListComponent } from './class/list/list.component';
 import { ClassDetailComponent } from './class/detail/detail.component';
 import { CreateClassComponent } from './class/create/create.component';
@@ -28,8 +28,8 @@ export const routes: Routes = [
   { path: '', component: RootComponent }, // Application root
   { path: 'sign-in', component: SigninComponent },
   { path: 'register', component: RegistrationComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'activation/:id', component: ActivationComponent},
-  { path: 'secure-test', component: SecureTestComponent, canActivate: [AuthRouteGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthRouteGuard] },
   { path: 'class', component: ClassBrowseComponent, canActivate: [AuthRouteGuard] },
   { path: 'class/:id', component: ClassDetailComponent, canActivate: [AuthRouteGuard] },

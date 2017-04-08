@@ -79,12 +79,16 @@
           </p>
         </div>
         <div class="row">
-          <h5>Class Code:</h5>
-          <b><h5>{{model.code}}</h5></b>
+          <div class="col-xs-12">
+            <h5>Class Code:</h5>
+            <b><h5>{{model.code}}</h5></b>
+          </div>
         </div>
         <div class="row">
-          <h4>Students</h4>
-          <user-list [classCode]="model.code" [users]="model.students"></user-list>
+          <div class="col-xs-12">
+            <h4>Students</h4>
+            <user-list [classCode]="model.code" [users]="model.students"></user-list>
+          </div>
         </div>
       </div>
     </div>

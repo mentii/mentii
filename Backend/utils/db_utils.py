@@ -102,13 +102,15 @@ def preloadClassData(jsonData, table):
         title = item['title']
         department = item['department']
         description = item['description']
+        activities = item.get('activities', [])
 
         table.put_item(
           Item={
             'code': code,
             'title': title,
             'department' : department,
-            'description' : description
+            'description' : description,
+            'activities' : activities
           }
         )
   except IOError as e:

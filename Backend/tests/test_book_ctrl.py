@@ -159,3 +159,13 @@ class BookControlDBTests(unittest.TestCase):
     scan = self.booksTable.scan()
     self.assertEqual(scan['Count'] , count)
 
+  def test_getBook(self):
+    bookId = 'd6742cc-f02d-4fd6-80f0-026784g1ab9b'
+    badBook = 'foobar'
+    response = book_ctrl.getBook(bookId, dynamodb)
+    self.assertTrue(len(response) != 0)
+    response = book_ctrl.getBook(badBook, dynamodb)
+    self.assertTrue(len(response) == 0)
+
+
+

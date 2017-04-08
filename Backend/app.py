@@ -241,7 +241,8 @@ def changeUserRole():
 @handleOptionsRequest
 def problemSteps(classId, activity):
   status = 200
-  problem = problem_ctrl.getProblemTemplate(classId, activity)
+  dynamoDBInstance = getDatabaseClient()
+  problem = problem_ctrl.getProblemTemplate(classId, activity, dynamoDBInstance)
   res = algebra.getProblemTree(problem)
   if res.hasErrors():
     status = 400

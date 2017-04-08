@@ -13,7 +13,7 @@ class ControllerResponse:
     self.payload = {}
     self.hasError = False
     self.user = {}
-    if g:
+    if g: # pragma: no cover
       self.user = g.get('authenticatedUser', {})
 
   def addError(self, title, message):

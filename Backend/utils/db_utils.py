@@ -228,27 +228,33 @@ def updateItem(jsonData, table):
   expression_attribute_values = data.get("ExpressionAttributeValues")
   return_values = data.get("ReturnValues")
 
+  response = None
+
   if key is None:
     message = "Unable to update item. Missing Key"
     logger.error(message)
-    return None
 
-  if not isKeyInTable(key, table):
+  elif not isKeyInTable(key, table):
     message = str(key) + " not in table " + table.table_name
     logger.exception(message + '\n')
-    return None
 
-  if update_expression is not None and expression_attribute_values is not None and return_values is not None:
-    response = table.update_item(
-      Key=key,
-      UpdateExpression=update_expression,
-      ExpressionAttributeValues=expression_attribute_values,
-      ReturnValues=return_values
-    )
-    return response
   else:
-    response = table.update_item(Key=key)
-    return response
+    if update_expression is not None and expression_attribute_values is not None and return_values is not None:
+      response = table.update_item(
+        Key=key,
+        UpdateExpression=update_expression,
+        ExpressionAttributeValues=expression_attribute_values,
+        ReturnValues=return_values
+      )
+    elif update_expression is not None and return_values is not None:
+      response = table.update_item(
+        Key=key,
+        UpdateExpression=update_expression,
+        ReturnValues=return_values
+      )
+    else:
+      response = table.update_item(Key=key)
+  return response
 
 def deleteItem(keys, table):
   if (type(keys) == str):

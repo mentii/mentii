@@ -9,7 +9,7 @@ def createBook(bookData, dynamoDBInstance, userRole=None):
 
   #g will be not be available during testing
   #userRole will need to be passed to the function
-  if g:
+  if g: # pragma: no cover
     userRole = g.authenticatedUser['userRole']
   #role is confirmed here incase createBook is called from somewhere other
   #than app.py createBook()

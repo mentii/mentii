@@ -39,13 +39,27 @@
   <div class="col-xs-12 col-md-4"  *ngIf="!isLoading && showTeacherView">
     <div class="panel panel-default">
       <div class="panel-body">
-        <p class="text-muted">
-          <em>
-            This panel is only visible to the teacher of this class.
-          </em>
-        </p>
-        <h4>Students</h4>
-        <user-list [classCode]="model.code" [users]="model.students"></user-list>
+        <div class="row">
+          <div class="col-xs-12">
+            <p class="text-muted">
+              <em>
+                This panel is only visible to the teacher of this class.
+              </em>
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <h4>Class Code</h4>
+            <b><h5>{{model.code}}</h5></b>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <h4>Students</h4>
+            <user-list [classCode]="model.code" [users]="model.students"></user-list>
+          </div>
+        </div>
       </div>
     </div>
   </div>

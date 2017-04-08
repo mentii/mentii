@@ -31,9 +31,7 @@ def generateAuthToken(userCredentials, appSecret=None, expiration = 86400):
   '''
   if appSecret == None:
     raise ValueError('appSecret cannot be none')
-
   retval = None
-
   if userCredentialsValid(userCredentials):
     try:
       s = Serializer(appSecret, expires_in = expiration)
@@ -51,7 +49,7 @@ def userCredentialsValid(userCredentials):
     valid = False
   return valid
 
-def verifyAuthToken(token, appSecret=None):
+def verifyAuthToken(token, dbInstance, appSecret=None):
   '''
   Reads the auth token to make sure it has not been modified and that it is not expired
   '''
@@ -61,7 +59,13 @@ def verifyAuthToken(token, appSecret=None):
   s = Serializer(appSecret)
   try:
     user = s.loads(token)
-    retval = user # user from token
+    email = user['email']
+    password = user['password']
+    userFromDB = user_ctrl.getUserByEmail(email, dbInstance)
+    if isPasswordValid(userFromDB, password) == True:
+      retval = user # user from token
+    else:
+      raise BadSignature('Token password did not match stored password')
   except (SignatureExpired, BadSignature) as e:
     MentiiLogging.getLogger().warning(e)
     retval = None
@@ -87,7 +91,7 @@ def verifyPassword(emailOrToken, password, dynamoDBInstance, appSecret=None):
   '''
   if appSecret == None:
     raise ValueError('appSecret cannot be none')
-  user = verifyAuthToken(emailOrToken, appSecret)
+  user = verifyAuthToken(emailOrToken, dynamoDBInstance, appSecret)
   isPasswordVerified = False
   if not user:
     if emailOrToken != '' and password != '':

@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ProblemService } from '../problem.service';
 import { UserService } from '../../user/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute } from '@angular/router';
-import { Router } from '@angular/router'
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -13,7 +13,6 @@ import { Router } from '@angular/router'
 })
 
 export class DisplayProblemComponent implements OnInit, OnDestroy {
-
   /*
   Display problem works by showing "good" steps that are less than the current active step count. The
   logic beind the actual showing the step is in displayProblem.html
@@ -32,7 +31,31 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   badStepShown = false;
   problemIsComplete = false;
 
+  stepIsBeingCorrected = false;
+  correctionModel = {
+    correction: '',
+    stepToCorrect: ''
+  }
+
   constructor(public problemService: ProblemService, public toastr: ToastrService, public router: Router, private activatedRoute: ActivatedRoute){
+  }
+
+  applyCorrection() {
+    let trimmedCorrection = this.correctionModel.correction.replace(/\s+/g, ''); // Removed all whitespace
+    let trimmedActual = this.problemTree[this.activeStepCount].correctStep.replace(/\s+/g, ''); // Removed all whitespace
+    if (trimmedCorrection == trimmedActual) {
+      this.toastr.success("Your correction got Mentii back on the right path", "Good Job");
+      this.problemTree[this.activeStepCount]['badStepShown'] = false; // Close the bad step subtree
+      this.stepIsBeingCorrected = false;
+      this.showNextStep(); // Progress to the next step, after the correction
+    } else {
+      this.toastr.error("Your correction won't help Mentii get back on the right path", "Not Quite...");
+    }
+  }
+
+  cancelCorrection() {
+    this.stepIsBeingCorrected = false;
+    this.correctionModel.correction = ''; //clear the correction from the text box
   }
 
   showNextStep(){
@@ -64,9 +87,13 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     }
   }
 
-  incorrectBadStep() {
-    this.toastr.success("This was an incorrect step, that you corrected", "Good Job");
-    this.problemTree[this.activeStepCount]['badStepShown'] = false;
+  incorrectBadStep(badStepIndex: number, problemStep: string) {
+    if (badStepIndex == 0) {
+      this.correctionModel.correction = this.badStepProblem[0]; //set the model to the current bad step
+      this.stepIsBeingCorrected = true;
+    } else {
+      this.toastr.warning("This is part of an incorrect step, but the problem is in a different step", "Almost...");
+    }
   }
 
   incorrectGoodStep() {

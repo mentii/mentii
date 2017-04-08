@@ -1,7 +1,7 @@
 {
-  "bookId":"abcdefg123456",
+  "bookId":"d6742cc-f02d-4fd6-80f0-026784g1ab9b",
   "title":"book title",
-  "description":"book description",
+  "description":"Foundations of Algebra",
   "chapters": [
     {
       "title": "Chapter 1",

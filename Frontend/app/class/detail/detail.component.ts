@@ -5,6 +5,7 @@ import { ClassService } from '../class.service';
 import { ToastrService } from 'ngx-toastr';
 import { ClassModel } from '../class.model';
 import { ModalDirective } from 'ng2-bootstrap';
+import { NgForm } from '@angular/forms';
 
 @Component({
   moduleId: module.id,
@@ -19,6 +20,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   isLoading = true;
   @ViewChild('addActivityModal') public autoShownModal:ModalDirective;
   public isModalShown:boolean = false;
+  editMode = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -47,7 +49,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
       data.title,
       data.department,
       data.description,
-      data.section,
+      data.classSection,
       data.code,
       data.activities,
       data.students
@@ -72,6 +74,41 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
 
   public onHidden():void {
     this.isModalShown = false;
+  }
+
+  toggleEditMode(){
+    this.editMode = !this.editMode;
+  }
+
+  updateModel(form){
+    this.model.title = form.value.title;
+    this.model.department = form.value.department;
+    this.model.section = form.value.section;
+    this.model.description = form.value.description;
+    this.toggleEditMode();
+    this.toastr.success("Class successfully updated.");
+  }
+
+  handleUpdateError(err){
+    this.toastr.error("Unable to update class details.");
+  }
+
+  saveChanges(form: NgForm){
+    var newModel = new ClassModel(
+      form.value.title,
+      form.value.department,
+      form.value.description,
+      form.value.section,
+      this.model.code,
+      this.model.activities,
+      this.model.students
+    );
+
+    this.classService.updateClassDetails(newModel)
+      .subscribe(
+        data => this.updateModel(form),
+        err => this.handleUpdateError(err)
+      );
   }
 
 }

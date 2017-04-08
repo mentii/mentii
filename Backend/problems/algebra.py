@@ -5,6 +5,14 @@ from algebraTemplate import ProblemGenerator
 import utils.MentiiLogging as MentiiLogging
 
 def getProblem(problemTemplate):
+  '''
+  Expects a problem template of the form: 
+  <template>|<*min range>|<*max range>|<*operator list>
+
+  The template can be any math expression with $a, $b, $c, $d for any numerical value, $var for the variable 'x', $op for a random operator from the operator list.
+
+  The values for the min range, max range, and operator list are optional but if one is provided all values have to be provided. The default values are: -20, 20, and + - * 
+  '''
   problem = 'Bad Problem'
   problemTokens = problemTemplate.split('|')
   if len(problemTokens) == 4:

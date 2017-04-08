@@ -1,8 +1,6 @@
 from string import Template
 import random
 
-
-
 class ProblemGenerator:
 
   def __init__(self, seed=None, opVals=None, minVal=-20, maxVal=20):
@@ -20,7 +18,7 @@ class ProblemGenerator:
     b = 0
     c = 0
     d = 0
-    while a == 0 or b == 0 or c == 0 or d == 0:
+    while a == 0 or a == 1 or b == 0 or c == 0 or d == 0:
       a, b, c, d = self.randomGen.sample(xrange(self.intMin, self.intMax), 4)
     op = self.randomGen.choice(self.operationValues)
     self.templateMap = {

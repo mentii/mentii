@@ -37,6 +37,8 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     stepToCorrect: ''
   }
 
+  stepLimit = 0;
+
   constructor(public problemService: ProblemService, public toastr: ToastrService, public router: Router, private activatedRoute: ActivatedRoute){
   }
 
@@ -67,6 +69,7 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
       this.badStepProblem = this.problemTree[this.activeStepCount+1]["badStepPath"];
       this.problemTree[this.activeStepCount+1]['badStepShown'] = true;
       this.activeStepCount++;
+      this.stepLimit = this.badStepProblem.length-1; //default step limit
     }
     // if the active step is only a good step
     else {
@@ -80,7 +83,7 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   }
 
   showNextBadStep(){
-    if (this.activeBadStepCount == this.badStepProblem.length-1) {
+    if (this.activeBadStepCount == this.stepLimit) {
       this.toastr.error("This doesn't seem quite right", "Uh Oh");
     } else {
       this.activeBadStepCount++;
@@ -136,6 +139,15 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     this.isLoading = false;
     if (!err.isAuthenticationError) {
       this.toastr.error('The problem steps failed to load.');
+    }
+  }
+
+  setStepLimit(limit){
+    if(limit < 0){
+      this.stepLimit = this.badStepProblem.length-1;
+    }
+    else {
+      this.stepLimit = limit;
     }
   }
 }

@@ -5,6 +5,23 @@
     </h2>
     <p class="lead" *ngIf="problem">
       Equation I'm trying to solve: <em>{{problem}}</em>
+      <span class="dropdown">
+        <button id="colorToggle" type="button" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Bad Step Color<span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="colorToggle">
+          <li><a>On</a></li>
+          <li><a>Off</a></li>
+        </ul>
+      </span>
+      <span class="dropdown">
+        <button id="stepLimit" type="button" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Bad Step Limit<span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="stepLimit">
+          <li><a>&infin;</a></li>
+          <li><a>3</a></li>
+          <li><a>1</a></li>
+        </ul>
+      </span>
     </p>
   </div>
 </div>

@@ -20,6 +20,7 @@ import { AdminComponent } from './admin/admin.component';
 import { AppComponent } from './app.component';
 import { RegistrationComponent } from './user/registration/registration.component';
 import { ForgotPasswordComponent } from './user/forgotPassword/forgotPassword.component';
+import { ResetPasswordComponent } from './user/resetPassword/resetPassword.component';
 import { SigninComponent } from './user/signin/signin.component';
 import { RootComponent } from './root/root.component';
 import { DashboardComponent } from './root/dashboard.component';
@@ -77,6 +78,7 @@ import { ModalModule } from 'ng2-bootstrap';
     AppComponent,
     RegistrationComponent,
     ForgotPasswordComponent,
+    ResetPasswordComponent,
     RootComponent,
     DashboardComponent,
     PageNotFoundComponent,

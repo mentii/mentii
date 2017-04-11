@@ -122,4 +122,23 @@ export class UserService {
     .catch((error:any) => Observable.throw(error));
   }
 
+  /**
+  * Service method to rset a password for a user if they forgot it
+  * @param  {string} email
+  * @return {Observable<any>} data.json() will contain status "Success" in payload or errors
+  */
+  resetPassword(id,email,password) : Observable<any> {
+    let resetPasswordUrl = this.mentiiConfig.getRootUrl() + '/resetPassword/';
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let options = new RequestOptions({ headers: headers })
+    let body = {
+      "id": id,
+      "email": email,
+      "password": password
+    }
+    return this.http.post(resetPasswordUrl, body)
+    .map((res:Response) => res)
+    .catch((error:any) => Observable.throw(error));
+  }
+
 }

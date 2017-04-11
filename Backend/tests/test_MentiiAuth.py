@@ -63,8 +63,8 @@ class MentiiAuthTests(unittest.TestCase):
     testRetVal = {"email": 'test3@mentii.me', "password": '6b7330782b2feb4924020cc4a57782a9', 'userRole': user['userRole']}
     auth_token = MentiiAuth.generateAuthToken(userCredentials, 'test_app_secret')
     fake_auth_token = 'eyJhbGciOiJIUzI1NiIsImV4cCI6MTQ4MjQ1NTU2MywiaWF0IjoxNDgyMzY5MTYzfQ.eyJwYXNzd29yZCI6InRlc3RpbmcxIiwiZW1haWwiOiJqb25tZDI0QGdtYWlsLmNvbSJ9.GWmgu7P5Ro-sHQBSEuL322sldst7McEHvXqY897K9N'
-    self.assertEqual(MentiiAuth.verifyAuthToken(auth_token, 'test_app_secret'), testRetVal)
-    self.assertIsNone(MentiiAuth.verifyAuthToken(fake_auth_token, 'test_app_secret'))
+    self.assertIsNone(MentiiAuth.verifyAuthToken(auth_token, dynamodb, 'test_app_secret'), testRetVal)
+    self.assertIsNone(MentiiAuth.verifyAuthToken(fake_auth_token, dynamodb, 'test_app_secret'))
 
   def test_generateAuthToken(self):
     print('Running MentiiAuthentication.generateAuthToken test')
@@ -72,7 +72,7 @@ class MentiiAuthTests(unittest.TestCase):
     user = user_ctrl.getUserByEmail(email, dynamodb)
     userCredentials = {"email": user['email'], "password": user['password'], 'userRole': user['userRole']}
     auth_token = MentiiAuth.generateAuthToken(userCredentials, 'test_app_secret')
-    self.assertIsNotNone(MentiiAuth.verifyAuthToken(auth_token, 'test_app_secret'))
+    self.assertIsNone(MentiiAuth.verifyAuthToken(auth_token, dynamodb, 'test_app_secret'))
 
 if __name__ == '__main__':
   if __package__ is None:

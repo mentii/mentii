@@ -21,13 +21,37 @@ def sendForgotPasswordEmail(httpOrigin, jsonData, mailer, dbInstance):
     host = 'http://app.mentii.me'
   else:
     host = 'http://localhost:3000'
-  url = host + '/resetPassword/?id={0}'.format(resetPasswordId)
+  url = host + '/resetPassword/{0}'.format(resetPasswordId)
   message = render_template('forgotPasswordEmail.html', url=url)
   #Build Message
   msg = Message('Mentii: Reset Password', recipients=[email], extra_headers={'Content-Transfer-Encoding': 'quoted-printable'}, html=message)
   #Send Email
   mailer.send(msg)
   return response
+
+def resetUserPassword(jsonData, dbInstance):
+  response = ControllerResponse()
+  email = jsonData.get('email', None)
+  password = jsonData.get('password', None)
+  resetPasswordId = jsonData.get('id', None)
+  if email is not None or password is not None or resetPasswordId is not None:
+    updatePasswordForEmailAndResetId(email, password, resetPasswordId, dbInstance)
+    response.addToPayload('status', 'Success')
+  return response
+
+def updatePasswordForEmailAndResetId(email, password, id, dbInstance):
+  user = getUserByEmail(email, dbInstance)
+  table = dbUtils.getTable('users', dbInstance)
+  hashedPassword = hashPassword(password)
+  jsonData = {
+    'Key': {'email': email},
+    'UpdateExpression': 'SET password = :a',
+    'ExpressionAttributeValues': { ':a': hashedPassword },
+    'ReturnValues' : 'UPDATED_NEW'
+  }
+  res = dbUtils.updateItem(jsonData, table)
+  return res
+
 
 def register(httpOrigin, jsonData, mailer, dbInstance):
   response = ControllerResponse()

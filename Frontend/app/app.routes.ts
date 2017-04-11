@@ -10,6 +10,7 @@ import { RootComponent } from './root/root.component';
 import { DashboardComponent } from './root/dashboard.component';
 import { RegistrationComponent } from './user/registration/registration.component';
 import { ForgotPasswordComponent } from './user/forgotPassword/forgotPassword.component';
+import { ResetPasswordComponent } from './user/resetPassword/resetPassword.component';
 import { SigninComponent } from './user/signin/signin.component';
 import { PageNotFoundComponent } from './pageNotFound/pageNotFound.component';
 import { ClassListComponent } from './class/list/list.component';
@@ -29,6 +30,7 @@ export const routes: Routes = [
   { path: 'sign-in', component: SigninComponent },
   { path: 'register', component: RegistrationComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password/:id', component: ResetPasswordComponent },
   { path: 'activation/:id', component: ActivationComponent},
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthRouteGuard] },
   { path: 'class', component: ClassBrowseComponent, canActivate: [AuthRouteGuard] },

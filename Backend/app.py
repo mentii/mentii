@@ -311,6 +311,15 @@ def forgotPassword():
   res = user_ctrl.sendForgotPasswordEmail(httpOrigin, request.json, mail, dynamoDBInstance)
   return ResponseCreation.createResponse(res,status)
 
+@app.route('/resetPassword/', methods=['POST', 'OPTIONS'])
+@handleOptionsRequest
+def resetPassword():
+  status = 200
+  res = ResponseCreation.ControllerResponse()
+  dynamoDBInstance = getDatabaseClient()
+  res = user_ctrl.resetUserPassword(request.json, dynamoDBInstance)
+  return ResponseCreation.createResponse(res,status)
+
 
 if __name__ == '__main__':
   logger.info('mentii app starting')

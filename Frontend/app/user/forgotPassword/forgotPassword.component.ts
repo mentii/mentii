@@ -10,7 +10,6 @@ import { ToastrService } from 'ngx-toastr';
 })
 
 export class ForgotPasswordComponent {
-  mentiiConfig = new MentiiConfig();
   emailSent = false;
   isLoading = false;
   emailAddress = "";

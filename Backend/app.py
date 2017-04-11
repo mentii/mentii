@@ -318,6 +318,8 @@ def resetPassword():
   res = ResponseCreation.ControllerResponse()
   dynamoDBInstance = getDatabaseClient()
   res = user_ctrl.resetUserPassword(request.json, dynamoDBInstance)
+  if res.hasErrors():
+    status = 400
   return ResponseCreation.createResponse(res,status)
 
 

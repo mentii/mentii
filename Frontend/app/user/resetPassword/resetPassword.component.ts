@@ -36,8 +36,16 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.userService.resetPassword(this.resetPasswordId, this.emailAddress, this.passwordVal).subscribe(
       data => this.handleSuccess(),
-      err => this.handleSuccess()
+      err => this.handleError(err)
     );
+  }
+
+  handleError(err) {
+    this.isLoading = false;
+    let data = err.json();
+    for (let error of data['errors']) {
+      this.toastr.error(error['message'], error['title']);
+    }
   }
 
   handleSuccess() {

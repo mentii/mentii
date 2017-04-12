@@ -1,4 +1,4 @@
-<div class="row" [hidden]="regSuccess">
+<div class="row" *ngIf="!regSuccess">
   <div class="col-xs-12">
     <div class="welcome">
       <h1 class="text-brand">
@@ -8,7 +8,7 @@
     </div>
   </div>
 </div>
-<div class="row" [hidden]="regSuccess">
+<div class="row" *ngIf="!regSuccess">
   <div class="col-xs-12 col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6">
     <form #registerForm="ngForm" autocomplete="off">
       <div class="form-group">
@@ -39,7 +39,7 @@
     <a [routerLink]="['']">Back to Sign In</a>
   </div>
 </div>
-<div class="row" [hidden]="!regSuccess">
+<div class="row welcome" *ngIf="regSuccess">
   <div class="col-xs-12">
     <div class='text-center'>
       <h1 class="text-brand">

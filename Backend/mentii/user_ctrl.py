@@ -11,7 +11,7 @@ import hashlib
 from flask import g
 
 def sendForgotPasswordEmail(httpOrigin, jsonData, mailer, dbInstance):
-  email = jsonData['email']
+  email = jsonData.get('email', None)
   resetPasswordId = str(uuid.uuid4())
   addResetPasswordIdToUser(email, resetPasswordId, dbInstance)
   response = ControllerResponse()

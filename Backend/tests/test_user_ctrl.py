@@ -327,6 +327,20 @@ class UserControlDBTests(unittest.TestCase):
     #confirm none joined
     self.assertFalse(joined)
 
+  def test_resetPassword(self):
+    usr.addResetPasswordIdToUser('test@mentii.me', 'test-reset-id', dynamodb)
+    user = usr.getUserByEmail('test@mentii.me', dynamodb)
+    userResetId = user.get('resetPasswordId', None)
+    userPassword = user.get('password', None)
+    self.assertIsNotNone(userResetId)
+    res = usr.updatePasswordForEmailAndResetId('test@mentii.me', 'newpassword', 'test-reset-id', dynamodb)
+    self.assertIsNotNone(res)
+    updatedUser = usr.getUserByEmail('test@mentii.me', dynamodb)
+    updatedResetId = updatedUser.get('resetPasswordId', None)
+    self.assertIsNone(updatedResetId)
+    updatedPassword = updatedUser.get('password', None)
+    self.assertNotEqual(userPassword, updatedPassword)
+
 if __name__ == '__main__':
   if __package__ is None:
     import sys

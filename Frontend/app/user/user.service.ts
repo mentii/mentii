@@ -106,7 +106,7 @@ export class UserService {
   }
 
   /**
-  * Service method to rset a password for a user if they forgot it
+  * Service method to send an email to reset a forgotten password
   * @param  {string} email
   * @return {Observable<any>} data.json() will contain status "Success" in payload or errors
   */
@@ -123,7 +123,7 @@ export class UserService {
   }
 
   /**
-  * Service method to rset a password for a user if they forgot it
+  * Service method to reset a password for a user if they forgot it
   * @param  {string} email
   * @return {Observable<any>} data.json() will contain status "Success" in payload or errors
   */

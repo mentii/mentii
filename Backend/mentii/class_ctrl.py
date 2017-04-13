@@ -104,7 +104,7 @@ def createClass(dynamoDBInstance, classData, email=None, userRole=None):
       if 'department' in classData.keys() and classData['department']:
         newClass['department'] = classData['department']
       if 'section' in classData.keys() and classData['section']:
-        newClass['section'] = classData['section']
+        newClass['classSection'] = classData['section']
 
       result = dbUtils.putItem(newClass, classTable)
 
@@ -321,3 +321,63 @@ def sendClassRemovalEmail(dynamoDBInstance, mailer, jsonData):
         extra_headers={'Content-Transfer-Encoding': 'quoted-printable'}, html=message)
 
   mailer.send(msg)
+
+def updateClassDetails(jsonData, dynamodb, email=None, userRole=None):
+  response = ControllerResponse()
+  classesTable = dbUtils.getTable('classes', dynamodb)
+
+  if classesTable is None:
+    MentiiLogging.getLogger().error('Unable to get classes table in getPublicClassList')
+    response.addError('Failed to get class list', 'A database error occured');
+  else:
+    # get data from request body
+    code = jsonData.get('code')
+    title = jsonData.get('title')
+    desc = jsonData.get('description')
+    dept = jsonData.get('department') # optional
+    sec = jsonData.get('section') # optional
+
+    if g: # pragma: no cover
+      email = g.authenticatedUser['email']
+      userRole = g.authenticatedUser['userRole']
+    #check if teacher is teacher of the class
+    if ((userRole == 'teacher' or userRole == 'admin')
+      and code in getTaughtClassCodesFromUser(dynamodb, email)):
+
+      updateExprString = 'SET title =:t, description =:dn'
+      expresionAttrDict = { ':t': title, ':dn' : desc }
+
+      removeString = ''
+      # if empty string is given, remove the attribute
+      if dept == '' and sec == '':
+        removeString = removeString + ' REMOVE department, classSection'
+      else:
+        if dept == '':
+          removeString = removeString + ' REMOVE department'
+        else:
+          updateExprString = updateExprString + ', department = :dt'
+          expresionAttrDict[':dt'] = dept
+        if sec == '':
+          removeString = removeString + ' REMOVE classSection'
+        else:
+          updateExprString = updateExprString + ', classSection = :s'
+          expresionAttrDict[':s'] = sec
+
+      updateExprString = updateExprString + removeString
+
+      # update item
+      updateData = {
+            'Key': {'code': code},
+            'UpdateExpression': updateExprString,
+            'ExpressionAttributeValues': expresionAttrDict,
+            'ReturnValues' : 'UPDATED_NEW'
+      }
+
+      res = dbUtils.updateItem(updateData, classesTable)
+      if res is None:
+        response.addError('updateClassDetails has error', 'Unable to update class details')
+      else:
+        response.addToPayload('Success', 'Class Details Updated')
+    else:
+      response.addError('Teacher permissions incorrect', 'Unable to update class details')
+  return response

@@ -18,13 +18,6 @@ def modifyStep(step):
 
   return badStep
 
-def getProblem(activity):
-  #For now just get a problem out of the hardcoded 'problem bank'
-  problem = 'Bad Problem'
-  if activity in problemBank.keys():
-    problem = problemBank[activity]
-  return problem
-
 
 def getProblemTree(problem):
   #When problem templates work problem could 

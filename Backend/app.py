@@ -241,7 +241,8 @@ def changeUserRole():
 @handleOptionsRequest
 def problemSteps(classId, activity):
   status = 200
-  problem = problem_ctrl.getProblemTemplate(classId, activity)
+  dynamoDBInstance = getDatabaseClient()
+  problem = problem_ctrl.getProblemTemplate(classId, activity, dynamoDBInstance)
   res = algebra.getProblemTree(problem)
   if res.hasErrors():
     status = 400
@@ -282,6 +283,24 @@ def createBook():
     if res.hasErrors():
       status = 400
   return ResponseCreation.createResponse(res,status)
+
+@app.route('/class/details/update', methods=['POST', 'OPTIONS'])
+@auth.login_required
+@handleOptionsRequest
+def updateClassDetails():
+  status = 200
+  res = ResponseCreation.ControllerResponse()
+  role = g.authenticatedUser['userRole']
+  if role != 'admin' and role != 'teacher':
+    res.addError('Role Error', 'Only teachers or admins can update class details')
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    res = class_ctrl.updateClassDetails(request.json, dynamoDBInstance)
+    if res.hasErrors():
+      status = 400
+  return ResponseCreation.createResponse(res,status)
+
 
 if __name__ == '__main__':
   logger.info('mentii app starting')

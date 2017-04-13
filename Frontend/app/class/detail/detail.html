@@ -6,8 +6,9 @@
   </div>
 
   <!-- Only show if the api done loading -->
-  <div class="col-xs-12 col-md-8" *ngIf="!isLoading">
+  <div class="col-xs-12 col-md-8" *ngIf="!isLoading && !editMode">
     <div class="row">
+      <button *ngIf="showTeacherView" class="btn btn-default pull-right" (click)="toggleEditMode()">Edit Class</button>
       <div class="col-xs-12">
         <h2>
           {{model.title}}
@@ -27,7 +28,7 @@
     <div class="row">
       <div class="col-xs-12">
         <h3>Activities</h3>
-        <activity-list [activities]="model.activities"></activity-list>
+        <activity-list [activities]="model.activities" [classCode]="model.code"></activity-list>
         <button type="button" class="btn btn-primary" *ngIf="showTeacherView" (click)=showCorrectionModal()>
           Add New Activity
         </button>
@@ -35,17 +36,67 @@
     </div>
   </div>
 
+  <!-- Only show if in edit mode -->
+  <div class="col-xs-12 col-md-8" *ngIf="editMode && showTeacherView">
+    <h2>Edit Class Details</h2>
+    <form #editClassForm="ngForm" autocomplete="off">
+      <div class="form-group">
+        <label class="required" for="title">Title</label>
+        <input type="text" placeholder="Algebra 1" class="form-control" id="title" required minlength=3 [ngModel]="model.title" name="title" #title="ngModel" clearPlaceholder>
+        <span [hidden]="title.pristine || title.valid" class="text-danger">
+          Class title must be at least 3 characters long.
+        </span>
+      </div>
+      <div class="form-group">
+        <label for="department">Department <em class="text-muted font-weight-normal">Optional</em></label>
+        <input type="text" placeholder="Mathematics" class="form-control" id="department" [ngModel]="model.department" name="department" #department="ngModel" clearPlaceholder>
+      </div>
+      <div class="form-group">
+        <label for="section">Section <em class="text-muted font-weight-normal">Optional</em></label>
+        <input type="text" placeholder="001 or A" class="form-control" id="section" [ngModel]="model.section" name="section" #section="ngModel" clearPlaceholder>
+      </div>
+      <div class="form-group">
+        <label class="required" for="description">Description</label>
+        <textarea placeholder="Describe your class here" class="form-control" rows="3" id="description" required [ngModel]="model.description" name="description" #description="ngModel" clearPlaceholder></textarea>
+        <span [hidden]="description.pristine || description.valid" class="text-danger">
+          Class description is required.
+        </span>
+      </div>
+      <p class="text-danger" *ngIf="!editClassForm.form.valid">* Required Fields</p>
+      <div class="form-group">
+        <button type="button" class="btn btn-primary" [disabled]="!editClassForm.form.valid" (click)="saveChanges(editClassForm)" [ladda]='isLoading'>
+          <span class="ladda-label">Save Changes</span>
+        </button>
+      </div>
+    </form>
+    <button class="btn btn-default" (click)="toggleEditMode()">Cancel</button>
+  </div>
+
   <!-- Only show if the api done loading and the user is the teacher of this class-->
   <div class="col-xs-12 col-md-4"  *ngIf="!isLoading && showTeacherView">
     <div class="panel panel-default">
       <div class="panel-body">
-        <p class="text-muted">
-          <em>
-            This panel is only visible to the teacher of this class.
-          </em>
-        </p>
-        <h4>Students</h4>
-        <user-list [classCode]="model.code" [users]="model.students"></user-list>
+        <div class="row">
+          <div class="col-xs-12">
+            <p class="text-muted">
+              <em>
+                This panel is only visible to the teacher of this class.
+              </em>
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <h4>Class Code</h4>
+            <b><h5>{{model.code}}</h5></b>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <h4>Students</h4>
+            <user-list [classCode]="model.code" [users]="model.students"></user-list>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -68,11 +119,46 @@
             <label class="required">Name</label>
             <input type="text" required placeholder="Week 1 Problems" class="form-control" clearPlaceholder>
           </div>
-          <div class="form-group">
-            <label>Due Date (Optional)</label>
-            <input type="date" class="form-control">
+          <div class="row">
+            <div class="col-xs-12 col-md-6">
+              <div class="form-group">
+                <label class="required"># of Problems to Complete</label>
+                <input type="number" min="1" step="1" value="5" class="form-control">
+              </div>
+            </div>
+            <div class="col-xs-12 col-md-6">
+              <div class="form-group">
+                <label>Due Date (Optional)</label>
+                <input type="date" class="form-control">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 col-md-4">
+              <div class="form-group">
+                <label class="required">Book</label>
+                <input type="text" class="form-control">
+              </div>
+            </div>
+            <div class="col-xs-12 col-md-4">
+              <div class="form-group">
+                <label class="required">Chapter</label>
+                <input type="text" class="form-control">
+              </div>
+            </div>
+            <div class="col-xs-12 col-md-4">
+              <div class="form-group">
+                <label class="required">Section</label>
+                <input type="text" class="form-control">
+              </div>
+            </div>
           </div>
         </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary pull-right">
+          Add New Activity
+        </button>
       </div>
     </div>
   </div>

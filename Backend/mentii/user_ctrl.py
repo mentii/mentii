@@ -14,7 +14,6 @@ def sendForgotPasswordEmail(httpOrigin, jsonData, mailer, dbInstance):
   email = jsonData.get('email', None)
   resetPasswordId = str(uuid.uuid4())
   addResetPasswordIdToUser(email, resetPasswordId, dbInstance)
-  response = ControllerResponse()
   host = getProperEnvironment(httpOrigin)
   url = host + '/reset-password/{0}'.format(resetPasswordId)
   message = render_template('forgotPasswordEmail.html', url=url)
@@ -22,7 +21,6 @@ def sendForgotPasswordEmail(httpOrigin, jsonData, mailer, dbInstance):
   msg = Message('Mentii: Reset Password', recipients=[email], extra_headers={'Content-Transfer-Encoding': 'quoted-printable'}, html=message)
   #Send Email
   mailer.send(msg)
-  return response
 
 def addResetPasswordIdToUser(email, resetPasswordId, dbInstance):
   table = dbUtils.getTable('users', dbInstance)

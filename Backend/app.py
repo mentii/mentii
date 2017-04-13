@@ -304,12 +304,10 @@ def updateClassDetails():
 @app.route('/forgotPassword/', methods=['POST', 'OPTIONS'])
 @handleOptionsRequest
 def forgotPassword():
-  status = 200
-  res = ResponseCreation.ControllerResponse()
   dynamoDBInstance = getDatabaseClient()
   httpOrigin = request.environ.get('HTTP_ORIGIN')
-  res = user_ctrl.sendForgotPasswordEmail(httpOrigin, request.json, mail, dynamoDBInstance)
-  return ResponseCreation.createResponse(res,status)
+  user_ctrl.sendForgotPasswordEmail(httpOrigin, request.json, mail, dynamoDBInstance)
+  return ResponseCreation.createEmptyResponse(200)
 
 @app.route('/resetPassword/', methods=['POST', 'OPTIONS'])
 @handleOptionsRequest

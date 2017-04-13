@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row":>
 
   <!-- Only show if the api is currently loading -->
   <div class="col-xs-12 col-sm-offset-1 col-sm-10" *ngIf="isLoading">
@@ -117,7 +117,7 @@
         <form #createActivityForm="ngForm" autocomplete="off">
           <div class="form-group">
             <label class="required">Name</label>
-            <input type="text" required placeholder="Week 1 Problems" class="form-control" clearPlaceholder>
+            <input type="text" required placeholder="Week 1 Problems" [(ngModel)]="newActivity.title" class="form-control" clearPlaceholder>
           </div>
           <div class="row">
             <div class="col-xs-12 col-md-6">

@@ -15,13 +15,7 @@ def sendForgotPasswordEmail(httpOrigin, jsonData, mailer, dbInstance):
   resetPasswordId = str(uuid.uuid4())
   addResetPasswordIdToUser(email, resetPasswordId, dbInstance)
   response = ControllerResponse()
-  host = ''
-  if httpOrigin.find('stapp') != -1:
-    host = 'http://stapp.mentii.me'
-  elif httpOrigin.find('app') != -1:
-    host = 'http://app.mentii.me'
-  else:
-    host = 'http://localhost:3000'
+  host = getProperEnvironment(httpOrigin)
   url = host + '/reset-password/{0}'.format(resetPasswordId)
   message = render_template('forgotPasswordEmail.html', url=url)
   #Build Message
@@ -32,43 +26,57 @@ def sendForgotPasswordEmail(httpOrigin, jsonData, mailer, dbInstance):
 
 def addResetPasswordIdToUser(email, resetPasswordId, dbInstance):
   table = dbUtils.getTable('users', dbInstance)
-  jsonData = {
-    'Key': {'email': email},
-    'UpdateExpression': 'SET resetPasswordId = :a',
-    'ExpressionAttributeValues': { ':a': resetPasswordId },
-    'ReturnValues' : 'UPDATED_NEW'
-  }
-  res = dbUtils.updateItem(jsonData, table)
+  if table is not None:
+    jsonData = {
+      'Key': {'email': email},
+      'UpdateExpression': 'SET resetPasswordId = :a',
+      'ExpressionAttributeValues': { ':a': resetPasswordId },
+      'ReturnValues' : 'UPDATED_NEW'
+    }
+    dbUtils.updateItem(jsonData, table)
 
 def resetUserPassword(jsonData, dbInstance):
   response = ControllerResponse()
   email = jsonData.get('email', None)
   password = jsonData.get('password', None)
   resetPasswordId = jsonData.get('id', None)
-  if email is not None or password is not None or resetPasswordId is not None:
+  if email is not None and password is not None and resetPasswordId is not None:
     res = updatePasswordForEmailAndResetId(email, password, resetPasswordId, dbInstance)
     if res is not None:
       response.addToPayload('status', 'Success')
     else:
       response.addError('Failed to Reset Password', 'We were unable to update the password for this account.')
+  else:
+    response.addError('Failed to Reset Password', 'We were unable to update the password for this account.')
   return response
 
 def updatePasswordForEmailAndResetId(email, password, resetPasswordId, dbInstance):
   res = None
   user = getUserByEmail(email, dbInstance)
-  storedResetPasswordId = user.get('resetPasswordId', None)
-  if storedResetPasswordId == resetPasswordId:
-    table = dbUtils.getTable('users', dbInstance)
-    hashedPassword = hashPassword(password)
-    jsonData = {
-      'Key': {'email': email},
-      'UpdateExpression': 'SET password = :a REMOVE resetPasswordId',
-      'ExpressionAttributeValues': { ':a': hashedPassword },
-      'ReturnValues' : 'UPDATED_NEW'
-    }
-    res = dbUtils.updateItem(jsonData, table)
+  if user is not None:
+    storedResetPasswordId = user.get('resetPasswordId', None)
+    if storedResetPasswordId == resetPasswordId:
+      table = dbUtils.getTable('users', dbInstance)
+      if table is not None:
+        hashedPassword = hashPassword(password)
+        jsonData = {
+          'Key': {'email': email},
+          'UpdateExpression': 'SET password = :a REMOVE resetPasswordId',
+          'ExpressionAttributeValues': { ':a': hashedPassword },
+          'ReturnValues' : 'UPDATED_NEW'
+        }
+        res = dbUtils.updateItem(jsonData, table)
   return res
 
+def getProperEnvironment(httpOrigin):
+  host = ''
+  if httpOrigin.find('stapp') != -1:
+    host = 'http://stapp.mentii.me'
+  elif httpOrigin.find('app') != -1:
+    host = 'http://app.mentii.me'
+  else:
+    host = 'http://localhost:3000'
+  return host
 
 def register(httpOrigin, jsonData, mailer, dbInstance):
   response = ControllerResponse()
@@ -177,24 +185,13 @@ def sendEmail(httpOrigin, email, activationId, mailer):
   '''
   if activationId is None:
     return
-
   #Change the URL to the appropriate environment
-  host = ''
-  if httpOrigin.find('stapp') != -1:
-    host = 'http://stapp.mentii.me'
-  elif httpOrigin.find('app') != -1:
-    host = 'http://app.mentii.me'
-  else:
-    host = 'http://localhost:3000'
-
+  host = getProperEnvironment(httpOrigin)
   url = host + '/activation/{0}'.format(activationId)
-
   message = render_template('registrationEmail.html', url=url)
-
   #Build Message
   msg = Message('Mentii: Thank You for Creating an Account!', recipients=[email],
       extra_headers={'Content-Transfer-Encoding': 'quoted-printable'}, html=message)
-
   #Send Email
   mailer.send(msg)
 

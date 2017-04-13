@@ -341,6 +341,73 @@ class UserControlDBTests(unittest.TestCase):
     updatedPassword = updatedUser.get('password', None)
     self.assertNotEqual(userPassword, updatedPassword)
 
+  def test_resetUserPasswordFunc(self):
+    usr.addResetPasswordIdToUser('test@mentii.me', 'test-reset-id', dynamodb)
+    user = usr.getUserByEmail('test@mentii.me', dynamodb)
+    userResetId = user.get('resetPasswordId', None)
+    self.assertIsNotNone(userResetId)
+    userPassword = user.get('password', None)
+    updatedUser = {
+      'email': user.get('email'),
+      'password': 'mynewpassword',
+      'id': userResetId
+    }
+    res = usr.resetUserPassword(updatedUser, dynamodb)
+    self.assertIsNotNone(res)
+    updatedUser = usr.getUserByEmail('test@mentii.me', dynamodb)
+    updatedResetId = updatedUser.get('resetPasswordId', None)
+    self.assertIsNone(updatedResetId)
+    updatedPassword = updatedUser.get('password', None)
+    self.assertNotEqual(userPassword, updatedPassword)
+
+  def test_resetUserPasswordFuncPoorData(self):
+    usr.addResetPasswordIdToUser('test@mentii.me', 'test-reset-id', dynamodb)
+    user = usr.getUserByEmail('test@mentii.me', dynamodb)
+    userResetId = user.get('resetPasswordId', None)
+    self.assertIsNotNone(userResetId)
+    userPassword = user.get('password', None)
+    updatedUser = {
+      'email': "test@mentii.me"
+    }
+    res = usr.resetUserPassword(updatedUser, dynamodb)
+    badResJson = '{"errors": [{"message": "We were unable to update the password for this account.", "title": "Failed to Reset Password"}], "user": {}, "payload": {}}'
+    resJson = ControllerResponse.getResponseString(res)
+    self.assertEqual(resJson, badResJson)
+    updatedUser = usr.getUserByEmail('test@mentii.me', dynamodb)
+    updatedResetId = updatedUser.get('resetPasswordId', None)
+    self.assertIsNotNone(updatedResetId)
+    updatedPassword = updatedUser.get('password', None)
+    self.assertEqual(userPassword, updatedPassword)
+
+  def test_resetUserPasswordFuncBadUser(self):
+    usr.addResetPasswordIdToUser('test@mentii.me', 'test-reset-id', dynamodb)
+    user = usr.getUserByEmail('test@mentii.me', dynamodb)
+    userResetId = user.get('resetPasswordId', None)
+    self.assertIsNotNone(userResetId)
+    userPassword = user.get('password', None)
+    updatedUser = {
+      'email': "notinmockdata@mentii.me",
+      'password': 'newpassword',
+      'id': userResetId
+    }
+    res = usr.resetUserPassword(updatedUser, dynamodb)
+    badResJson = '{"errors": [{"message": "We were unable to update the password for this account.", "title": "Failed to Reset Password"}], "user": {}, "payload": {}}'
+    resJson = ControllerResponse.getResponseString(res)
+    self.assertEqual(resJson, badResJson)
+    updatedUser = usr.getUserByEmail('test@mentii.me', dynamodb)
+    updatedResetId = updatedUser.get('resetPasswordId', None)
+    self.assertIsNotNone(updatedResetId)
+    updatedPassword = updatedUser.get('password', None)
+    self.assertEqual(userPassword, updatedPassword)
+
+  def test_getProperEnvironment(self):
+    staging = usr.getProperEnvironment('http://stapp.mentii.me')
+    self.assertEqual(staging, 'http://stapp.mentii.me')
+    prod = usr.getProperEnvironment('http://app.mentii.me')
+    self.assertEqual(prod, 'http://app.mentii.me')
+    localHost = usr.getProperEnvironment('anything else that doesnt match prod or staging')
+    self.assertEqual(localHost, 'http://localhost:3000')
+
 if __name__ == '__main__':
   if __package__ is None:
     import sys

@@ -13,25 +13,31 @@ from flask import g
 def sendForgotPasswordEmail(httpOrigin, jsonData, mailer, dbInstance):
   email = jsonData.get('email', None)
   resetPasswordId = str(uuid.uuid4())
-  addResetPasswordIdToUser(email, resetPasswordId, dbInstance)
-  host = getProperEnvironment(httpOrigin)
-  url = host + '/reset-password/{0}'.format(resetPasswordId)
-  message = render_template('forgotPasswordEmail.html', url=url)
-  #Build Message
-  msg = Message('Mentii: Reset Password', recipients=[email], extra_headers={'Content-Transfer-Encoding': 'quoted-printable'}, html=message)
-  #Send Email
-  mailer.send(msg)
+  success = addResetPasswordIdToUser(email, resetPasswordId, dbInstance)
+  if success == True:
+    host = getProperEnvironment(httpOrigin)
+    url = host + '/reset-password/{0}'.format(resetPasswordId)
+    message = render_template('forgotPasswordEmail.html', url=url)
+    #Build Message
+    msg = Message('Mentii: Reset Password', recipients=[email], extra_headers={'Content-Transfer-Encoding': 'quoted-printable'}, html=message)
+    #Send Email
+    mailer.send(msg)
 
 def addResetPasswordIdToUser(email, resetPasswordId, dbInstance):
+  success = False;
   table = dbUtils.getTable('users', dbInstance)
   if table is not None:
-    jsonData = {
-      'Key': {'email': email},
-      'UpdateExpression': 'SET resetPasswordId = :a',
-      'ExpressionAttributeValues': { ':a': resetPasswordId },
-      'ReturnValues' : 'UPDATED_NEW'
-    }
-    dbUtils.updateItem(jsonData, table)
+    user = getUserByEmail(email,dbInstance)
+    if user is not None:
+      jsonData = {
+        'Key': {'email': email},
+        'UpdateExpression': 'SET resetPasswordId = :a',
+        'ExpressionAttributeValues': { ':a': resetPasswordId },
+        'ReturnValues' : 'UPDATED_NEW'
+      }
+      dbUtils.updateItem(jsonData, table)
+      success = True
+  return success
 
 def resetUserPassword(jsonData, dbInstance):
   response = ControllerResponse()

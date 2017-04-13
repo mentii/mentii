@@ -30,6 +30,9 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   activeBadStepCount = 0;
   badStepShown = false;
   problemIsComplete = false;
+  problemIndex = 0;
+  classCode = '';
+  problemCode = '';
 
   stepIsBeingCorrected = false;
   correctionModel = {
@@ -101,18 +104,35 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   }
 
   returnToClassPage() {
+    this.sendSuccessUpdate();
     this.activatedRoute.params.subscribe(params => {
       let classCode = params['classCode'];
       this.router.navigateByUrl('/class/' + classCode);
     });
   }
 
+  sendSuccessUpdate() {
+    this.problemService.postProblemSuccess(this.classCode, this.problemCode, this.problemIndex, "True")
+      .subscribe(
+        data => {},
+        err => {}
+      );
+  }
+  
+  sendFailUpdate() {
+    this.problemService.postProblemSuccess(this.classCode, this.problemCode, this.problemIndex, "")
+      .subscribe(
+        data => {},
+        err => {}
+      );
+  }
+
   ngOnInit() {
     this.routeSub = this.activatedRoute.params.subscribe(params => {
       // grab codes out of the URL
-      let classCode = params['classCode'];
-      let problemCode = params['problemCode'];
-      this.problemService.getProblemSteps(classCode,problemCode)
+      this.classCode = params['classCode'];
+      this.problemCode = params['problemCode'];
+      this.problemService.getProblemSteps(this.classCode,this.problemCode)
       .subscribe(
         data => this.handleInitSuccess(data.json()),
         err => this.handleInitError(err)
@@ -127,6 +147,7 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   handleInitSuccess(data) {
     //save the problem
     this.problemTree = data.payload.problemTree;
+    this.problemIndex = data.payload.problemIndex;
     //save the equation being solved as different variable
     this.problem = data.payload.problemTree[0].correctStep;
     this.isLoading = false;

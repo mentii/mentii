@@ -1,14 +1,16 @@
 from utils import db_utils as dbUtils
 import utils.MentiiLogging as MentiiLogging
+from utils.ResponseCreation import ControllerResponse
 import random
+import decimal
 from numpy.random import choice
 import book_ctrl
 
 
-def getProblemTemplate(classId, activity, dynamoDBInstance):
+def getProblemTemplate(classId, activity, userId, dynamoDBInstance):
   bookId, chapterTitle, sectionTitle = getBookInfoFromActivity(classId, activity, dynamoDBInstance)
-  problemTemplate = getProblemFromBook(bookId, chapterTitle, sectionTitle, dynamoDBInstance)
-  return problemTemplate
+  (index, problemTemplate) = getProblemFromBook(bookId, chapterTitle, sectionTitle, userId, dynamoDBInstance)
+  return (index, problemTemplate)
 
 
 def getBookInfoFromActivity(classId, activityTitle, dynamoDBInstance):
@@ -38,6 +40,7 @@ def chooseProblemTemplate(templateList, userHistoryList):
   '''
   The userHistoryList should be a list of integers
   '''
+  index = -1
   problemTemplate = 'Bad Problem'
   if len(templateList) == 0:
     print("error, empty template list passed")
@@ -51,28 +54,47 @@ def chooseProblemTemplate(templateList, userHistoryList):
     history = [x + abs(minVal) + 1 for x in history]
     #Create a probablility distrobution
     total = sum(history)
-    probDist = [float(x)/total for x in history]
-    print(history)
-    print(probDist)
+    probDist = [decimal.Decimal(x)/total for x in history]
 
-    problemTemplate = choice(templateList, p=probDist)
+    index = choice(range(0, len(templateList)), p=probDist)
+    problemTemplate = templateList[index].get('problemString', '')
 
-  return problemTemplate
+  return (index, problemTemplate)
+
+
+def updateUserTemplateHistory(classId, activity, userId, index, didSucceed, dynamoDBInstance):
+  #Get the section so we can update the weights
+  response = ControllerResponse()
+  bookId, chapterTitle, sectionTitle = getBookInfoFromActivity(classId, activity, dynamoDBInstance)
+  section = book_ctrl.getSectionFromBook(bookId, chapterTitle, sectionTitle, userId, dynamoDBInstance)
+  #Update the weights or create new ones if this is the first time
+  currentWeights = section.get('users', {}).get(userId, [])
+  newWeights = [0 for _ in xrange(len(section.get('problems', [])))] #Initial value
+  if len(currentWeights) != 0: #Update if we can
+    newWeights = currentWeights
+  #Actually update the weights 
+  if index < len(newWeights):
+    if didSucceed:
+      newWeights[index] += 1
+    else:
+      newWeights[index] -= 1
+  #Send it elsewhere to update the database
+  updateSuccessful = book_ctrl.updateBookWithUserData(bookId, chapterTitle, sectionTitle, userId, newWeights, dynamoDBInstance)
+  if not updateSuccessful:
+    response.addError('History Update Error', 'Unable to update the users history')
+
+  return response
+
 
 
 def getProblemFromBook(bookId, chapterTitle, sectionTitle, userId, dynamoDBInstance):
-  #Get the book
-  book = book_ctrl.getBook(bookId, dynamoDBInstance)
+  section = book_ctrl.getSectionFromBook(bookId, chapterTitle, sectionTitle, userId, dynamoDBInstance)
   problem = 'Bad Problem'
-  if book is not None:
-    for chapter in book.get('chapters', []):
-      if chapter.get('title', '') == chapterTitle:
-        sections = chapter.get('sections', [])
-        for section in sections:
-          if section.get('title', '') == sectionTitle:
-            #Get the user list 
-            problem = random.choice(section['problems']).get('problemString')
-            break #Break out of section loop
-        break #Break out of chapter loop
+  index = -1
+  #From the section we got get the weights and chose a random problem using them
+  weights = section.get('users', {}).get(userId, [])
+  problemTemplates = section.get('problems', [])
+  index, problem = chooseProblemTemplate(problemTemplates, weights)
 
-  return problem
+  return (index, problem)
+

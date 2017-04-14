@@ -19,11 +19,12 @@ import { ActivationComponent } from './user/activation/activation.component';
 import { AdminComponent } from './admin/admin.component';
 import { AppComponent } from './app.component';
 import { RegistrationComponent } from './user/registration/registration.component';
+import { ForgotPasswordComponent } from './user/forgotPassword/forgotPassword.component';
+import { ResetPasswordComponent } from './user/resetPassword/resetPassword.component';
 import { SigninComponent } from './user/signin/signin.component';
 import { RootComponent } from './root/root.component';
 import { DashboardComponent } from './root/dashboard.component';
 import { PageNotFoundComponent } from './pageNotFound/pageNotFound.component';
-import { SecureTestComponent } from './secureTest/secureTest.component';
 import { ClassListComponent } from './class/list/list.component';
 import { TaughtClassListComponent } from './class/taughtList/taughtList.component';
 import { ClassDetailComponent } from './class/detail/detail.component';
@@ -76,10 +77,11 @@ import { ModalModule } from 'ng2-bootstrap';
     DisplayProblemComponent,
     AppComponent,
     RegistrationComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent,
     RootComponent,
     DashboardComponent,
     PageNotFoundComponent,
-    SecureTestComponent,
     EqualValidator,
     DeleteValue,
     SigninComponent,

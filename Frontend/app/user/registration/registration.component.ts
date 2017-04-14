@@ -12,7 +12,6 @@ import { ToastrService } from 'ngx-toastr';
 
 export class RegistrationComponent {
   model = new RegistrationModel('', '', '');
-  mentiiConfig = new MentiiConfig();
   regSuccess = false;
   isLoading = false;
 

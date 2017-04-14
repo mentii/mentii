@@ -38,7 +38,6 @@ def getProblemFromBook(bookId, chapterTitle, sectionTitle, dynamoDBInstance):
   #Get the book
   book = book_ctrl.getBook(bookId, dynamoDBInstance)
   problem = 'Bad Problem'
-  
   if book is not None:
     for chapter in book.get('chapters', []):
       if chapter.get('title', '') == chapterTitle:

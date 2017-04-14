@@ -313,7 +313,6 @@ def forgotPassword():
 @handleOptionsRequest
 def resetPassword():
   status = 200
-  res = ResponseCreation.ControllerResponse()
   dynamoDBInstance = getDatabaseClient()
   res = user_ctrl.resetUserPassword(request.json, dynamoDBInstance)
   if res.hasErrors():

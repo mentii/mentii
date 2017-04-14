@@ -37,6 +37,12 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     stepToCorrect: ''
   }
 
+  // default color is not shown
+  showBadStepColor = false;
+  panelClass = 'panel panel-default';
+
+  //default all bad steps in tree are shown
+  selectedStepLimit = -1;
   stepLimit = 0;
 
   constructor(public problemService: ProblemService, public toastr: ToastrService, public router: Router, private activatedRoute: ActivatedRoute){
@@ -69,7 +75,7 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
       this.badStepProblem = this.problemTree[this.activeStepCount+1]["badStepPath"];
       this.problemTree[this.activeStepCount+1]['badStepShown'] = true;
       this.activeStepCount++;
-      this.stepLimit = this.badStepProblem.length-1; //default step limit
+      this.setStepLimit();
     }
     // if the active step is only a good step
     else {
@@ -83,7 +89,9 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   }
 
   showNextBadStep(){
-    if (this.activeBadStepCount == this.stepLimit) {
+    console.log('Active Step Count: ' + this.activeBadStepCount);
+    console.log('Step Limit: ' + this.stepLimit);
+    if (this.activeBadStepCount >= this.stepLimit) {
       this.toastr.error("This doesn't seem quite right", "Uh Oh");
     } else {
       this.activeBadStepCount++;
@@ -142,12 +150,25 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     }
   }
 
-  setStepLimit(limit){
-    if(limit < 0){
+  selectStepLimit(limit){
+    this.selectedStepLimit = limit;
+  }
+
+  setStepLimit(){
+    if(this.selectedStepLimit < 0){
       this.stepLimit = this.badStepProblem.length-1;
     }
     else {
-      this.stepLimit = limit;
+      this.stepLimit = this.selectedStepLimit;
+    }
+  }
+
+  toggleBadStepColor(){
+    this.showBadStepColor = !this.showBadStepColor;
+    if(this.showBadStepColor){
+      this.panelClass = 'panel panel-danger';
+    } else{
+      this.panelClass = 'panel panel-default';
     }
   }
 }

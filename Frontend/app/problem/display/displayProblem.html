@@ -3,25 +3,28 @@
     <h2>
       Solving a Problem
     </h2>
+    <div class="lead">
+    <label for="colorToggle">Bad Step Color</label>
+        <button (click)="toggleBadStepColor()" id="colorToggle" type="button" class="btn btn-default">
+          <span class="text-danger" *ngIf="showBadStepColor">On</span>
+          <span *ngIf="!showBadStepColor">Off</span>
+        </button>
+      <label for="stepLimit">Bad Step Limit</label>
+      <span class="dropdown">
+        <button id="stepLimit" type="button" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span *ngIf="selectedStepLimit < 0">&infin;&nbsp;</span>
+          <span *ngIf="selectedStepLimit > 0">{{selectedStepLimit}}&nbsp;</span>
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" style="min-width:0px;" aria-labelledby="stepLimit">
+          <li (click)="selectStepLimit(-1)"><a>&infin;</a></li>
+          <li (click)="selectStepLimit(3)"><a>3</a></li>
+          <li (click)="selectStepLimit(1)"><a>1</a></li>
+        </ul>
+      </span>
+    </div>
     <p class="lead" *ngIf="problem">
       Equation I'm trying to solve: <em>{{problem}}</em>
-      <span class="dropdown">
-        <button id="colorToggle" type="button" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Bad Step Color<span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="colorToggle">
-          <li><a>On</a></li>
-          <li><a>Off</a></li>
-        </ul>
-      </span>
-      <span class="dropdown">
-        <button id="stepLimit" type="button" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Bad Step Limit<span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="stepLimit">
-          <li><a>&infin;</a></li>
-          <li><a>3</a></li>
-          <li><a>1</a></li>
-        </ul>
-      </span>
     </p>
   </div>
 </div>
@@ -59,7 +62,7 @@
       <div class="row" [attr.data-bad-index]="badStepIndex" *ngIf="goodStepIndex == activeStepCount && step.badStepShown">
         <div class="col-xs-12">
           <!-- Show all of the bad steps upto the current active bad step, similar to how we show the overall steps in the above loop -->
-          <div class="panel panel-danger" *ngIf="badStepIndex <= activeBadStepCount">
+          <div class={{panelClass}} *ngIf="badStepIndex <= activeBadStepCount">
             <div class="panel-heading">
               <h3 class="panel-title">
                 {{badStep}}

@@ -27,3 +27,7 @@ clean:
 runtests: clean
 	@ cd ../../LocalDB; make -s
 	@ ./runTests.sh
+
+runtests-lite: 
+	@ cd ../../LocalDB; make -s
+	@ ./runTestsLite.sh

@@ -37,7 +37,7 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     stepToCorrect: ''
   }
 
-  // default color is not shown
+  // default red color is not shown
   showBadStepColor = false;
   panelClass = 'panel panel-default';
 
@@ -89,6 +89,7 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   }
 
   showNextBadStep(){
+    // TODO print for testing purposes, will remove in final product
     console.log('Active Step Count: ' + this.activeBadStepCount);
     console.log('Step Limit: ' + this.stepLimit);
     if (this.activeBadStepCount >= this.stepLimit) {
@@ -155,11 +156,12 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   }
 
   setStepLimit(){
-    if(this.selectedStepLimit < 0){
+    let limit = this.selectedStepLimit-1;
+    if(limit < 0){
       this.stepLimit = this.badStepProblem.length-1;
     }
     else {
-      this.stepLimit = this.selectedStepLimit;
+      this.stepLimit = limit;
     }
   }
 

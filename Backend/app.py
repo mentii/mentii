@@ -260,7 +260,7 @@ def problemSteps(classId, activity):
     try:
       status = 200
       problemIndex = int(request.json.get('problemIndex', ''))
-      didSucceed = bool(request.json.get('didSucceed', 'True'))
+      didSucceed = request.json.get('didSucceed', 'True') == 'True'
       res = problem_ctrl.updateUserTemplateHistory(classId, activity, userId, problemIndex, didSucceed, dynamoDBInstance)
       if res.hasErrors():
         status = 462

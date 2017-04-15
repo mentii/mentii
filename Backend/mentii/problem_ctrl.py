@@ -43,7 +43,7 @@ def chooseProblemTemplate(templateList, userHistoryList):
   index = -1
   problemTemplate = 'Bad Problem'
   if len(templateList) == 0:
-    print("error, empty template list passed")
+    MentiiLogging.getLogger().warning("error, empty template list passed")
   else:
     history = [-1*x for x in userHistoryList]
     if len(history) != len(templateList):
@@ -66,7 +66,7 @@ def updateUserTemplateHistory(classId, activity, userId, index, didSucceed, dyna
   #Get the section so we can update the weights
   response = ControllerResponse()
   bookId, chapterTitle, sectionTitle = getBookInfoFromActivity(classId, activity, dynamoDBInstance)
-  section = book_ctrl.getSectionFromBook(bookId, chapterTitle, sectionTitle, userId, dynamoDBInstance)
+  section = book_ctrl.getSectionFromBook(bookId, chapterTitle, sectionTitle, dynamoDBInstance)
   #Update the weights or create new ones if this is the first time
   currentWeights = section.get('users', {}).get(userId, [])
   newWeights = [0 for _ in xrange(len(section.get('problems', [])))] #Initial value
@@ -88,7 +88,7 @@ def updateUserTemplateHistory(classId, activity, userId, index, didSucceed, dyna
 
 
 def getProblemFromBook(bookId, chapterTitle, sectionTitle, userId, dynamoDBInstance):
-  section = book_ctrl.getSectionFromBook(bookId, chapterTitle, sectionTitle, userId, dynamoDBInstance)
+  section = book_ctrl.getSectionFromBook(bookId, chapterTitle, sectionTitle, dynamoDBInstance)
   problem = 'Bad Problem'
   index = -1
   #From the section we got get the weights and chose a random problem using them

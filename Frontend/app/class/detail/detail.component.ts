@@ -23,6 +23,9 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   public isModalShown:boolean = false;
   editMode = false;
   newActivity = null;
+  books:Array<Object> = [ {id: undefined, name: 'Select a Textbook'} ];
+  chapters:Array<Object> = [ {title: undefined, name: 'Select a Chapter'} ];
+  sections:Array<Object> = [ {title: undefined, name: 'Select a Section'} ];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -61,24 +64,41 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   }
 
   handleError(err){
-    this.toastr.error("Unable to access class.");
+    this.toastr.error('Unable to access class.');
     this.router.navigateByUrl('/dashboard');
   }
 
   /* Modal Methods */
-  public showCorrectionModal():void {
+  showActivityModal():void {
+    this.newActivity = new ActivityModel('', 5, new Date(), new Date(), undefined, undefined, undefined);
+    this.books = this.books.concat([
+      {id: 1, name: 'Algebra 1'},
+      {id: 2, name: 'Algebra 2'}
+    ]);
     this.isModalShown = true;
-    this.newActivity = new ActivityModel('', 5, new Date(), new Date(), '', '', '')
   }
 
-  public hideCorrectionModal():void {
+  hideActivityModal():void {
     this.autoShownModal.hide();
   }
 
-  public onHidden():void {
+  onHideActivityModal():void {
     this.isModalShown = false;
   }
 
+  bookSelected() {
+    console.log('book selected:' + this.newActivity.bookId);
+  }
+
+  chapterSelected() {
+    console.log('chapter selected:' + this.newActivity.chapterTitle);
+  }
+
+  sectionSelected() {
+    console.log('section selected:' + this.newActivity.sectionTitle);
+  }
+
+  /* Edit Methods */
   toggleEditMode(){
     this.editMode = !this.editMode;
   }

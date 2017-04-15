@@ -3,6 +3,27 @@
     <h2>
       Solving a Problem
     </h2>
+    <div class="lead">
+    <span>Testing Controls:</span>
+    <label for="colorToggle">Bad Step Color</label>
+        <button (click)="toggleBadStepColor()" id="colorToggle" type="button" class="btn btn-default">
+          <span class="text-danger" *ngIf="showBadStepColor">On</span>
+          <span *ngIf="!showBadStepColor">Off</span>
+        </button>
+      <label for="stepLimit">Bad Step Limit</label>
+      <span class="dropdown">
+        <button id="stepLimit" type="button" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span *ngIf="selectedStepLimit < 0">&infin;&nbsp;</span>
+          <span *ngIf="selectedStepLimit > 0">{{selectedStepLimit}}&nbsp;</span>
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" style="min-width:0px;" aria-labelledby="stepLimit">
+          <li (click)="selectStepLimit(-1)"><a>&infin;</a></li>
+          <li (click)="selectStepLimit(3)"><a>3</a></li>
+          <li (click)="selectStepLimit(1)"><a>1</a></li>
+        </ul>
+      </span>
+    </div>
     <p class="lead" *ngIf="problem">
       Equation I'm trying to solve: <em>{{problem}}</em>
     </p>
@@ -11,26 +32,26 @@
 <!-- show if the problem has loaded -->
 <div *ngIf="!isLoading">
   <!-- loop through the the list of steps that is contained in the problem tree
-    and keep track of the index we are at -->
+  and keep track of the index we are at -->
   <div *ngFor="let step of problemTree; let goodStepIndex = index;">
     <div class="row">
       <div class="col-xs-12">
-        <!-- Only show this step if the index we are at is less than the current step the user is on and 
-          we are not currently showing a bad step. The reason we use less than is so that each step that
-          has been taken will be shown -->
-        <div class="panel panel-default" *ngIf="goodStepIndex <= activeStepCount && !step.badStepShown">
+        <!-- Only show this step if the index we are at is less than the current step the user is on and
+        we are not currently showing a bad step. The reason we use less than is so that each step that
+        has been taken will be shown -->
+        <div class="panel panel-default" [attr.data-good-index]="goodStepIndex" *ngIf="goodStepIndex <= activeStepCount && !step.badStepShown">
           <div class="panel-heading">
             <h3 class="panel-title">
               {{step.correctStep}}
             </h3>
           </div>
           <!-- Only show the buttons in the panel for the current step -->
-          <div class="panel-body" *ngIf="goodStepIndex == activeStepCount">
+          <div class="panel-body">
             <button class="btn btn-primary btn-sm" (click)="showNextStep()" *ngIf="goodStepIndex==activeStepCount">
               Conintue to Next Step
             </button>
             <!-- Don't show this button if we are on the first good step, that's the problem declaration -->
-            <button class="btn btn-danger btn-sm" (click)="incorrectGoodStep()" *ngIf="goodStepIndex==activeStepCount && goodStepIndex != 0">
+            <button class="btn btn-danger btn-sm" (click)="incorrectGoodStep()" *ngIf="goodStepIndex != 0">
               This Step is Incorrect
             </button>
           </div>
@@ -39,23 +60,38 @@
     </div>
     <!-- loop through the bad steps for this step if they exist -->
     <div *ngFor="let badStep of step.badStepPath; let badStepIndex = index;">
-      <div class="row" *ngIf="goodStepIndex == activeStepCount && step.badStepShown">
+      <div class="row" [attr.data-bad-index]="badStepIndex" *ngIf="goodStepIndex == activeStepCount && step.badStepShown">
         <div class="col-xs-12">
           <!-- Show all of the bad steps upto the current active bad step, similar to how we show the overall steps in the above loop -->
-          <div class="panel panel-danger" *ngIf="badStepIndex <= activeBadStepCount">
+          <div class={{panelClass}} *ngIf="badStepIndex <= activeBadStepCount">
             <div class="panel-heading">
               <h3 class="panel-title">
                 {{badStep}}
               </h3>
             </div>
             <!-- Only show the buttons on the active bad step -->
-            <div class="panel-body" *ngIf="badStepIndex == activeBadStepCount">
-              <button class="btn btn-primary btn-sm" (click)="showNextBadStep()" *ngIf="badStepIndex==activeBadStepCount">
-                Conintue to Next Step
-              </button>
-              <button class="btn btn-danger btn-sm" (click)="incorrectBadStep()" *ngIf="badStepIndex==activeBadStepCount">
-                This Step is Incorrect
-              </button>
+            <div class="panel-body">
+              <div *ngIf="!stepIsBeingCorrected">
+                <button class="btn btn-primary btn-sm" (click)="showNextBadStep()" *ngIf="badStepIndex==activeBadStepCount">
+                  Conintue to Next Step
+                </button>
+                <button class="btn btn-danger btn-sm" (click)="incorrectBadStep(badStepIndex,badStep)">
+                  This Step is Incorrect
+                </button>
+              </div>
+              <form #applyCorrectionForm="ngForm" autocomplete="off" class="form-inline" *ngIf="stepIsBeingCorrected && badStepIndex==0">
+                <div class="form-group">
+                  <label for="correction">Correction: </label>
+                  <input type="text" required placeholder="Enter your correction for this step here" class="form-control" id="correction" [(ngModel)]="correctionModel.correction" name="correction" #correction="ngModel" clearPlaceholder>
+                </div>
+
+                <button type='button' class="btn btn-primary" [disabled]="!applyCorrectionForm.form.valid" (click)="applyCorrection()">
+                  Apply Correction
+                </button>
+                <button type='button' class="btn btn-default" (click)="cancelCorrection()">
+                  Cancel
+                </button>
+              </form>
             </div>
           </div>
         </div>
@@ -63,6 +99,7 @@
     </div>
   </div>
 </div>
+
 <!-- show if there are no other steps to take on the good branch -->
 <div *ngIf="problemIsComplete">
   <div class="row">
@@ -80,7 +117,8 @@
     </div>
   </div>
 </div>
-<!-- show if still loading -->
+
+<!-- show if problem is still loading -->
 <div *ngIf="isLoading">
   <div class="row">
     <div class="col-xs-12">

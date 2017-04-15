@@ -241,11 +241,32 @@ def changeUserRole():
 @handleOptionsRequest
 def problemSteps(classId, activity):
   status = 200
-  problem = problem_ctrl.getProblemTemplate(classId, activity)
+  dynamoDBInstance = getDatabaseClient()
+  problem = problem_ctrl.getProblemTemplate(classId, activity, dynamoDBInstance)
   res = algebra.getProblemTree(problem)
   if res.hasErrors():
     status = 400
   return ResponseCreation.createResponse(res,status)
+
+@app.route('/classes/remove', methods=['POST', 'OPTIONS'])
+@auth.login_required
+@handleOptionsRequest
+def removeStudentFromClass():
+  status = 200
+  role = g.authenticatedUser['userRole']
+  if role != "teacher" and role != "admin" :
+    res = ResponseCreation.ControllerResponse()
+    res.addError('Role error', 'Only those with teacher privileges can remove students from classes')
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    res = class_ctrl.removeStudent(dynamoDBInstance, request.json)
+    if res.hasErrors():
+      status = 400
+    else:
+      #send email
+      class_ctrl.sendClassRemovalEmail(dynamoDBInstance, mail, request.json)
+  return ResponseCreation.createResponse(res, status)
 
 @app.route('/book', methods=['POST', 'OPTIONS'])
 @auth.login_required
@@ -262,6 +283,42 @@ def createBook():
     if res.hasErrors():
       status = 400
   return ResponseCreation.createResponse(res,status)
+
+@app.route('/class/details/update', methods=['POST', 'OPTIONS'])
+@auth.login_required
+@handleOptionsRequest
+def updateClassDetails():
+  status = 200
+  res = ResponseCreation.ControllerResponse()
+  role = g.authenticatedUser['userRole']
+  if role != 'admin' and role != 'teacher':
+    res.addError('Role Error', 'Only teachers or admins can update class details')
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    res = class_ctrl.updateClassDetails(request.json, dynamoDBInstance)
+    if res.hasErrors():
+      status = 400
+  return ResponseCreation.createResponse(res,status)
+
+@app.route('/forgotPassword/', methods=['POST', 'OPTIONS'])
+@handleOptionsRequest
+def forgotPassword():
+  dynamoDBInstance = getDatabaseClient()
+  httpOrigin = request.environ.get('HTTP_ORIGIN')
+  user_ctrl.sendForgotPasswordEmail(httpOrigin, request.json, mail, dynamoDBInstance)
+  return ResponseCreation.createEmptyResponse(200)
+
+@app.route('/resetPassword/', methods=['POST', 'OPTIONS'])
+@handleOptionsRequest
+def resetPassword():
+  status = 200
+  dynamoDBInstance = getDatabaseClient()
+  res = user_ctrl.resetUserPassword(request.json, dynamoDBInstance)
+  if res.hasErrors():
+    status = 400
+  return ResponseCreation.createResponse(res,status)
+
 
 if __name__ == '__main__':
   logger.info('mentii app starting')

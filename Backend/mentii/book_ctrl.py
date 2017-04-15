@@ -9,7 +9,7 @@ def createBook(bookData, dynamoDBInstance, userRole=None):
 
   #g will be not be available during testing
   #userRole will need to be passed to the function
-  if g:
+  if g: # pragma: no cover
     userRole = g.authenticatedUser['userRole']
   #role is confirmed here incase createBook is called from somewhere other
   #than app.py createBook()
@@ -39,5 +39,20 @@ def createBook(bookData, dynamoDBInstance, userRole=None):
         response.addError('Book creation failed.', 'Unable to create Book in database.')
       else:
         response.addToPayload('Success', 'Book Created')
+
+  return response
+
+def getBook(bookId, dynamoDBInstance):
+  response = {}
+  booksTable = dbUtils.getTable('books', dynamoDBInstance)
+  if booksTable is None:
+    MentiiLogging.getLogger().error('Could not get book table') 
+  else:
+    bookQuery = {'Key': {'bookId': bookId}}
+    res = dbUtils.getItem(bookQuery, booksTable)
+    if res is not None and 'Item' in res.keys():
+      response = res['Item']
+    else:
+      MentiiLogging.getLogger().warning('Could not get an item from the books table') 
 
   return response

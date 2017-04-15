@@ -1,8 +1,38 @@
 import mathstepsWrapper as mathsteps
 from utils.ResponseCreation import ControllerResponse
 import random
+from algebraTemplate import ProblemGenerator
+import utils.MentiiLogging as MentiiLogging
 
-problemBank = {'a1': '5x=10', 'a2':'2x + 3x - 5 = 5', 'a3': '2x = -3x + 15'}
+def getProblem(problemTemplate):
+  '''
+  Expects a problem template of the form: 
+  <template>|<*min range>|<*max range>|<*operator list>
+
+  The template can be any math expression with $a, $b, $c, $d for any numerical value, $var for the variable 'x', $op for a random operator from the operator list.
+
+  The values for the min range, max range, and operator list are optional but if one is provided all values have to be provided. The default values are: -20, 20, and + - * 
+  '''
+  problem = 'Bad Problem'
+  problemTokens = problemTemplate.split('|')
+  if len(problemTokens) == 4:
+    try:
+      template = problemTokens[0]
+      minVal = int(problemTokens[1])
+      maxVal = int(problemTokens[2])
+      opVals = problemTokens[3].split(' ')
+      generator = ProblemGenerator(minVal=minVal, maxVal=maxVal, opVals=opVals)     
+      problem = generator.buildProblemFromTemplate(template)
+    except Exception as e:
+      MentiiLogging.getLogger().exception(e)
+  elif len(problemTokens) == 1:
+    template = problemTokens[0]
+    generator = ProblemGenerator() 
+    problem = generator.buildProblemFromTemplate(template)
+  else:
+    MentiiLogging.getLogger().warning('Could not build problem from template: {0}'.format(problemTemplate)) 
+  
+  return problem
 
 def modifyStep(step):
   badStep = step
@@ -18,21 +48,14 @@ def modifyStep(step):
 
   return badStep
 
-def getProblem(activity):
-  #For now just get a problem out of the hardcoded 'problem bank'
-  problem = 'Bad Problem'
-  if activity in problemBank.keys():
-    problem = problemBank[activity]
-  return problem
 
-
-def getProblemTree(problem):
+def getProblemTree(problemTemplate):
   #When problem templates work problem could 
   # be a problem template instead. If that's the case 
   # we could get the problem from the template here
   response = ControllerResponse()
   numberOfFailurePoints = 2 #TODO: Replace this with the recommender system output
-
+  problem = getProblem(problemTemplate)  
   problemPath = mathsteps.getStepsForProblem(problem)
   if len(problemPath) <= 1:
     #We couldn't get a path for the problem

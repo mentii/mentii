@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ProblemService } from '../problem.service';
 import { UserService } from '../../user/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute } from '@angular/router';
-import { Router } from '@angular/router'
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -13,7 +13,6 @@ import { Router } from '@angular/router'
 })
 
 export class DisplayProblemComponent implements OnInit, OnDestroy {
-
   /*
   Display problem works by showing "good" steps that are less than the current active step count. The
   logic beind the actual showing the step is in displayProblem.html
@@ -32,7 +31,39 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   badStepShown = false;
   problemIsComplete = false;
 
+  stepIsBeingCorrected = false;
+  correctionModel = {
+    correction: '',
+    stepToCorrect: ''
+  }
+
+  // default red color is not shown
+  showBadStepColor = false;
+  panelClass = 'panel panel-default';
+
+  //default all bad steps in tree are shown
+  selectedStepLimit = -1;
+  stepLimit = 0;
+
   constructor(public problemService: ProblemService, public toastr: ToastrService, public router: Router, private activatedRoute: ActivatedRoute){
+  }
+
+  applyCorrection() {
+    let trimmedCorrection = this.correctionModel.correction.replace(/\s+/g, ''); // Removed all whitespace
+    let trimmedActual = this.problemTree[this.activeStepCount].correctStep.replace(/\s+/g, ''); // Removed all whitespace
+    if (trimmedCorrection == trimmedActual) {
+      this.toastr.success("Your correction got Mentii back on the right path", "Good Job");
+      this.problemTree[this.activeStepCount]['badStepShown'] = false; // Close the bad step subtree
+      this.stepIsBeingCorrected = false;
+      this.showNextStep(); // Progress to the next step, after the correction
+    } else {
+      this.toastr.error("Your correction won't help Mentii get back on the right path", "Not Quite...");
+    }
+  }
+
+  cancelCorrection() {
+    this.stepIsBeingCorrected = false;
+    this.correctionModel.correction = ''; //clear the correction from the text box
   }
 
   showNextStep(){
@@ -44,6 +75,7 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
       this.badStepProblem = this.problemTree[this.activeStepCount+1]["badStepPath"];
       this.problemTree[this.activeStepCount+1]['badStepShown'] = true;
       this.activeStepCount++;
+      this.setStepLimit();
     }
     // if the active step is only a good step
     else {
@@ -57,16 +89,23 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   }
 
   showNextBadStep(){
-    if (this.activeBadStepCount == this.badStepProblem.length-1) {
+    // TODO print for testing purposes, will remove in final product
+    console.log('Active Step Count: ' + this.activeBadStepCount);
+    console.log('Step Limit: ' + this.stepLimit);
+    if (this.activeBadStepCount >= this.stepLimit) {
       this.toastr.error("This doesn't seem quite right", "Uh Oh");
     } else {
       this.activeBadStepCount++;
     }
   }
 
-  incorrectBadStep() {
-    this.toastr.success("This was an incorrect step, that you corrected", "Good Job");
-    this.problemTree[this.activeStepCount]['badStepShown'] = false;
+  incorrectBadStep(badStepIndex: number, problemStep: string) {
+    if (badStepIndex == 0) {
+      this.correctionModel.correction = this.badStepProblem[0]; //set the model to the current bad step
+      this.stepIsBeingCorrected = true;
+    } else {
+      this.toastr.warning("This is part of an incorrect step, but the problem is in a different step", "Almost...");
+    }
   }
 
   incorrectGoodStep() {
@@ -109,6 +148,29 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     this.isLoading = false;
     if (!err.isAuthenticationError) {
       this.toastr.error('The problem steps failed to load.');
+    }
+  }
+
+  selectStepLimit(limit){
+    this.selectedStepLimit = limit;
+  }
+
+  setStepLimit(){
+    let limit = this.selectedStepLimit-1;
+    if(limit < 0){
+      this.stepLimit = this.badStepProblem.length-1;
+    }
+    else {
+      this.stepLimit = limit;
+    }
+  }
+
+  toggleBadStepColor(){
+    this.showBadStepColor = !this.showBadStepColor;
+    if(this.showBadStepColor){
+      this.panelClass = 'panel panel-danger';
+    } else{
+      this.panelClass = 'panel panel-default';
     }
   }
 }

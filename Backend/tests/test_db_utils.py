@@ -298,7 +298,7 @@ class DbUtilsTest(unittest.TestCase):
     booksTable = db.createTableFromFile('./tests/'+booksSetting, self.dynamodb)
 
     db.preloadBookData('./tests/'+bookMockData, booksTable)
-    self.assertIsNotNone(booksTable.get_item(Key={'bookId':'abcdefg123456'}).get('Item'))
+    self.assertIsNotNone(booksTable.get_item(Key={'bookId':'d6742cc-f02d-4fd6-80f0-026784g1ab9b'}).get('Item'))
 
 #################### Get Table Tests #################################
 
@@ -396,11 +396,45 @@ class DbUtilsTest(unittest.TestCase):
       "ReturnValues" : "UPDATED_NEW"
     }
 
-    db.updateItem(jsonData, self.table)
-    item = self.table.get_item(Key={"email":"test4@mentii.me"}).get("Item")
+    response = db.updateItem(jsonData, self.table)
+    self.assertIsNotNone(response.get('Attributes'))
+    self.assertEqual(response.get('Attributes').get('active'), 'T')
 
-    self.assertIsNotNone(item)
-    self.assertEqual(item.get("active"), "T")
+    # No ExpressionAttributeValues
+    jsonData = {
+      "Key": {"email": "test4@mentii.me"},
+      "UpdateExpression": "REMOVE active",
+      "ReturnValues" : "UPDATED_NEW"
+    }
+
+    db.updateItem(jsonData, self.table)
+    response = self.table.get_item(Key={"email":"test4@mentii.me"}).get("Item")
+    self.assertIsNone(response.get('active'))
+
+  def test_updateItem_none(self):
+    print("Running updateItem_none test case")
+    self.assertIsNotNone(self.table)
+    self.assertEqual(self.table.table_status,"ACTIVE")
+
+    # No Key
+    jsonData = {
+      "UpdateExpression": "SET active = :a",
+      "ExpressionAttributeValues": { ":a": "T" },
+      "ReturnValues" : "UPDATED_NEW"
+    }
+
+    response = db.updateItem(jsonData, self.table)
+    self.assertIsNone(response)
+
+    # Key not in table
+    jsonData = {
+      "Key": {"email": "fake@mentii.me"},
+      "UpdateExpression": "REMOVE active",
+      "ReturnValues" : "UPDATED_NEW"
+    }
+
+    response = db.updateItem(jsonData, self.table)
+    self.assertIsNone(response)
 
   def test_updateItem_string(self):
     print("Running updateItem_string test")
@@ -414,11 +448,9 @@ class DbUtilsTest(unittest.TestCase):
       "ReturnValues" : "UPDATED_NEW"\
     }'
 
-    db.updateItem(jsonData, self.table)
-    item = self.table.get_item(Key={"email":"test3@mentii.me"}).get("Item")
-
-    self.assertIsNotNone(item)
-    self.assertEqual(item.get("active"), "F")
+    response = db.updateItem(jsonData, self.table)
+    self.assertIsNotNone(response.get('Attributes'))
+    self.assertEqual(response.get('Attributes').get('active'), 'F')
 
   def test_updateItem_not_previously_existed(self):
     print("Running updateItem_not_previously_existed test")
@@ -432,10 +464,8 @@ class DbUtilsTest(unittest.TestCase):
       "ReturnValues" : "UPDATED_NEW"\
     }'
 
-    db.updateItem(jsonData, self.table)
-    item = self.table.get_item(Key={"email":"crab@mentii.me"}).get("Item")
-
-    self.assertIsNone(item)
+    response = db.updateItem(jsonData, self.table)
+    self.assertIsNone(response)
 
   def test_deleteItem_string(self):
     print("Running deleteItem_string test")

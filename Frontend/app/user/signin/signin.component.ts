@@ -14,7 +14,6 @@ import { UserService } from '../user.service';
 
 export class SigninComponent {
   model = new SigninModel('', '');
-  mentiiConfig = new MentiiConfig();
   isLoading = false;
 
   constructor(public userService: UserService, public authHttpService: AuthHttp , public router: Router, public toastr: ToastrService){

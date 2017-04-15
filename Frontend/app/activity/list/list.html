@@ -12,6 +12,7 @@
             <p *ngIf="activity.description">
               {{activity.description}}
             </p>
+            <a [routerLink]="['/problem/display', classCode, activity.title]"><i class="fa fa-paper-plane-o"></i> Do Problem</a>
           </div>
         </div>
       </div>

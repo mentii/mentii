@@ -323,6 +323,24 @@ def updateClassDetails():
       status = 400
   return ResponseCreation.createResponse(res,status)
 
+@app.route('/forgotPassword/', methods=['POST', 'OPTIONS'])
+@handleOptionsRequest
+def forgotPassword():
+  dynamoDBInstance = getDatabaseClient()
+  httpOrigin = request.environ.get('HTTP_ORIGIN')
+  user_ctrl.sendForgotPasswordEmail(httpOrigin, request.json, mail, dynamoDBInstance)
+  return ResponseCreation.createEmptyResponse(200)
+
+@app.route('/resetPassword/', methods=['POST', 'OPTIONS'])
+@handleOptionsRequest
+def resetPassword():
+  status = 200
+  dynamoDBInstance = getDatabaseClient()
+  res = user_ctrl.resetUserPassword(request.json, dynamoDBInstance)
+  if res.hasErrors():
+    status = 400
+  return ResponseCreation.createResponse(res,status)
+
 
 if __name__ == '__main__':
   logger.info('mentii app starting')

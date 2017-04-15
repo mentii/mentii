@@ -40,6 +40,14 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     stepToCorrect: ''
   }
 
+  // default red color is not shown
+  showBadStepColor = false;
+  panelClass = 'panel panel-default';
+
+  //default all bad steps in tree are shown
+  selectedStepLimit = -1;
+  stepLimit = 0;
+
   constructor(public problemService: ProblemService, public toastr: ToastrService, public router: Router, private activatedRoute: ActivatedRoute){
   }
 
@@ -70,6 +78,7 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
       this.badStepProblem = this.problemTree[this.activeStepCount+1]["badStepPath"];
       this.problemTree[this.activeStepCount+1]['badStepShown'] = true;
       this.activeStepCount++;
+      this.setStepLimit();
     }
     // if the active step is only a good step
     else {
@@ -83,7 +92,10 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   }
 
   showNextBadStep(){
-    if (this.activeBadStepCount == this.badStepProblem.length-1) {
+    // TODO print for testing purposes, will remove in final product
+    console.log('Active Step Count: ' + this.activeBadStepCount);
+    console.log('Step Limit: ' + this.stepLimit);
+    if (this.activeBadStepCount >= this.stepLimit) {
       this.toastr.error("This doesn't seem quite right", "Uh Oh");
     } else {
       this.activeBadStepCount++;
@@ -157,6 +169,29 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     this.isLoading = false;
     if (!err.isAuthenticationError) {
       this.toastr.error('The problem steps failed to load.');
+    }
+  }
+
+  selectStepLimit(limit){
+    this.selectedStepLimit = limit;
+  }
+
+  setStepLimit(){
+    let limit = this.selectedStepLimit-1;
+    if(limit < 0){
+      this.stepLimit = this.badStepProblem.length-1;
+    }
+    else {
+      this.stepLimit = limit;
+    }
+  }
+
+  toggleBadStepColor(){
+    this.showBadStepColor = !this.showBadStepColor;
+    if(this.showBadStepColor){
+      this.panelClass = 'panel panel-danger';
+    } else{
+      this.panelClass = 'panel panel-default';
     }
   }
 }

@@ -96,6 +96,7 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     console.log('Active Step Count: ' + this.activeBadStepCount);
     console.log('Step Limit: ' + this.stepLimit);
     if (this.activeBadStepCount >= this.stepLimit) {
+      this.sendFailUpdate();
       this.toastr.error("This doesn't seem quite right", "Uh Oh");
     } else {
       this.activeBadStepCount++;

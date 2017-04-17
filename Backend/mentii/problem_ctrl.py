@@ -43,7 +43,7 @@ def chooseProblemTemplate(templateList, userHistoryList):
   index = -1
   problemTemplate = 'Bad Problem'
   if len(templateList) == 0:
-    MentiiLogging.getLogger().warning("error, empty template list passed")
+    MentiiLogging.getLogger().error("error, empty template list passed")
   else:
     history = [-1*x for x in userHistoryList]
     if len(history) != len(templateList):
@@ -52,7 +52,7 @@ def chooseProblemTemplate(templateList, userHistoryList):
     #Normalize the history to be all positive numbers
     minVal = min(history)
     history = [x + abs(minVal) + 1 for x in history]
-    #Create a probablility distrobution
+    #Create a probablility distribution
     total = sum(history)
     probDist = [decimal.Decimal(x)/total for x in history]
 

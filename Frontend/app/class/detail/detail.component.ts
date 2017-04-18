@@ -23,9 +23,12 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   public isModalShown:boolean = false;
   editMode = false;
   newActivity = null;
-  books:Array<Object> = [ {id: undefined, name: 'Select a Textbook'} ];
-  chapters:Array<Object> = [ {title: undefined, name: 'Select a Chapter'} ];
-  sections:Array<Object> = [ {title: undefined, name: 'Select a Section'} ];
+  books:Array<Object> = [];
+  booksDefault = {id: undefined, name: 'Select a Textbook'};
+  chapters:Array<Object> = [];
+  chaptersDefault = {title: 'Select a Chapter'};
+  sections:Array<Object> = [];
+  sectionsDefault = {title: 'Select a Section'};
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -71,6 +74,11 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   /* Modal Methods */
   showActivityModal():void {
     this.newActivity = new ActivityModel('', 5, new Date(), new Date(), undefined, undefined, undefined);
+    this.resetBooks();
+    this.resetChapters();
+    this.resetSections();
+
+    //TODO: load using service
     this.books = this.books.concat([
       {id: 1, name: 'Algebra 1'},
       {id: 2, name: 'Algebra 2'}
@@ -86,12 +94,44 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
     this.isModalShown = false;
   }
 
+  resetBooks() {
+    this.books = [];
+    this.books.push(this.booksDefault);
+  }
+
+  resetChapters() {
+    this.chapters = []
+    this.chapters.push(this.chaptersDefault);
+  }
+
+  resetSections() {
+    this.sections = []
+    this.sections.push(this.sectionsDefault);
+  }
+
   bookSelected() {
     console.log('book selected:' + this.newActivity.bookId);
+    this.resetChapters();
+    this.resetSections();
+    //Load from data
+    this.chapters = this.chapters.concat([
+      {title: 'Chapter 1'},
+      {title: 'Chapter 2'}
+    ]);
+    console.log('chapters:' + this.chapters);
+    console.log('sections:' + this.sections);
   }
 
   chapterSelected() {
     console.log('chapter selected:' + this.newActivity.chapterTitle);
+    this.resetSections();
+    //Load from data
+    this.sections = this.sections.concat([
+      {title: 'Section 1'},
+      {title: 'Section 2'}
+    ]);
+    console.log('chapters:' + this.chapters);
+    console.log('sections:' + this.sections);
   }
 
   sectionSelected() {

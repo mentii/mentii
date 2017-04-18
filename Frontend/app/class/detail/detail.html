@@ -142,16 +142,16 @@
             <div class="col-xs-12 col-md-4">
               <div class="form-group">
                 <label class="required">Chapter</label>
-                <select class="form-control" [(ngModel)]="newActivity.chapterTitle" #newActivity.chapterTitle="ngModel" name="chapter" (change)="chapterSelected()">
-                  <option *ngFor="let chapter of chapters" [value]="chapter.title" [disabled]="!chapter.title">{{chapter.name}}</option>
+                <select class="form-control" [(ngModel)]="newActivity.chapterTitle" #newActivity.chapterTitle="ngModel" name="chapter" [disabled]="chapters.length < 2" (change)="chapterSelected()">
+                  <option *ngFor="let chapter of chapters" [value]="chapter.title" [disabled]="!chapter.title">{{chapter.title}}</option>
                 </select>
               </div>
             </div>
             <div class="col-xs-12 col-md-4">
               <div class="form-group">
                 <label class="required">Section</label>
-                <select class="form-control" [(ngModel)]="newActivity.sectionTitle" #newActivity.sectionTitle="ngModel" name="section" (change)="sectionSelected()">
-                  <option *ngFor="let section of sections" [value]="section.title" [disabled]="!section.title">{{section.name}}</option>
+                <select class="form-control" [(ngModel)]="newActivity.sectionTitle" #newActivity.sectionTitle="ngModel" name="section" [disabled]="sections.length < 2" (change)="sectionSelected()">
+                  <option *ngFor="let section of sections" [value]="section.title" [disabled]="!section.title">{{section.title}}</option>
                 </select>
               </div>
             </div>

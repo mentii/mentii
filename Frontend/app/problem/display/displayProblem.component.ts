@@ -126,18 +126,12 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
 
   sendSuccessUpdate() {
     this.problemService.postProblemSuccess(this.classCode, this.problemCode, this.problemIndex, "True")
-      .subscribe(
-        data => {},
-        err => {}
-      );
+      .subscribe();
   }
   
   sendFailUpdate() {
     this.problemService.postProblemSuccess(this.classCode, this.problemCode, this.problemIndex, "")
-      .subscribe(
-        data => {},
-        err => {}
-      );
+      .subscribe();
   }
 
   ngOnInit() {

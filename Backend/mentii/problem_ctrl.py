@@ -46,6 +46,9 @@ def chooseProblemTemplate(templateList, userHistoryList):
     MentiiLogging.getLogger().error("error, empty template list passed")
   else:
     history = [-1*x for x in userHistoryList]
+    #If this function is passed an empty list for userHistoryList
+    # then the user did not have a history and it will be initialized 
+    # inside this if.
     if len(history) != len(templateList):
       history = [ 0 for _ in xrange(len(templateList))]
 

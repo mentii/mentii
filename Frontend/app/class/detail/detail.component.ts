@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { ClassService } from '../class.service';
+import { BookService } from '../../book/book.service';
 import { ToastrService } from 'ngx-toastr';
 import { ClassModel } from '../class.model';
 import { ActivityModel } from '../../activity/activity.model';
@@ -34,6 +35,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private classService: ClassService,
+    private bookService: BookService,
     private toastr: ToastrService
   ){}
 
@@ -78,20 +80,11 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
     this.resetChapters();
     this.resetSections();
 
-    //TODO: load using service
-    this.books = this.books.concat([
-      {id: 1, name: 'Algebra 1'},
-      {id: 2, name: 'Algebra 2'}
-    ]);
-    this.isModalShown = true;
-  }
-
-  hideActivityModal():void {
-    this.autoShownModal.hide();
-  }
-
-  onHideActivityModal():void {
-    this.isModalShown = false;
+    this.bookService.getAllBookTitlesAndIds()
+      .subscribe(
+        data => this.booksRecived(data.json().payload),
+        err => this.handleGetBooksError(err)
+      );
   }
 
   resetBooks() {
@@ -109,33 +102,53 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
     this.sections.push(this.sectionsDefault);
   }
 
+  booksRecived(books) {
+    this.books = books
+    this.isModalShown = true;
+  }
+
+  handleGetBooksError(err) {
+      this.toastr.error('Unable to load books.');
+      this.hideActivityModal();
+  }
+
+  hideActivityModal():void {
+    this.autoShownModal.hide();
+  }
+
+  onHideActivityModal():void {
+    this.isModalShown = false;
+  }
+
   bookSelected() {
-    console.log('book selected:' + this.newActivity.bookId);
     this.resetChapters();
     this.resetSections();
-    //Load from data
-    this.chapters = this.chapters.concat([
-      {id: 'Chapter 1', title: 'Chapter 1'},
-      {id: 'Chapter 2', title: 'Chapter 2'}
-    ]);
-    console.log('chapters:' + this.chapters);
-    console.log('sections:' + this.sections);
+
+    this.bookService.getBook(this.newActivity.bookId)
+      .subscribe(
+        data => this.bookRecived(data.json().payload),
+        err => this.handleGetBookError(err)
+      );
+  }
+
+  bookRecived(book) {
+    this.chapters = book.chapters; //TODO: there will need to be some logic to get all chapters from book
+  }
+
+  handleGetBookError(err) {
+      this.toastr.error('Unable to load selected book.');
+      this.hideActivityModal();
   }
 
   chapterSelected() {
-    console.log('chapter selected:' + this.newActivity.chapterTitle);
     this.resetSections();
-    //Load from data
-    this.sections = this.sections.concat([
-      {id: 'Section 1', title: 'Section 1'},
-      {id: 'Section 2', title: 'Section 2'}
-    ]);
-    console.log('chapters:' + this.chapters);
-    console.log('sections:' + this.sections);
+    //TODO: Load from data
+    //this.sections = this.chapters[this.newActivity.chapterTitle]
   }
 
   sectionSelected() {
     console.log('section selected:' + this.newActivity.sectionTitle);
+    //TODO: display sample problems
   }
 
   /* Edit Methods */

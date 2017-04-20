@@ -23,4 +23,13 @@ export class ProblemService {
     .map((res:Response) => res)
     .catch((error:any) => Observable.throw(error));
   }
+  
+  postProblemSuccess(classCode, activityCode, problemIndex, wasSuccessful): Observable<any> {
+    let postUrl = this.mentiiConfig.getRootUrl() + '/problem/' + classCode + '/' + activityCode + '/';
+    let body = {"problemIndex": problemIndex, "didSucceed": wasSuccessful}
+    return this.authHttp.post(postUrl, body)
+    .map((res:Response) => res)
+    .catch((error:any) => Observable.throw(error));
+  }
+  
 }

@@ -186,5 +186,4 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
         err => this.handleUpdateError(err)
       );
   }
-
 }

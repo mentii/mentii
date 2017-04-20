@@ -284,6 +284,23 @@ def createBook():
       status = 400
   return ResponseCreation.createResponse(res,status)
 
+@app.route('/books', methods=['GET', 'OPTIONS'])
+@auth.login_required
+@handleOptionsRequest
+def getBooks():
+  status = 200
+  res = ResponseCreation.ControllerResponse()
+  if role != "teacher" and role != "admin" :
+    res = ResponseCreation.ControllerResponse()
+    res.addError('Role error', 'Only those with teacher privileges can get all books.')
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    res = book_ctrl.getBooks(dynamoDBInstance)
+    if res.hasErrors():
+      status = 400
+  return ResponseCreation.createResponse(res,status)
+
 @app.route('/class/details/update', methods=['POST', 'OPTIONS'])
 @auth.login_required
 @handleOptionsRequest

@@ -26,9 +26,9 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   books:Array<Object> = [];
   booksDefault = {id: undefined, name: 'Select a Textbook'};
   chapters:Array<Object> = [];
-  chaptersDefault = {title: 'Select a Chapter'};
+  chaptersDefault = {id: undefined, title: 'Select a Chapter'};
   sections:Array<Object> = [];
-  sectionsDefault = {title: 'Select a Section'};
+  sectionsDefault = {id: undefined, title: 'Select a Section'};
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -100,12 +100,12 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   }
 
   resetChapters() {
-    this.chapters = []
+    this.chapters = [];
     this.chapters.push(this.chaptersDefault);
   }
 
   resetSections() {
-    this.sections = []
+    this.sections = [];
     this.sections.push(this.sectionsDefault);
   }
 
@@ -115,8 +115,8 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
     this.resetSections();
     //Load from data
     this.chapters = this.chapters.concat([
-      {title: 'Chapter 1'},
-      {title: 'Chapter 2'}
+      {id: 'Chapter 1', title: 'Chapter 1'},
+      {id: 'Chapter 2', title: 'Chapter 2'}
     ]);
     console.log('chapters:' + this.chapters);
     console.log('sections:' + this.sections);
@@ -127,8 +127,8 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
     this.resetSections();
     //Load from data
     this.sections = this.sections.concat([
-      {title: 'Section 1'},
-      {title: 'Section 2'}
+      {id: 'Section 1', title: 'Section 1'},
+      {id: 'Section 2', title: 'Section 2'}
     ]);
     console.log('chapters:' + this.chapters);
     console.log('sections:' + this.sections);

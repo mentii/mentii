@@ -143,7 +143,7 @@
               <div class="form-group">
                 <label class="required">Chapter</label>
                 <select class="form-control" [(ngModel)]="newActivity.chapterTitle" #newActivity.chapterTitle="ngModel" name="chapter" [disabled]="chapters.length < 2" (change)="chapterSelected()">
-                  <option *ngFor="let chapter of chapters" [value]="chapter.title" [disabled]="!chapter.title">{{chapter.title}}</option>
+                  <option *ngFor="let chapter of chapters" [value]="chapter.id" [disabled]="!chapter.id">{{chapter.title}}</option>
                 </select>
               </div>
             </div>
@@ -151,7 +151,7 @@
               <div class="form-group">
                 <label class="required">Section</label>
                 <select class="form-control" [(ngModel)]="newActivity.sectionTitle" #newActivity.sectionTitle="ngModel" name="section" [disabled]="sections.length < 2" (change)="sectionSelected()">
-                  <option *ngFor="let section of sections" [value]="section.title" [disabled]="!section.title">{{section.title}}</option>
+                  <option *ngFor="let section of sections" [value]="id" [disabled]="!section.id">{{section.title}}</option>
                 </select>
               </div>
             </div>
@@ -159,7 +159,7 @@
           <div class="modal-footer">
             <p class="text-danger" *ngIf="!createActivityForm.form.valid">* Required Fields</p>
             <div class="form-group">
-              <button type="button" class="btn btn-primary pull-right" [disabled]="!createActivityForm.form.valid" >
+              <button type="button" class="btn btn-primary pull-right" [disabled]="!createActivityForm.form.valid || !newActivity.bookId || !newActivity.chapterTitle || !newActivity.sectionTitle" >
                 Add New Activity
               </button>
             </div>

@@ -46,13 +46,22 @@ def getBook(bookId, dynamoDBInstance):
   response = {}
   booksTable = dbUtils.getTable('books', dynamoDBInstance)
   if booksTable is None:
-    MentiiLogging.getLogger().error('Could not get book table') 
+    MentiiLogging.getLogger().error('Could not get book table')
   else:
     bookQuery = {'Key': {'bookId': bookId}}
     res = dbUtils.getItem(bookQuery, booksTable)
     if res is not None and 'Item' in res.keys():
       response = res['Item']
     else:
-      MentiiLogging.getLogger().warning('Could not get an item from the books table') 
+      MentiiLogging.getLogger().warning('Could not get an item from the books table')
 
+def getAllBooks(dynamoDBInstance):
+  response = ControllerResponse()
+  booksTable = dbUtils.getTable('books', dynamoDBInstance)
+  if booksTable is None:
+    MentiiLogging.getLogger().error('Could not get book table')
+    response.addError('Unable to get table', 'Unable to get books table')
+  else:
+    books = dbUtils.scan(booksTable)
+    response.addToPayload('books', books)
   return response

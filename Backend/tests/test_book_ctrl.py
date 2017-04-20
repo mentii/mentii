@@ -167,5 +167,8 @@ class BookControlDBTests(unittest.TestCase):
     response = book_ctrl.getBook(badBook, dynamodb)
     self.assertTrue(len(response) == 0)
 
-
-
+  def test_getAllBooks(self):
+    print('Running getAllBooks test case')
+    books = book_ctrl.getAllBooks(dynamodb)
+    print(books.payload)
+    self.assertIsNotNone(books.payload.get('books').get('Items'))

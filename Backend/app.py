@@ -319,6 +319,15 @@ def resetPassword():
     status = 400
   return ResponseCreation.createResponse(res,status)
 
+@app.route('/book/list/', methods=['GET', 'OPTIONS'])
+@handleOptionsRequest
+def retrieveBooks():
+  status = 200
+  dynamoDBInstance = getDatabaseClient()
+  res = book_ctrl.getAllBooks(dynamoDBInstance)
+  if res.hasErrors():
+    status = 400
+  return ResponseCreation.createResponse(res,status)
 
 if __name__ == '__main__':
   logger.info('mentii app starting')

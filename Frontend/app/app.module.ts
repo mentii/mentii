@@ -44,6 +44,7 @@ import { ProblemListComponent } from './book/problemList/problemList.component';
 import { ProblemListItemComponent } from './book/problemList/problemListItem.component';
 import { BookListComponent } from './book/edit/bookList.component';
 import { BookListItemComponent } from './book/edit/bookListItem.component';
+import { BookEditComponent } from './book/edit/bookEditForm.component';
 /* Directives */
 import { EqualValidator } from './directives/equal-validator.directive';
 import { DeleteValue } from './directives/delete-value-validator.directive';
@@ -105,7 +106,8 @@ import { ModalModule } from 'ng2-bootstrap';
     ProblemListItemComponent,
     HideNgInvalid,
     BookListComponent,
-    BookListItemComponent
+    BookListItemComponent,
+    BookEditComponent
   ],
 
   providers:  [

@@ -8,7 +8,7 @@ import { BookService } from '../book.service';
   templateUrl: 'bookList.html'
 })
 
-export class BookListComponent {
+export class BookListComponent implements OnInit{
 
   books:any;
 

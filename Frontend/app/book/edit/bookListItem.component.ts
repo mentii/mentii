@@ -16,25 +16,7 @@ export class BookListItemComponent {
   @Input('id')
   public id :string;
 
-  constructor(public bookService: BookService, public toastr: ToastrService){
-  }
-/*
-  ngOnInit() {
-  }
-
-  handleSuccess(data) {
-    let json = data.json();
-    this.books = json.payload.books['Items']
-    //this.books = books['payload']
-    console.log(this.books);
-  }
-
-  handleError(err) {
-    let data = err.json();
-    for (let error of data['errors']) {
-      this.toastr.error(error['message'], error['title']);
-    }
-  }*/
+  constructor(public bookService: BookService, public toastr: ToastrService){ }
 
   goToForm() {
     //go to edit book form

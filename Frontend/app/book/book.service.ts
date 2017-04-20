@@ -31,4 +31,13 @@ export class BookService {
     .map((res:Response) => res)
     .catch((error:any) => Observable.throw(error));
   }
+
+  getAllBooks():Observable<any> {
+    let getAllBooksUrl = this.mentiiConfig.getRootUrl() + '/book/list/';
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let options = new RequestOptions({ headers: headers })
+    return this.authHttp.get(getAllBooksUrl)
+    .map((res:Response) => res)
+    .catch((error:any) => Observable.throw(error));
+  }
 }

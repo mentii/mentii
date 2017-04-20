@@ -1,0 +1,15 @@
+<div class="row">
+  <div class="col-xs-12 col-md-12">
+    <h2>Edit A Book</h2>
+    <p>Select a book below to edit</p>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12 col-md-12">
+      <bookListItem
+        *ngFor="let book of books"
+        [title]="book.title"
+        [id]="book.bookId">
+      </bookListItem>
+  </div>
+</div>

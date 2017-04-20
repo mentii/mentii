@@ -55,6 +55,8 @@ def getBook(bookId, dynamoDBInstance):
     else:
       MentiiLogging.getLogger().warning('Could not get an item from the books table')
 
+  return response
+
 def getAllBooks(dynamoDBInstance):
   response = ControllerResponse()
   booksTable = dbUtils.getTable('books', dynamoDBInstance)
@@ -64,4 +66,5 @@ def getAllBooks(dynamoDBInstance):
   else:
     books = dbUtils.scan(booksTable)
     response.addToPayload('books', books)
+
   return response

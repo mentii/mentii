@@ -16,6 +16,7 @@
           <ul class="dropdown-menu">
             <li><a [routerLink]="['/admin/changeRole']">Change User Role</a></li>
             <li><a [routerLink]="['/admin/addBook']">Create a New Book</a></li>
+            <li><a [routerLink]="['/admin/editBook']">Edit a Book</a></li>
           </ul>
         </li>
         <li *ngIf="role == 'teacher' || role == 'admin'"><a [routerLink]="['/create/class']">Create a Class</a></li>

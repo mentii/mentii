@@ -167,5 +167,92 @@ class BookControlDBTests(unittest.TestCase):
     response = book_ctrl.getBook(badBook, dynamodb)
     self.assertTrue(len(response) == 0)
 
+  def test_editBook(self):
+    print('Running editBook test case')
+    bookData = {
+      'title' : 'Foundations of Algebra 1',
+      'description' : 'How to do algebra',
+      'bookId' :  'd6742cc-f02d-4fd6-80f0-026784g1ab9b',
+      'chapters': [
+        {
+          'title': 'Chapter One',
+          'sections' : [
+            {
+              'title': 'Section One',
+              'problems' : [
+                {
+                  'problemString' : '2x-3=9'
+                },
+                {
+                  'problemString' : '21x*7=11'
+                },
+                {
+                  'problemString' : '5x/12=69'
+                }
+              ]
+            },
+            {
+              'title': 'Section Two',
+              'problems' : [
+                {
+                  'problemString' : '6x-2=7'
+                },
+                {
+                  'problemString' : '4x+9=20'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          'title': 'Chapter Two',
+          'sections' : [
+            {
+              'title': 'Section One',
+              'problems' : [
+                {
+                  'problemString' : '21x*11=19'
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    
+    #Edit the existing book
+    book_ctrl.editBook(bookData, dynamodb)
+    bookId = 'd6742cc-f02d-4fd6-80f0-026784g1ab9b'
+
+    book = book_ctrl.getBook(bookId, dynamodb)
+    self.assertEqual(book, bookData)
+
+  def test_getSectionFromBook(self):
+    print('Running getSectionFromBook test case')
+    bookId = 'd6742cc-f02d-4fd6-80f0-026784g1ab9b'
+    chapterTitle = 'Chapter One'
+    sectionTitle = 'Section One'
+    
+    res = book_ctrl.getSectionFromBook(bookId, chapterTitle, sectionTitle, dynamodb)
+    self.assertNotEqual(res, {})
+    
+    chapterTitle2 = 'Non Existant'
+    
+    res = book_ctrl.getSectionFromBook(bookId, chapterTitle2, sectionTitle, dynamodb)
+    self.assertEqual(res, {})
+  
+
+  def test_updateBookWithUserData(self): 
+    print('Running updateBookWithUserData test case')
+    bookId = 'd6742cc-f02d-4fd6-80f0-026784g1ab9b'
+    chapterTitle = 'Chapter One'
+    sectionTitle = 'Section One'
+    userId = 'test@mentii.me'
+    weights = [1, -1, 1]
+    success = book_ctrl.updateBookWithUserData(bookId, chapterTitle, sectionTitle, userId, weights, dynamodb)
+    self.assertTrue(success)
+    res = book_ctrl.getSectionFromBook(bookId, chapterTitle, sectionTitle, dynamodb)
+    self.assertTrue(res['users'][userId] == weights)
+    
 
 

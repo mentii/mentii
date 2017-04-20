@@ -18,7 +18,11 @@
             {
               "problemString" : "5x/12=63"
             }
-          ]
+          ],
+          "users": 
+            {
+              "student@mentii.me" : [0, 0, 0]
+            }
         },
         {
           "title": "Section 2",

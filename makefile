@@ -4,6 +4,10 @@ run:
 	@ cd ./Backend; make -s
 	@ cd ./Frontend; make -s
 
+run-lite:
+	@ cd ./Backend; make run-lite -s
+	@ cd ./Frontend; make -s
+
 clean:
 	@ cd ./Backend; make clean -s
 	@ cd ./Frontend; make clean -s

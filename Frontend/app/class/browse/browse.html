@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-xs-12">
+  <div class="col-xs-8">
     <h2>Public Classes<br/>
       <small>Available to Join</small>
     </h2>
@@ -7,6 +7,19 @@
       These classes are available to all users and can be joined at any time. If you want to learn more about a given topic, please click the "Join <em>Class Name</em>" button that follows the description of the class. Note that classes you have already joined will not be shown in this list.
     </p>
     <br/>
+  </div>
+  <div class="col-xs-4" id="joinClassByCode">
+    <h4>Join class by access code</h4>
+    <div class="row">
+      <div class="col-xs-12">
+        <form #joinClassByCodeForm="ngForm" autocomplete="off">
+          <div class="form-group">
+            <input type="text" placeholder="93211750-a753-41cc-b8dc-904d6ed2f931" class="form-control" id="code" required pattern="[a-z0-9A-Z]+-[a-z0-9A-Z]+-[a-z0-9A-Z]+-[a-z0-9A-Z]+-[a-z0-9A-Z]+" [(ngModel)]="classCode" name="code" clearPlaceholder>
+          </div>
+          <button type="submit" class="btn btn-primary" [disabled]="!joinClassByCodeForm.form.valid" (click)="submit()" [ladda]='isJoiningClass'><span class="ladda-label">Join Class</span></button>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
 <div class="row">

@@ -3,6 +3,7 @@ import { ClassModel } from '../class.model';
 import { ClassService } from '../class.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router'
+import { UserService } from '../../user/user.service';
 
 
 @Component({
@@ -13,10 +14,11 @@ import { Router } from '@angular/router'
 
 export class ClassBrowseComponent implements OnInit {
   isLoading = true;
+  isJoiningClass = false;
   classes: ClassModel[] = [];
+  classCode = "";
 
-  constructor(public classService: ClassService, public toastr: ToastrService, public router: Router ){
-  }
+  constructor(public classService: ClassService, public toastr: ToastrService, public router: Router, public userService: UserService ){}
 
   ngOnInit() {
     this.classService.getPublicClassList()
@@ -36,5 +38,25 @@ export class ClassBrowseComponent implements OnInit {
     if (!err.isAuthenticationError) {
       this.toastr.error('The public class list failed to load.');
     }
+  }
+
+  submit() {
+    this.isJoiningClass = true;
+    this.userService.joinClass(this.classCode)
+      .subscribe(
+        data => this.handleJoinSuccess(data.json().payload),
+        err => this.handleJoinError(err)
+    );
+  }
+
+  handleJoinSuccess(json) {
+    this.isJoiningClass = false;
+    this.toastr.success('You have joined ' + json.title);
+    this.router.navigateByUrl('/class/' + json.code);
+  }
+
+  handleJoinError(err) {
+    this.isJoiningClass = false;
+    this.toastr.error('Unable to join class');
   }
 }

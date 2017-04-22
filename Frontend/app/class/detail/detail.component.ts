@@ -132,7 +132,13 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   }
 
   bookRecived(book) {
-    console.log(book)
+    for (var chapter of book.chapters) {
+      console.log(chapter)
+      this.chapters.push({
+        'id': chapter.title,
+        'title': chapter.title
+      })
+    }
   }
 
   handleGetBookError(err) {

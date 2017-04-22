@@ -300,7 +300,7 @@ def getBook(bookId):
       res.addError('Data error', 'Unable to retrive book.')
       status = 400
     else:
-      res.addToPayload('book', book)
+      res.setPayload(book)
   return ResponseCreation.createResponse(res,status)
 
 @app.route('/books', methods=['GET', 'OPTIONS'])

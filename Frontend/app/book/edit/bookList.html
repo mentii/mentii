@@ -1,15 +1,72 @@
 <div class="row">
   <div class="col-xs-12 col-md-12">
     <h2>Edit A Book</h2>
-    <p>Select a book below to edit</p>
+    <p *ngIf="!editMode">Select a book below to edit</p>
+    <p *ngIf="editMode">
+      <strong>Note: </strong>Form will reset if you navigate away from this page before saving changes
+    </p>
   </div>
 </div>
-<div class="row">
+
+<!-- Show when books are loading -->
+<div class="col-xs-12" *ngIf="isLoading">
+  <i class="fa fa-spinner fa-spin"></i> Loading books...
+</div>
+
+<!-- Show when there are no books -->
+<div *ngIf="!books.length && !isLoading">
+  <div class="empty-state text-center">
+    <i class="fa fa-bookmark fa-5x" aria-hidden="true"></i>
+    <h2>No books to edit</h2>
+  </div>
+</div>
+
+<!-- Show when not in edit mode -->
+<div class="row" *ngIf="!isLoading && !editMode">
   <div class="col-xs-12 col-md-12">
-      <bookListItem
-        *ngFor="let book of books"
-        [title]="book.title"
-        [id]="book.bookId">
-      </bookListItem>
+    <bookListItem
+      *ngFor="let book of books"
+      [book]="book"
+      (selection)="editBook($event)"
+      >
+    </bookListItem>
+  </div>
+</div>
+
+<!-- Only show when in edit mode -->
+<div class="row" *ngIf="editMode">
+  <div class="col-xs-12 col-md-12">
+    <form [formGroup]="createBookForm" (ngSubmit)="submit(createBookForm)">
+      <!-- Title -->
+      <div class="form-group">
+        <label class="required" for="title">Title</label>
+        <input type="text" class="form-control" formControlName="title" placeholder="Algebra" clearPlaceholder>
+        <span [hidden]="createBookForm.controls.title.pristine || createBookForm.controls.title.valid" class="text-danger">
+          Book title must be at least 5 characters long.
+        </span>
+      </div>
+      <!-- Description -->
+      <div class="form-group">
+        <label class="required" for="description">Description</label>
+        <textarea class="form-control" rows="3" formControlName="description" placeholder="Common Core Highschool Algebra" clearPlaceholder></textarea>
+        <span [hidden]="createBookForm.controls.description.pristine || createBookForm.controls.description.valid" class="text-danger">
+          Book description is required.
+        </span>
+      </div>
+      <!-- Chapters -->
+      <div class="form-group">
+        <label>Chapters</label>
+        <chapterList
+          formArrayName="chapters"
+          [chaptersArray]="createBookForm.get('chapters')"
+          hideNgInvalid>
+        </chapterList>
+      </div>
+      <p class="text-danger">* Required Fields</p>
+      <button type="submit" class="btn btn-primary" [disabled]="!createBookForm.valid">
+        Save Changes
+      </button>
+    </form>
+    <button class="btn btn-default" (click)="toggleEditMode()">Cancel</button>
   </div>
 </div>

@@ -1,6 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
-import { BookService } from '../book.service';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { BookModel } from '../book.model';
 
 @Component({
   moduleId: module.id,
@@ -8,17 +7,26 @@ import { BookService } from '../book.service';
   templateUrl: 'bookListItem.html'
 })
 
-export class BookListItemComponent {
+export class BookListItemComponent implements OnInit {
 
-  @Input('title')
-  public title : string;
+  @Input('book')
+  public book;
 
-  @Input('id')
-  public id :string;
+  @Output() selection = new EventEmitter();
 
-  constructor(public bookService: BookService, public toastr: ToastrService){ }
+  title: string;
+  model = new BookModel('','',[]);
 
-  goToForm() {
-    //go to edit book form
+  constructor(){ }
+
+  ngOnInit() {
+    this.title = this.book.title;
+    this.model.title = this.book.title;
+    this.model.description = this.book.description;
+    this.model.chapters = this.book.chapters;
+  }
+
+  selectBook() {
+    this.selection.emit({'model':this.model, 'bookId': this.book.bookId });
   }
 }

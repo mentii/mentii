@@ -44,8 +44,8 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   showBadStepColor = false;
   panelClass = 'panel panel-default';
 
-  //default all bad steps in tree are shown
-  selectedStepLimit = -1;
+  //default show only one bad step
+  selectedStepLimit = 1;
   stepLimit = 0;
 
   constructor(public problemService: ProblemService, public toastr: ToastrService, public router: Router, private activatedRoute: ActivatedRoute){
@@ -128,7 +128,7 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     this.problemService.postProblemSuccess(this.classCode, this.problemCode, this.problemIndex, "True")
       .subscribe();
   }
-  
+
   sendFailUpdate() {
     this.problemService.postProblemSuccess(this.classCode, this.problemCode, this.problemIndex, "")
       .subscribe();

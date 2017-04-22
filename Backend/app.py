@@ -284,19 +284,38 @@ def createBook():
       status = 400
   return ResponseCreation.createResponse(res,status)
 
+@app.route('/book/<bookId>', methods=['GET'])
+@auth.login_required
+def getBook(bookId):
+  status = 200
+  res = ResponseCreation.ControllerResponse()
+  role = g.authenticatedUser['userRole']
+  if role != "teacher" and role != "admin" :
+    res.addError('Role error', 'Only those with teacher privileges can get a book.')
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    book = book_ctrl.getBook(bookId, dynamoDBInstance)
+    if not book:
+      res.addError('Data error', 'Unable to retrive book.')
+      status = 400
+    else:
+      res.addToPayload('book', book)
+  return ResponseCreation.createResponse(res,status)
+
 @app.route('/books', methods=['GET', 'OPTIONS'])
 @auth.login_required
 @handleOptionsRequest
-def getBooks():
+def getBookList():
   status = 200
   res = ResponseCreation.ControllerResponse()
+  role = g.authenticatedUser['userRole']
   if role != "teacher" and role != "admin" :
-    res = ResponseCreation.ControllerResponse()
     res.addError('Role error', 'Only those with teacher privileges can get all books.')
     status = 403
   else:
     dynamoDBInstance = getDatabaseClient()
-    res = book_ctrl.getBooks(dynamoDBInstance)
+    res = book_ctrl.getBookList(dynamoDBInstance)
     if res.hasErrors():
       status = 400
   return ResponseCreation.createResponse(res,status)

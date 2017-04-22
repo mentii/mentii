@@ -25,7 +25,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   editMode = false;
   newActivity = null;
   books:Array<Object> = [];
-  booksDefault = {id: undefined, name: 'Select a Textbook'};
+  booksDefault = {id: undefined, title: 'Select a Textbook'};
   chapters:Array<Object> = [];
   chaptersDefault = {id: undefined, title: 'Select a Chapter'};
   sections:Array<Object> = [];
@@ -82,7 +82,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
 
     this.bookService.getAllBookTitlesAndIds()
       .subscribe(
-        data => this.booksRecived(data.json().payload),
+        data => this.booksRecived(data.json().payload.books),
         err => this.handleGetBooksError(err)
       );
   }
@@ -103,7 +103,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   }
 
   booksRecived(books) {
-    this.books = books
+    this.books = this.books.concat(books);
     this.isModalShown = true;
   }
 
@@ -132,7 +132,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   }
 
   bookRecived(book) {
-    this.chapters = book.chapters; //TODO: there will need to be some logic to get all chapters from book
+    console.log(book)
   }
 
   handleGetBookError(err) {

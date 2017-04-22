@@ -135,7 +135,7 @@
               <div class="form-group">
                 <label class="required">Book</label>
                 <select class="form-control" [(ngModel)]="newActivity.bookId" #newActivity.bookId="ngModel" name="book" (change)="bookSelected()">
-                  <option *ngFor="let book of books" [value]="book.id" [disabled]="!book.id">{{book.name}}</option>
+                  <option *ngFor="let book of books" [value]="book.id" [disabled]="!book.id">{{book.title}}</option>
                 </select>
               </div>
             </div>

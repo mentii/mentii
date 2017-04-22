@@ -31,11 +31,8 @@ export class BookService {
   }
 
   getBook(bookId: String):Observable<any> {
-    let getBookUrl = this.mentiiConfig.getRootUrl() + '/book';
-    let body = {
-      "id": bookId
-    }
-    return this.authHttp.get(getBookUrl, body)
+    let getBookUrl = this.mentiiConfig.getRootUrl() + '/book/' + bookId;
+    return this.authHttp.get(getBookUrl)
       .map((res:Response) => res)
       .catch((error:any) => Observable.throw(error));
   }

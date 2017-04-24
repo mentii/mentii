@@ -6,7 +6,6 @@
   <!-- Only show if the api done loading -->
   <div class="col-xs-12 col-md-8" *ngIf="!isLoading && !editMode">
     <div class="row">
-      <button *ngIf="showTeacherView" class="btn btn-default pull-right" (click)="toggleEditMode()">Edit Class</button>
       <div class="col-xs-12">
         <h2>
           {{model.title}}
@@ -78,6 +77,11 @@
                 This panel is only visible to the teacher of this class.
               </em>
             </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <button class="btn btn-default" (click)="toggleEditMode()">Edit Class Details</button>
           </div>
         </div>
         <div class="row">

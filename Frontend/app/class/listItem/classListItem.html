@@ -13,6 +13,7 @@
     <button class="btn btn-sm btn-primary" (click)="joinClass(classObject.code)" *ngIf="joinClassButtonShown" [ladda]="isJoinClassInprogress">
       Join {{classObject.title}}
     </button>
-    <a [routerLink]="['/class/', classObject.code]" class="btn btn-sm btn-info">View Class Detail Page</a>
+    <a [routerLink]="['/class/', classObject.code]" class="btn btn-sm btn-info">View Class Details</a>
+    <a *ngIf="editClassButtonShown" [routerLink]="['/class/', classObject.code]" [queryParams]="{edit:true}" class="btn btn-sm btn-info">Edit Class Details</a>
   </div>
 </div>

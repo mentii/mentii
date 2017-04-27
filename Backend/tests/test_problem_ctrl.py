@@ -39,7 +39,8 @@ class ProblemCtrlTests(unittest.TestCase):
     bookId = 'd6742cc-f02d-4fd6-80f0-026784g1ab9b'
     chapterTitle = 'Chapter 1'
     sectionTitle = 'Section 2'
-    problem = problem_ctrl.getProblemFromBook(bookId, chapterTitle, sectionTitle, dynamodb)
+    user = 'new@User.com'
+    index, problem = problem_ctrl.getProblemFromBook(bookId, chapterTitle, sectionTitle, user, dynamodb)
     self.assertNotEqual(problem, 'Bad Problem') #Problem is a random problem. can't hard code it. 
 
   def test_getBookInfoFromActivity(self):
@@ -49,7 +50,34 @@ class ProblemCtrlTests(unittest.TestCase):
     self.assertEqual(bookId, 'd6742cc-f02d-4fd6-80f0-026784g1ab9b')
     self.assertEqual(chapterTitle,'Chapter 1')
     self.assertEqual(sectionTitle, 'Section 2')
+
+  def test_chooseProblemTemplate(self):
+    templateList = [{'problemString':'a'}, {'problemString': 'b'}, {'problemString': 'c'}, {'problemString': 'd'}]
+    userHistoryList = [0, -1, 3, 0]
+    index, template = problem_ctrl.chooseProblemTemplate(templateList, userHistoryList)
     
+    self.assertTrue(template != 'Bad Problem')
+    self.assertTrue(index < len(templateList))
+    
+    templateList = []
+    userHistoryList = [0, -1, 3, 0]
+    index, template = problem_ctrl.chooseProblemTemplate(templateList, userHistoryList)
+    
+    self.assertTrue(template == 'Bad Problem')
+
+  def test_updateUserTemplateHistory(self):
+    classId = 'd26713cc-f02d-4fd6-80f0-026784d1ab9b'
+    activityTitle = 'Week 1' 
+    userId = 'test@mentii.me'
+    index = 1
+    didSucceed = True
+    res = problem_ctrl.updateUserTemplateHistory(classId, activityTitle, userId, index, didSucceed, dynamodb)
+    self.assertTrue(not res.hasErrors())
+
+    didSucceed = False
+    res = problem_ctrl.updateUserTemplateHistory(classId, activityTitle, userId, index, didSucceed, dynamodb)
+    self.assertTrue(not res.hasErrors())
+
 if __name__ == '__main__':
   if __package__ is None:
     import sys

@@ -30,6 +30,9 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   activeBadStepCount = 0;
   badStepShown = false;
   problemIsComplete = false;
+  problemIndex = 0;
+  classCode = '';
+  problemCode = '';
 
   stepIsBeingCorrected = false;
   correctionModel = {
@@ -41,8 +44,8 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   showBadStepColor = false;
   panelClass = 'panel panel-default';
 
-  //default all bad steps in tree are shown
-  selectedStepLimit = -1;
+  //default show only one bad step
+  selectedStepLimit = 1;
   stepLimit = 0;
 
   constructor(public problemService: ProblemService, public toastr: ToastrService, public router: Router, private activatedRoute: ActivatedRoute){
@@ -93,6 +96,7 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     console.log('Active Step Count: ' + this.activeBadStepCount);
     console.log('Step Limit: ' + this.stepLimit);
     if (this.activeBadStepCount >= this.stepLimit) {
+      this.sendFailUpdate();
       this.toastr.error("This doesn't seem quite right", "Uh Oh");
     } else {
       this.activeBadStepCount++;
@@ -113,18 +117,29 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   }
 
   returnToClassPage() {
+    this.sendSuccessUpdate();
     this.activatedRoute.params.subscribe(params => {
       let classCode = params['classCode'];
       this.router.navigateByUrl('/class/' + classCode);
     });
   }
 
+  sendSuccessUpdate() {
+    this.problemService.postProblemSuccess(this.classCode, this.problemCode, this.problemIndex, "True")
+      .subscribe();
+  }
+
+  sendFailUpdate() {
+    this.problemService.postProblemSuccess(this.classCode, this.problemCode, this.problemIndex, "")
+      .subscribe();
+  }
+
   ngOnInit() {
     this.routeSub = this.activatedRoute.params.subscribe(params => {
       // grab codes out of the URL
-      let classCode = params['classCode'];
-      let problemCode = params['problemCode'];
-      this.problemService.getProblemSteps(classCode,problemCode)
+      this.classCode = params['classCode'];
+      this.problemCode = params['problemCode'];
+      this.problemService.getProblemSteps(this.classCode,this.problemCode)
       .subscribe(
         data => this.handleInitSuccess(data.json()),
         err => this.handleInitError(err)
@@ -139,6 +154,7 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   handleInitSuccess(data) {
     //save the problem
     this.problemTree = data.payload.problemTree;
+    this.problemIndex = data.payload.problemIndex;
     //save the equation being solved as different variable
     this.problem = data.payload.problemTree[0].correctStep;
     this.isLoading = false;

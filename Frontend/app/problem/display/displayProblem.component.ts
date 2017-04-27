@@ -89,18 +89,17 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
       // if more steps exist, increment the counter so the next good step is shown on the page
       this.activeStepCount++;
     }
+    this.scrollToBottom();
   }
 
   showNextBadStep(){
-    // TODO print for testing purposes, will remove in final product
-    console.log('Active Step Count: ' + this.activeBadStepCount);
-    console.log('Step Limit: ' + this.stepLimit);
     if (this.activeBadStepCount >= this.stepLimit) {
       this.sendFailUpdate();
       this.toastr.error("This doesn't seem quite right", "Uh Oh");
     } else {
       this.activeBadStepCount++;
     }
+    this.scrollToBottom();
   }
 
   incorrectBadStep(badStepIndex: number, problemStep: string) {
@@ -188,5 +187,9 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     } else{
       this.panelClass = 'panel panel-default';
     }
+    }
+
+  scrollToBottom(){
+    window.scrollTo(0, document.body.scrollHeight);
   }
 }

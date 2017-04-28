@@ -77,8 +77,9 @@ def getStepsForProblem(problem):
     ''
   ]
 
-  stringStepList = str(disallowedChangeTypes)
-  stringAllowBadSteps = str(allowSubSteps)
+  stringStepList = json.dumps(disallowedChangeTypes)
+  stringAllowBadSteps = json.dumps(allowSubSteps)
+
 
   mathstepsFile = os.path.dirname(os.path.abspath(__file__)) + "/index.js"
   problemStepsJson = subprocess.check_output(['node', mathstepsFile, problem, stringStepList, stringAllowBadSteps])

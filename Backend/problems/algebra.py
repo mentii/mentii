@@ -2,6 +2,7 @@ import mathstepsWrapper as mathsteps
 from utils.ResponseCreation import ControllerResponse
 import random
 from algebraTemplate import ProblemGenerator
+import re
 import utils.MentiiLogging as MentiiLogging
 
 def getProblem(problemTemplate):
@@ -34,19 +35,95 @@ def getProblem(problemTemplate):
   
   return problem
 
+def dropTerm(step):
+  '''
+  Always drop the right most term 
+  '''
+  regex = '(\+|-|\*|/){1}\s*\d+' #Will match any number after an operator
+  termList = [m.start() for m in re.finditer(regex, step)]
+  res = step
+  if len(termList) > 0:
+    lastTerm = termList[-1]
+    badStep = step[0:lastTerm] #Get everything upto but not inlcuding the last term. 
+    #Check to make sure we didnt drop the coefficent of x
+    xIndex = step.index('x')
+    newXIndex = badStep.index('x')
+    if step[xIndex-1] != badStep[newXIndex - 1 ]: #The coeffiecent of X was dropped :( 
+      badstep = step
+    res = badStep
+
+  return res
+
+
+def swapSign(step):
+  signs = [m.start() for m in re.finditer('(\+|-)', step)]
+  res = step
+  if len(signs) > 0:
+    signToSwap = random.choice(signs)
+    badStep = list(step)
+    if step[signToSwap] == '+':
+      badStep[signToSwap] = '-'
+    else:
+      badStep[signToSwap] = '+'
+    res = ''.join(badStep)
+
+  return res
+
+def swapOperator(step):
+  operators = [m.start() for m in re.finditer('(\+|-|\*|/)', step)]
+  res = step
+  if len(operators) > 0:
+    signToSwap = random.choice(operators)
+    badStep = list(step)
+    if step[signToSwap] == '+':
+      badStep[signToSwap] = '*'
+    elif step[signToSwap] == '-':
+      badStep[signToSwap] = '/'
+    elif step[signToSwap] == '/':
+      badStep[signToSwap] = '*'
+    elif step[signToSwap] == '*':
+      badStep[signToSwap] = '/'
+    res = ''.join(badStep)
+    
+  
+  return res
+  
+
+def swapNumbers(step):
+  numbers = [(m.start(), m.end()) for m in re.finditer('\d+', step)]
+  print(numbers)
+  res = step
+  if len(numbers) > 1:
+    firstNum, secondNum = random.sample(numbers, 2)
+    print(firstNum)
+    print(secondNum)
+    if firstNum[0] > secondNum[0]:
+      firstNum, secondNum = secondNum, firstNum
+    badStep = []
+    #Get everything upto the first number's start
+    badStep.append(step[0:firstNum[0]])
+    #Add the second number
+    badStep.append(step[secondNum[0]:secondNum[1]])
+    #Get everything from the first number's end to the second number start
+    badStep.append(step[firstNum[1]:secondNum[0]])
+    #Add the first number
+    badStep.append(step[firstNum[0]:firstNum[1]])
+    #Get everything from the second number's end to the end
+    badStep.append(step[secondNum[1]:])
+    res = ''.join(badStep)
+
+  
+  return res
+
 def modifyStep(step):
   badStep = step
-  #modify step
-  if(badStep.find('*') != -1):
-    badStep = badStep.replace('*', "/")
-  elif(badStep.find('/') != -1):
-    badStep = badStep.replace('/', "*")
-  elif(badStep.find('+') != -1):
-    badStep = badStep.replace('+', "-")
-  elif(badStep.find('-') != -1):
-    badStep = badStep.replace('-', "+")
+  success = False
+  modifications = [dropTerm, swapSign, swapOperator, swapNumbers]
+  modfunc = random.choice(modifications)
+  badStep = modfunc(badStep)
+  success = badStep != step
 
-  return badStep
+  return (badStep, success)
 
 
 def getProblemTree(problemTemplate):
@@ -89,9 +166,10 @@ def generateTreeWithBadSteps(problemSolutionPath, numOfFailurePoints, failurePoi
   # for each failure point generate the bad step and path
   for step in failurePoints:
     failureIndex = problemSolutionPath.index(step)
-    badStep = modifyStep(step)
-    badStepPath = mathsteps.getStepsForProblem(badStep)
-    response[failureIndex]['badStep'] = badStep
-    response[failureIndex]['badStepPath'] = badStepPath
+    successful, badStep = modifyStep(step)
+    if successful:
+      badStepPath = mathsteps.getStepsForProblem(badStep)
+      response[failureIndex]['badStep'] = badStep
+      response[failureIndex]['badStepPath'] = badStepPath
 
   return response

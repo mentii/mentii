@@ -4,7 +4,7 @@ import os
 import json
 
 def getStepsForProblem(problem):
-  allowSubSteps = True; # Changing this to false will prevent all substeps from showing
+  allowSubSteps = False; # Changing this to false will prevent all substeps from showing
 
   # Uncomment lines for types of changes you do not want to occur within mathsteps as a
   # normal step or substep

@@ -39,7 +39,7 @@ def dropTerm(step):
   '''
   Always drop the right most term 
   '''
-  regex = '(\+|-|\*|/){1}\s*\d+' #Will match any number after an operator
+  regex = '(\+|-|\*|/| )+\s*\d+' #Will match any number after an operator
   termList = [m.start() for m in re.finditer(regex, step)]
   res = step
   if len(termList) > 0:
@@ -51,6 +51,9 @@ def dropTerm(step):
     if step[xIndex-1] != badStep[newXIndex - 1 ]: #The coeffiecent of X was dropped :( 
       badstep = step
     res = badStep
+
+    if not '=' in res or res[-1] == '=':
+      res = step
 
   return res
 
@@ -84,13 +87,16 @@ def swapOperator(step):
     elif step[signToSwap] == '*':
       badStep[signToSwap] = '/'
     res = ''.join(badStep)
+
+    if step[signToSwap+1] == 'x':
+      res = step
     
   
   return res
   
 
 def swapNumbers(step):
-  numbers = [(m.start(), m.end()) for m in re.finditer('\d+', step)]
+  numbers = [(m.start(), m.end()) for m in re.finditer('-?\d+', step)]
   res = step
   if len(numbers) > 1:
     firstNum, secondNum = random.sample(numbers, 2)
@@ -112,10 +118,17 @@ def swapNumbers(step):
   
   return res
 
+def newTerm(step):
+  op = random.choice(["+", "-"])
+  num = random.choice(xrange(-10, 10))
+  term = " {0} {1}".format(op, num)
+  res = step + term
+  return res
+
 def modifyStep(step):
   badStep = step
   success = False
-  modifications = [dropTerm, swapSign, swapOperator, swapNumbers]
+  modifications = [dropTerm, swapSign, swapOperator, swapNumbers, newTerm]
   modfunc = random.choice(modifications)
   badStep = modfunc(badStep)
   success = badStep != step

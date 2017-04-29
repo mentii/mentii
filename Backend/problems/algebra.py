@@ -73,14 +73,14 @@ def swapSign(step):
   return res
 
 def swapOperator(step):
-  operators = [m.start() for m in re.finditer('(\+|-|\*|/)', step)]
+  operators = [m.start() for m in re.finditer('(\+|-|\*|/){1}', step)]
   res = step
   if len(operators) > 0:
     signToSwap = random.choice(operators)
     badStep = list(step)
     if step[signToSwap] == '+':
       badStep[signToSwap] = '*'
-    elif step[signToSwap] == '-':
+    elif step[signToSwap] == '-' and step[signToSwap+1] == ' ':
       badStep[signToSwap] = '/'
     elif step[signToSwap] == '/':
       badStep[signToSwap] = '*'
@@ -128,10 +128,12 @@ def newTerm(step):
 def modifyStep(step):
   badStep = step
   success = False
-  modifications = [dropTerm, swapSign, swapOperator, swapNumbers, newTerm]
-  modfunc = random.choice(modifications)
-  badStep = modfunc(badStep)
-  success = badStep != step
+  containsNegOne = r'-1(?:[^\d]|$)'
+  if not re.search(containsNegOne, step):
+    modifications = [dropTerm, swapSign, swapOperator, swapNumbers, newTerm]
+    modfunc = random.choice(modifications)
+    badStep = modfunc(badStep)
+    success = badStep != step
 
   return (badStep, success)
 

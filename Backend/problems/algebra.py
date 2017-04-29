@@ -102,18 +102,19 @@ def swapNumbers(step):
     firstNum, secondNum = random.sample(numbers, 2)
     if firstNum[0] > secondNum[0]:
       firstNum, secondNum = secondNum, firstNum
-    badStep = []
-    #Get everything upto the first number's start
-    badStep.append(step[0:firstNum[0]])
-    #Add the second number
-    badStep.append(step[secondNum[0]:secondNum[1]])
-    #Get everything from the first number's end to the second number start
-    badStep.append(step[firstNum[1]:secondNum[0]])
-    #Add the first number
-    badStep.append(step[firstNum[0]:firstNum[1]])
-    #Get everything from the second number's end to the end
-    badStep.append(step[secondNum[1]:])
-    res = ''.join(badStep)
+    if '=' in step[firstNum[1]:secondNum[0]]:#This means the swap is across the equal sign. If it isn't we don't do it.
+      badStep = []
+      #Get everything upto the first number's start
+      badStep.append(step[0:firstNum[0]])
+      #Add the second number
+      badStep.append(step[secondNum[0]:secondNum[1]])
+      #Get everything from the first number's end to the second number start
+      badStep.append(step[firstNum[1]:secondNum[0]])
+      #Add the first number
+      badStep.append(step[firstNum[0]:firstNum[1]])
+      #Get everything from the second number's end to the end
+      badStep.append(step[secondNum[1]:])
+      res = ''.join(badStep)
 
   
   return res

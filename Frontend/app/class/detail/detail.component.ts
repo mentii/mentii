@@ -27,6 +27,12 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   ){}
 
   ngOnInit() {
+    this.activatedRoute.queryParams.subscribe(qParams => {
+      if(qParams['edit'] == 'true') {
+        this.editMode = true;
+      }
+    });
+
     this.routeSub = this.activatedRoute.params.subscribe(params => {
       this.model.code = params['id'];
       this.classService.getClass(this.model.code)

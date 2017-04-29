@@ -15,7 +15,7 @@
     </div>
     <div class="row" *ngFor="let class of classes;">
       <div class="col-xs-12">
-        <class-list-item [classObject]="class"></class-list-item>
+        <class-list-item [editClassButtonShown]="true" [classObject]="class"></class-list-item>
       </div>
     </div>
   </div>

@@ -13,6 +13,7 @@ export class ClassListItemComponent {
   @Input() classObject;
   @Input() classDetailsButton;
   @Input() joinClassButtonShown;
+  @Input() editClassButtonShown;
   isJoinClassInprogress = false;
 
   constructor(public toastr: ToastrService, public router: Router, public userService: UserService ){

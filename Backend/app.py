@@ -236,17 +236,39 @@ def changeUserRole():
       status = 400
   return ResponseCreation.createResponse(res,status)
 
-@app.route('/problem/<classId>/<activity>/', methods=['GET', 'OPTIONS'])
+@app.route('/problem/<classId>/<activity>/', methods=['POST', 'GET', 'OPTIONS'])
 @auth.login_required
 @handleOptionsRequest
 def problemSteps(classId, activity):
-  status = 200
-  dynamoDBInstance = getDatabaseClient()
-  problem = problem_ctrl.getProblemTemplate(classId, activity, dynamoDBInstance)
-  res = algebra.getProblemTree(problem)
-  if res.hasErrors():
-    status = 400
+  res = ResponseCreation.ControllerResponse()
+  res.addError('Invalid request', 'An error occurred')
+  status = 400
+  userId = g.authenticatedUser['email']
+  if request.method == 'GET':
+    #Get the problem tree
+    status = 200
+    dynamoDBInstance = getDatabaseClient()
+    index, problem = problem_ctrl.getProblemTemplate(classId, activity, userId, dynamoDBInstance)
+    res = algebra.getProblemTree(problem)
+    if res.hasErrors():
+      status = 461
+    else:
+      res.addToPayload('problemIndex', index)
+  elif request.method == 'POST':
+    #Post the students results
+    dynamoDBInstance = getDatabaseClient()
+    try:
+      status = 200
+      problemIndex = int(request.json.get('problemIndex', ''))
+      didSucceed = request.json.get('didSucceed', 'True') == 'True'
+      res = problem_ctrl.updateUserTemplateHistory(classId, activity, userId, problemIndex, didSucceed, dynamoDBInstance)
+      if res.hasErrors():
+        status = 462
+    except ValueError, TypeError:
+      pass
+
   return ResponseCreation.createResponse(res,status)
+
 
 @app.route('/classes/remove', methods=['POST', 'OPTIONS'])
 @auth.login_required

@@ -25,7 +25,8 @@
       </span>
     </div>
     <p class="lead" *ngIf="problem">
-      Equation I'm trying to solve: <em>{{problem}}</em>
+      <img src="http://app.mentii.me/favicon/favicon-32.png" alt="Mentii Logo"> I'm working on this problem, can you help me solve for x?<br/><br/>
+      <strong><em>{{problem}}</em></strong>
     </p>
   </div>
 </div>
@@ -47,12 +48,17 @@
           </div>
           <!-- Only show the buttons in the panel for the current step -->
           <div class="panel-body">
-            <button class="btn btn-primary btn-sm" (click)="showNextStep()" *ngIf="goodStepIndex==activeStepCount">
-              Continue to Next Step
-            </button>
+            <button class="btn btn-primary btn-sm" (click)="showNextStep()" *ngIf="goodStepIndex==activeStepCount && goodStepIndex != problemTree.length-1">Correct, go on Mentii</button>
+
+            <!-- Only show this button when we've reached the a solution -->
+            <button class="btn btn-primary btn-sm" (click)="showNextStep()" *ngIf="goodStepIndex==activeStepCount && goodStepIndex == problemTree.length-1">Confirm solution</button>
+
             <!-- Don't show this button if we are on the first good step, that's the problem declaration -->
-            <button class="btn btn-danger btn-sm" (click)="incorrectGoodStep()" *ngIf="goodStepIndex != 0">
-              This Step is Incorrect
+            <button class="btn btn-danger btn-sm" (click)="incorrectGoodStep()" *ngIf="goodStepIndex != 0 && goodStepIndex == activeStepCount">
+              Something looks wrong Mentii
+            </button>
+            <button class="lightBadStep btn btn-sm" (click)="incorrectGoodStep()" *ngIf="goodStepIndex != 0 && goodStepIndex != activeStepCount">
+              Something looks wrong Mentii
             </button>
           </div>
         </div>
@@ -73,10 +79,10 @@
             <div class="panel-body">
               <div *ngIf="!stepIsBeingCorrected">
                 <button class="btn btn-primary btn-sm" (click)="showNextBadStep()" *ngIf="badStepIndex==activeBadStepCount">
-                  Continue to Next Step
+                  Correct, go on Mentii
                 </button>
                 <button class="btn btn-danger btn-sm" (click)="incorrectBadStep(badStepIndex,badStep)">
-                  This Step is Incorrect
+                  Something looks wrong Mentii
                 </button>
               </div>
               <form #applyCorrectionForm="ngForm" autocomplete="off" class="form-inline" *ngIf="stepIsBeingCorrected && badStepIndex==0">
@@ -86,7 +92,7 @@
                 </div>
 
                 <button type='button' class="btn btn-primary" [disabled]="!applyCorrectionForm.form.valid" (click)="applyCorrection()">
-                  Apply Correction
+                  Correct Mentii
                 </button>
                 <button type='button' class="btn btn-default" (click)="cancelCorrection()">
                   Cancel
@@ -105,7 +111,7 @@
   <div class="row">
     <div class="col-xs-12">
       <h4 class="text-success">
-        <i class="fa fa-check"></i> You've Successfully Completed this Problem
+        <i class="fa fa-check"></i> You've Successfully Helped Mentii!
       </h4>
     </div>
   </div>

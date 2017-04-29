@@ -91,12 +91,9 @@ def swapOperator(step):
 
 def swapNumbers(step):
   numbers = [(m.start(), m.end()) for m in re.finditer('\d+', step)]
-  print(numbers)
   res = step
   if len(numbers) > 1:
     firstNum, secondNum = random.sample(numbers, 2)
-    print(firstNum)
-    print(secondNum)
     if firstNum[0] > secondNum[0]:
       firstNum, secondNum = secondNum, firstNum
     badStep = []
@@ -166,7 +163,7 @@ def generateTreeWithBadSteps(problemSolutionPath, numOfFailurePoints, failurePoi
   # for each failure point generate the bad step and path
   for step in failurePoints:
     failureIndex = problemSolutionPath.index(step)
-    successful, badStep = modifyStep(step)
+    badStep, successful = modifyStep(step)
     if successful:
       badStepPath = mathsteps.getStepsForProblem(badStep)
       response[failureIndex]['badStep'] = badStep

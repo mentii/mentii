@@ -99,6 +99,14 @@ h6 {
   padding-bottom: 30px;
 }
 
+.cursor-pointer:hover {
+  cursor: pointer;
+}
+
+#removeStudentIcon {
+  margin-right: 5px;
+}
+
 @media (max-width:767px){
   .divider {
         height: 1px;

@@ -120,7 +120,7 @@ def swapNumbers(step):
 
 def newTerm(step):
   op = random.choice(["+", "-"])
-  num = random.choice(xrange(-10, 10))
+  num = random.choice(xrange(0, 10))
   term = " {0} {1}".format(op, num)
   res = step + term
   return res

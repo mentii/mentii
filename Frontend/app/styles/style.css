@@ -126,7 +126,7 @@ label.required::before {
   background: linear-gradient(to bottom, #d64f4f 0, #e04343 100%);
 }
 
-.lightBadStep:hover {
+.lightBadStep:hover{
   color: #ffffff;
   background: linear-gradient(to bottom, #fb0207 0, #be0205 100%);
 }

@@ -51,6 +51,39 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   constructor(public problemService: ProblemService, public toastr: ToastrService, public router: Router, private activatedRoute: ActivatedRoute){
   }
 
+  ngOnInit() {
+    this.routeSub = this.activatedRoute.params.subscribe(params => {
+      // grab codes out of the URL
+      this.classCode = params['classCode'];
+      this.problemCode = params['problemCode'];
+      this.problemService.getProblemSteps(this.classCode,this.problemCode)
+      .subscribe(
+        data => this.handleInitSuccess(data.json()),
+        err => this.handleInitError(err)
+      );
+    });
+  }
+
+  ngOnDestroy() {
+    this.routeSub.unsubscribe();
+  }
+
+  handleInitSuccess(data) {
+    //save the problem
+    this.problemTree = data.payload.problemTree;
+    this.problemIndex = data.payload.problemIndex;
+    //save the equation being solved as different variable
+    this.problem = data.payload.problemTree[0].correctStep;
+    this.isLoading = false;
+  }
+
+  handleInitError(err) {
+    this.isLoading = false;
+    if (!err.isAuthenticationError) {
+      this.toastr.error('The problem steps failed to load.');
+    }
+  }
+
   applyCorrection() {
     let trimmedCorrection = this.correctionModel.correction.replace(/\s+/g, ''); // Removed all whitespace
     let trimmedActual = this.problemTree[this.activeStepCount].correctStep.replace(/\s+/g, ''); // Removed all whitespace
@@ -131,39 +164,6 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   sendFailUpdate() {
     this.problemService.postProblemSuccess(this.classCode, this.problemCode, this.problemIndex, "")
       .subscribe();
-  }
-
-  ngOnInit() {
-    this.routeSub = this.activatedRoute.params.subscribe(params => {
-      // grab codes out of the URL
-      this.classCode = params['classCode'];
-      this.problemCode = params['problemCode'];
-      this.problemService.getProblemSteps(this.classCode,this.problemCode)
-      .subscribe(
-        data => this.handleInitSuccess(data.json()),
-        err => this.handleInitError(err)
-      );
-    });
-  }
-
-  ngOnDestroy() {
-    this.routeSub.unsubscribe();
-  }
-
-  handleInitSuccess(data) {
-    //save the problem
-    this.problemTree = data.payload.problemTree;
-    this.problemIndex = data.payload.problemIndex;
-    //save the equation being solved as different variable
-    this.problem = data.payload.problemTree[0].correctStep;
-    this.isLoading = false;
-  }
-
-  handleInitError(err) {
-    this.isLoading = false;
-    if (!err.isAuthenticationError) {
-      this.toastr.error('The problem steps failed to load.');
-    }
   }
 
   selectStepLimit(limit){

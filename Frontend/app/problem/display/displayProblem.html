@@ -12,7 +12,7 @@
         </button>
       <label for="stepLimit">Bad Step Limit</label>
       <span class="dropdown">
-        <button disabled id="stepLimit" type="button" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button  id="stepLimit" type="button" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span *ngIf="selectedStepLimit < 0">&infin;&nbsp;</span>
           <span *ngIf="selectedStepLimit > 0">{{selectedStepLimit}}&nbsp;</span>
           <span class="caret"></span>
@@ -25,7 +25,7 @@
       </span>
     </div>
     <p class="lead" *ngIf="problem">
-      <img src="http://app.mentii.me/favicon/favicon-32.png" alt="Mentii Logo"> I'm working on this problem, can you help me solve for x?<br/><br/>
+      <img src="http://app.mentii.me/favicon/favicon-32.png" alt="Mentii Logo">: I'm working on this problem, can you help me solve for x?<br/><br/>
       <strong><em>{{problem}}</em></strong>
     </p>
   </div>
@@ -48,17 +48,21 @@
           </div>
           <!-- Only show the buttons in the panel for the current step -->
           <div class="panel-body">
-            <button class="btn btn-primary btn-sm" (click)="showNextStep()" *ngIf="goodStepIndex==activeStepCount && goodStepIndex != problemTree.length-1">Correct, go on Mentii</button>
+            <button class="btn btn-primary btn-sm" (click)="showNextStep()" *ngIf="goodStepIndex==activeStepCount &&
+            goodStepIndex != problemTree.length-1">Correct, go on Mentii</button>
 
-            <!-- Only show this button when we've reached the a solution -->
-            <button class="btn btn-primary btn-sm" (click)="showNextStep()" *ngIf="goodStepIndex==activeStepCount && goodStepIndex == problemTree.length-1">Confirm solution</button>
+            <!-- Only show this button when we've reached a solution -->
+            <button class="btn btn-primary btn-sm" (click)="showNextStep()" *ngIf="goodStepIndex==activeStepCount &&
+            goodStepIndex == problemTree.length-1">Confirm solution</button>
 
             <!-- Don't show this button if we are on the first good step, that's the problem declaration -->
             <button class="btn btn-danger btn-sm" (click)="incorrectGoodStep()" *ngIf="goodStepIndex != 0 && goodStepIndex == activeStepCount">
-              Something looks wrong Mentii
+              Something here looks wrong Mentii
             </button>
+
+            <!-- Only show this button on the non active steps -->
             <button class="lightBadStep btn btn-sm" (click)="incorrectGoodStep()" *ngIf="goodStepIndex != 0 && goodStepIndex != activeStepCount">
-              Something looks wrong Mentii
+              Something here looks wrong Mentii
             </button>
           </div>
         </div>
@@ -78,11 +82,22 @@
             <!-- Only show the buttons on the active bad step -->
             <div class="panel-body">
               <div *ngIf="!stepIsBeingCorrected">
-                <button class="btn btn-primary btn-sm" (click)="showNextBadStep()" *ngIf="badStepIndex==activeBadStepCount">
+                <button class="btn btn-primary btn-sm" (click)="showNextBadStep()" *ngIf="badStepIndex==activeBadStepCount &&
+                badStepIndex != stepLimit">
                   Correct, go on Mentii
                 </button>
-                <button class="btn btn-danger btn-sm" (click)="incorrectBadStep(badStepIndex,badStep)">
-                  Something looks wrong Mentii
+
+                <!-- Only show this button when we've reached a solution -->
+                <button class="btn btn-primary btn-sm" (click)="showNextBadStep()" *ngIf="badStepIndex==activeBadStepCount &&
+                badStepIndex == stepLimit">Confirm solution</button>
+
+                <!-- Only show this button on the non active steps -->
+                <button class="lightBadStep btn btn-sm" (click)="incorrectBadStep(badStepIndex,badStep)" *ngIf="badStepIndex != activeBadStepCount">
+                  Something here looks wrong Mentii
+                </button>
+
+                <button class="btn btn-danger btn-sm" (click)="incorrectBadStep(badStepIndex,badStep)" *ngIf="badStepIndex == activeBadStepCount">
+                  Something here looks wrong Mentii
                 </button>
               </div>
               <form #applyCorrectionForm="ngForm" autocomplete="off" class="form-inline" *ngIf="stepIsBeingCorrected && badStepIndex==0">

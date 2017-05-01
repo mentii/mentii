@@ -32,3 +32,114 @@ class ProblemCtrlTests(unittest.TestCase):
     
     prob5 = algebra.getProblem(badTemplate2)
     self.assertTrue(prob5 == 'Bad Problem')
+
+
+  def test_dropTerm(self):
+    p1 = "5x = 3 - 2"
+    p2 = "2x = 4"
+    p3 = "3 = 1 - 2x"
+    p4 = "Bad Problem"
+    p5 = "x + 1 = 2"
+
+    res = algebra.dropTerm(p1)
+    self.assertTrue(p1 != res)
+    res = algebra.dropTerm(p2)
+    self.assertTrue(p2 == res)
+    res = algebra.dropTerm(p3)
+    self.assertTrue(p3 == res)
+    res = algebra.dropTerm(p4)
+    self.assertTrue(p4 == res)
+    res = algebra.dropTerm(p5)
+    self.assertTrue(p5 == res)
+
+
+
+  def test_swapSign(self):
+    p1 = "5x = 3 - 2"
+    p2 = "2x = 4"
+    p3 = "3 = 1 + 2x"
+    p4 = "Bad Problem"
+    p5 = "x + 1 = 2"
+
+    res = algebra.swapSign(p1)
+    self.assertTrue(p1 != res)
+    res = algebra.swapSign(p2)
+    self.assertTrue(p2 == res)
+    res = algebra.swapSign(p3)
+    self.assertTrue(p3 != res)
+    res = algebra.swapSign(p4)
+    self.assertTrue(p4 == res)
+    res = algebra.swapSign(p5)
+    self.assertTrue(p5 != res)
+
+  def test_swapOperator(self):
+    p1 = "5x = 3 * 2"
+    p2 = "2x = 4 + 5"
+    p3 = "3 = 1 + 2x"
+    p4 = "Bad Problem"
+    p5 = "x / 3 = 2"
+
+    res = algebra.swapOperator(p1)
+    self.assertTrue(p1 != res)
+    res = algebra.swapOperator(p2)
+    self.assertTrue(p2 != res)
+    res = algebra.swapOperator(p3)
+    self.assertTrue(p3 != res)
+    res = algebra.swapOperator(p4)
+    self.assertTrue(p4 == res)
+    res = algebra.swapOperator(p5)
+    self.assertTrue(p5 != res)
+
+  def test_swapNumber(self):
+    p1 = "5x = 3 * 2"
+    p2 = "2x = 4 + 5"
+    p3 = "3 = 1 + 2x"
+    p4 = "Bad Problem"
+    p5 = "x / 3 = 2"
+
+    res = algebra.swapNumbers(p1)
+    self.assertTrue(p1 is not None)
+    res = algebra.swapNumbers(p2)
+    self.assertTrue(p2 is not None)
+    res = algebra.swapNumbers(p3)
+    self.assertTrue(p3 is not None)
+    res = algebra.swapNumbers(p4)
+    self.assertTrue(p4 is not None)
+    res = algebra.swapNumbers(p5)
+    self.assertTrue(p5 is not None)
+
+  def test_newTerm(self):
+    p1 = "5x = 3 * 2"
+    p2 = "2x = 4 + 5"
+    p3 = "3 = 1 + 2x"
+    p4 = "Bad Problem"
+    p5 = "x / 3 = 2"
+
+    res = algebra.newTerm(p1)
+    self.assertTrue(p1 != res)
+    res = algebra.newTerm(p2)
+    self.assertTrue(p2 != res)
+    res = algebra.newTerm(p3)
+    self.assertTrue(p3 != res)
+    res = algebra.newTerm(p4)
+    self.assertTrue(p4 != res)
+    res = algebra.newTerm(p5)
+    self.assertTrue(p5 != res)
+
+  def test_modifyStep(self):
+    p1 = "5x = 3 * 2"
+    p2 = "2x = 4 + 5"
+    p3 = "3 = -1 + 2x"
+    p4 = "Bad Problem"
+    p5 = "x / 3 = 2"
+
+    _, res = algebra.modifyStep(p1)
+    self.assertTrue(res is not None)
+    _, res = algebra.modifyStep(p2)
+    self.assertTrue(res is not None)
+    _, res = algebra.modifyStep(p3)
+    self.assertFalse(res)
+    _, res = algebra.modifyStep(p4)
+    self.assertFalse(res)
+    _, res = algebra.modifyStep(p5)
+    self.assertTrue(res is not None)

@@ -42,15 +42,16 @@ def dropTerm(step):
   regex = '(\+|-|\*|/| )+\s*\d+' #Will match any number after an operator
   termList = [m.start() for m in re.finditer(regex, step)]
   res = step
-  if len(termList) > 0:
+  if len(termList) > 0 and 'x' in step:
     lastTerm = termList[-1]
     badStep = step[0:lastTerm] #Get everything upto but not inlcuding the last term. 
     #Check to make sure we didnt drop the coefficent of x
-    xIndex = step.index('x')
-    newXIndex = badStep.index('x')
-    if step[xIndex-1] != badStep[newXIndex - 1 ]: #The coeffiecent of X was dropped :( 
-      badstep = step
-    res = badStep
+    if 'x' in badStep and 'x' in step:
+      xIndex = step.index('x')
+      newXIndex = badStep.index('x')
+      if step[xIndex-1] != badStep[newXIndex - 1 ]: #The coeffiecent of X was dropped :( 
+        badstep = step
+      res = badStep
 
     if not '=' in res or res[-1] == '=':
       res = step

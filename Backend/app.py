@@ -320,6 +320,26 @@ def getBookList():
       status = 400
   return ResponseCreation.createResponse(res,status)
 
+@app.route('/book/<bookId>/<chapterTitle>/<sectionTitle>/', methods=['GET', 'OPTIONS'])
+@auth.login_required
+@handleOptionsRequest
+def getSampleProblems(bookId, chapterTitle, sectionTitle):
+  status = 200
+  res = ResponseCreation.ControllerResponse()
+  role = g.authenticatedUser['userRole']
+  if role != "teacher" and role != "admin" :
+    res.addError('Role error', 'Only those with teacher privileges can get sample problems from a book.')
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    problemCount = 4
+    problems = [ algebra.getProblem( problem_ctrl.getProblemFromBook( bookId, chapterTitle, sectionTitle, dynamoDBInstance)) for _ in xrange(problemCount)]
+    if 'Bad Problem' in problems:
+      status = 400
+    else:
+      res.addToPayload('problems', problems)
+  return ResponseCreation.createResponse(res, status)
+
 @app.route('/class/details/update', methods=['POST', 'OPTIONS'])
 @auth.login_required
 @handleOptionsRequest

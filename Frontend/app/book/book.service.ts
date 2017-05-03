@@ -43,4 +43,11 @@ export class BookService {
       .map((res:Response) => res)
       .catch((error:any) => Observable.throw(error));
   }
+
+  getSampleProblems(bookId: string, chapterTitle: string, sectionTitle: string) {
+    let getProblemsUrl = this.mentiiConfig.getRootUrl() + '/book/' + bookId + '/' + chapterTitle + '/' + sectionTitle + '/';
+    return this.authHttp.get(getProblemsUrl)
+      .map((res:Response) => res)
+      .catch((error:any) => Observable.throw(error));
+  }
 }

@@ -30,6 +30,8 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   chaptersDefault = {id: undefined, title: 'Select a Chapter'};
   sections:Array<Object> = [];
   sectionsDefault = {id: undefined, title: 'Select a Section'};
+  chapterData = null;
+  sectionData = null;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -77,8 +79,6 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   showActivityModal():void {
     this.newActivity = new ActivityModel('', 5, new Date(), new Date(), undefined, undefined, undefined);
     this.resetBooks();
-    this.resetChapters();
-    this.resetSections();
 
     this.bookService.getAllBookTitlesAndIds()
       .subscribe(
@@ -90,16 +90,23 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   resetBooks() {
     this.books = [];
     this.books.push(this.booksDefault);
+    this.newActivity.bookId = undefined;
+    this.resetChapters();
   }
 
   resetChapters() {
+    this.chapterData = null;
     this.chapters = [];
     this.chapters.push(this.chaptersDefault);
+    this.newActivity.chapterTitle = undefined;
+    this.resetSections();
   }
 
   resetSections() {
+    this.sectionData = null;
     this.sections = [];
     this.sections.push(this.sectionsDefault);
+    this.newActivity.sectionTitle = undefined;
   }
 
   booksRecived(books) {
@@ -122,7 +129,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
 
   bookSelected() {
     this.resetChapters();
-    this.resetSections();
+    this.chapterData = null;
 
     this.bookService.getBook(this.newActivity.bookId)
       .subscribe(
@@ -132,11 +139,11 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   }
 
   bookRecived(book) {
-    for (var chapter of book.chapters) {
-      console.log(chapter)
+    this.chapterData = book.chapters;
+    for (var i = 0; i < this.chapterData.length; i++) {
       this.chapters.push({
-        'id': chapter.title,
-        'title': chapter.title
+        'id': i,
+        'title': this.chapterData[i].title
       })
     }
   }
@@ -146,15 +153,29 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
       this.hideActivityModal();
   }
 
-  chapterSelected() {
+  chapterSelected(chapterIndex) {
     this.resetSections();
-    //TODO: Load from data
-    //this.sections = this.chapters[this.newActivity.chapterTitle]
+    this.newActivity.chapterTitle = this.chapterData[chapterIndex].title;
+    this.sectionData = this.chapterData[chapterIndex].sections;
+    for (var sectionIndex = 0; sectionIndex < this.sectionData.length; sectionIndex++) {
+      this.sections.push({
+        'id': sectionIndex,
+        'title': this.sectionData[sectionIndex].title
+      })
+    }
   }
 
-  sectionSelected() {
-    console.log('section selected:' + this.newActivity.sectionTitle);
-    //TODO: display sample problems
+  sectionSelected(sectionIndex) {
+    console.log('section index selected:' + sectionIndex);
+    this.newActivity.sectionTitle = this.sectionData[sectionIndex].title;
+    this.bookService.getSampleProblems(
+        this.newActivity.bookId,
+        this.newActivity.chapterTitle,
+        this.newActivity.sectionTitle)
+      .subscribe(
+        data => this.bookRecived(data.json().payload),
+        err => this.handleGetBookError(err)
+      );
   }
 
   /* Edit Methods */

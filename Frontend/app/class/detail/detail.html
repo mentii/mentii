@@ -135,23 +135,23 @@
               <div class="form-group">
                 <label class="required">Book</label>
                 <select class="form-control" [(ngModel)]="newActivity.bookId" #newActivity.bookId="ngModel" name="book" (change)="bookSelected()">
-                  <option *ngFor="let book of books" [value]="book.id" [disabled]="!book.id">{{book.title}}</option>
+                  <option *ngFor="let book of books" [value]="book.id" [disabled]="book.id === undefined">{{book.title}}</option>
                 </select>
               </div>
             </div>
             <div class="col-xs-12 col-md-4">
               <div class="form-group">
                 <label class="required">Chapter</label>
-                <select class="form-control" [(ngModel)]="newActivity.chapterTitle" #newActivity.chapterTitle="ngModel" name="chapter" [disabled]="chapters.length < 2" (change)="chapterSelected()">
-                  <option *ngFor="let chapter of chapters" [value]="chapter.id" [disabled]="!chapter.id">{{chapter.title}}</option>
+                <select class="form-control" name="chapter" [disabled]="chapters.length < 2" (change)="chapterSelected($event.target.value)">
+                  <option *ngFor="let chapter of chapters; let i = index" [value]="chapter.id" [disabled]="chapter.id === undefined ">{{chapter.title}}</option>
                 </select>
               </div>
             </div>
             <div class="col-xs-12 col-md-4">
               <div class="form-group">
                 <label class="required">Section</label>
-                <select class="form-control" [(ngModel)]="newActivity.sectionTitle" #newActivity.sectionTitle="ngModel" name="section" [disabled]="sections.length < 2" (change)="sectionSelected()">
-                  <option *ngFor="let section of sections" [value]="id" [disabled]="!section.id">{{section.title}}</option>
+                <select class="form-control"  name="section" [disabled]="sections.length < 2" (change)="sectionSelected($event.target.value)">
+                  <option *ngFor="let section of sections; let i = index" [value]="section.id" [disabled]="section.id === undefined">{{section.title}}</option>
                 </select>
               </div>
             </div>

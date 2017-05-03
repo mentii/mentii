@@ -15,5 +15,6 @@
     </button>
     <a [routerLink]="['/class/', classObject.code]" class="btn btn-sm btn-info">View Class Details</a>
     <a *ngIf="editClassButtonShown" [routerLink]="['/class/', classObject.code]" [queryParams]="{edit:true}" class="btn btn-sm btn-info">Edit Class Details</a>
+    <a (click)="leaveClass(classObject.code)" [ladda]="isLeaveClassInProgress" class="btn btn-sm btn-danger">Unenroll</a>
   </div>
 </div>

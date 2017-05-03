@@ -24,10 +24,15 @@
         </ul>
       </span>
     </div>
-    <p class="lead" *ngIf="problem">
-      <img src="http://app.mentii.me/favicon/favicon-32.png" alt="Mentii Logo">: I'm working on this problem, can you help me solve for x?<br/><br/>
-      <strong><em>{{problem}}</em></strong>
-    </p>
+    <div *ngIf="problem">
+      <p class="lead">
+        <img id="mentii-avatar" src="../../../favicon/mentii-avatar2.png" alt="Mentii Logo">
+        I'm working on this problem, can you help me?
+      </p>
+      <p class="lead">
+        <strong><em>{{problem}}</em></strong>
+      </p>
+    </div>
   </div>
 </div>
 <!-- show if the problem has loaded -->
@@ -47,30 +52,32 @@
             </h3>
           </div>
           <!-- Only show the buttons in the panel for the current step that's not a solution -->
-          <div class="panel-body">
-            <button class="btn btn-primary btn-sm" (click)="showNextStep()"
-            *ngIf="goodStepIndex==activeStepCount && goodStepIndex != problemTree.length-1">
-              Correct, go on Mentii
-            </button>
+          <div *ngIf="!problemIsComplete" class="panel-body">
+            <div *ngIf="!stepIsBeingCorrected">
+              <button type="button" class="btn btn-primary btn-sm" (click)="showNextStep()"
+              *ngIf="goodStepIndex==activeStepCount && goodStepIndex != problemTree.length-1">
+                <i class="fa fa-thumbs-o-up fa-lg" aria-hidden="true"></i> Go on Mentii
+              </button>
 
-            <!-- Only show this button when we've reached a solution -->
-            <button class="btn btn-primary btn-sm" (click)="showNextStep()"
-            *ngIf="goodStepIndex==activeStepCount && goodStepIndex == problemTree.length-1">
-              Confirm solution
-            </button>
+              <!-- Only show this button when we've reached a solution -->
+              <button type="button" class="btn btn-primary btn-sm" (click)="showNextStep()"
+              *ngIf="goodStepIndex==activeStepCount && goodStepIndex == problemTree.length-1">
+                <i class="fa fa-check-square-o fa-lg" aria-hidden="true"></i> Confirm solution
+              </button>
 
-            <!-- Don't show this button if we are on the first good step, that's the
-                 problem declaration. This will be shown on the active step -->
-            <button class="btn btn-danger btn-sm" (click)="incorrectGoodStep()"
-            *ngIf="goodStepIndex != 0 && goodStepIndex == activeStepCount">
-              Something here looks wrong Mentii
-            </button>
+              <!-- Don't show this button if we are on the first good step, that's the
+                   problem declaration. This will be shown on the active step -->
+              <button type="button" class="btn btn-danger btn-sm" (click)="incorrectGoodStep()"
+              *ngIf="goodStepIndex != 0 && goodStepIndex == activeStepCount">
+                <i class="fa fa-hand-paper-o fa-lg" aria-hidden="true"></i> Mistake here Mentii
+              </button>
 
-            <!-- Only show this button on the non active steps -->
-            <a type="button" class="lightBadStep btn btn-sm" (click)="incorrectGoodStep()"
-            *ngIf="goodStepIndex != 0 && goodStepIndex != activeStepCount">
-              Something here looks wrong Mentii
-            </a>
+              <!-- Only show this button on the non active steps -->
+              <a type="button" class="lightBadStep btn btn-sm" (click)="incorrectGoodStep()"
+              *ngIf="goodStepIndex != 0 && goodStepIndex != activeStepCount">
+                <i class="fa fa-hand-paper-o fa-lg" aria-hidden="true"></i> Mistake here Mentii
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -92,32 +99,32 @@
               <div *ngIf="!stepIsBeingCorrected">
                 <button class="btn btn-primary btn-sm" (click)="showNextBadStep()"
                 *ngIf="badStepIndex==activeBadStepCount && badStepIndex != step.badStepPath.length-1">
-                  Correct, go on Mentii
+                  <i class="fa fa-thumbs-o-up fa-lg" aria-hidden="true"></i> Go on Mentii
                 </button>
 
                 <!-- Only show this button when we've reached a solution for a bad step -->
                 <button class="btn btn-primary btn-sm" (click)="showNextBadStep()"
-                *ngIf="badStepIndex==activeBadStepCount && badStepIndex == step.badStepPath.length-1">
-                  Confirm solution
+                *ngIf="badStepIndex == step.badStepPath.length-1">
+                  <i class="fa fa-check-square-o fa-lg" aria-hidden="true"></i> Confirm solution
                 </button>
 
                 <!-- Only show this button on the non active bad steps -->
                 <a class="lightBadStep btn btn-sm" (click)="incorrectBadStep(badStepIndex,badStep)"
                 *ngIf="badStepIndex != activeBadStepCount">
-                  Something here looks wrong Mentii
+                  <i class="fa fa-hand-paper-o fa-lg" aria-hidden="true"></i> Mistake here Mentii
                 </a>
 
                 <!-- Show this button on the active bad step -->
                 <button class="btn btn-danger btn-sm" (click)="incorrectBadStep(badStepIndex,badStep)"
                 *ngIf="badStepIndex == activeBadStepCount">
-                  Something here looks wrong Mentii
+                  <i class="fa fa-hand-paper-o fa-lg" aria-hidden="true"></i> Mistake here Mentii
                 </button>
               </div>
               <form #applyCorrectionForm="ngForm" autocomplete="off" class="form-inline"
                 *ngIf="stepIsBeingCorrected && badStepIndex==0">
                 <div class="form-group">
                   <label for="correction">Correction: </label>
-                  <input type="text" required placeholder="Enter your correction for this step here" class="form-control" id="correction" [(ngModel)]="correctionModel.correction" name="correction" #correction="ngModel" clearPlaceholder>
+                  <input type="text" required placeholder="Enter correction here" class="form-control" id="correction" [(ngModel)]="correctionModel.correction" name="correction" #correction="ngModel" clearPlaceholder>
                 </div>
 
                 <button type='button' class="btn btn-primary" [disabled]="!applyCorrectionForm.form.valid" (click)="applyCorrection()">

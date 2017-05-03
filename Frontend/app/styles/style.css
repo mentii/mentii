@@ -132,3 +132,9 @@ label.required::before {
   color: #ffffff;
   background: linear-gradient(to bottom, #fb0207 0, #be0205 100%);
 }
+
+#mentii-avatar {
+  border-radius: 10px;
+  width: 65px;
+  height: 65px;
+}

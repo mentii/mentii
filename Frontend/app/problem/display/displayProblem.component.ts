@@ -88,12 +88,12 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     let trimmedCorrection = this.correctionModel.correction.replace(/\s+/g, ''); // Removed all whitespace
     let trimmedActual = this.problemTree[this.activeStepCount].correctStep.replace(/\s+/g, ''); // Removed all whitespace
     if (trimmedCorrection == trimmedActual) {
-      this.toastr.success("Your correction got Mentii back on the right path", "Good Job");
+      this.toastr.success("This correction gets Mentii back on the right path", "Good Job!");
       this.problemTree[this.activeStepCount]['badStepShown'] = false; // Close the bad step subtree
       this.stepIsBeingCorrected = false;
       this.showNextStep(); // Progress to the next step, after the correction
     } else {
-      this.toastr.error("Your correction won't help Mentii get back on the right path", "Not Quite...");
+      this.toastr.error("This correction won't help Mentii get back on the right path", "Not Quite...");
     }
   }
 
@@ -126,9 +126,9 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   }
 
   showNextBadStep(){
-    if (this.activeBadStepCount >= this.stepLimit) {
+    if (this.activeBadStepCount >= this.stepLimit || this.activeBadStepCount == this.badStepProblem.length-1) {
       this.sendFailUpdate();
-      this.toastr.error("There is at least one mistake here or above", "Look Carefully");
+      this.toastr.error("Mentii made at least one mistake somewhere", "Look Carefully");
     } else {
       this.activeBadStepCount++;
     }
@@ -140,12 +140,12 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
       this.correctionModel.correction = this.badStepProblem[0]; //set the model to the current bad step
       this.stepIsBeingCorrected = true;
     } else {
-      this.toastr.warning("This is part of an incorrect step, but the problem is in a different step", "Almost...");
+      this.toastr.warning("Mentii's mistake is somewhere else", "Try Again");
     }
   }
 
   incorrectGoodStep() {
-    this.toastr.error("This is actually a correct step to take.", "Sorry");
+    this.toastr.warning("This is a correct step to take", "Try Again");
   }
 
   returnToClassPage() {

@@ -88,7 +88,7 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     let trimmedCorrection = this.correctionModel.correction.replace(/\s+/g, ''); // Removed all whitespace
     let trimmedActual = this.problemTree[this.activeStepCount].correctStep.replace(/\s+/g, ''); // Removed all whitespace
     if (trimmedCorrection == trimmedActual) {
-      this.toastr.success("This correction gets Mentii back on the right path", "Good Job!");
+      this.toastr.success("Your correction got Mentii back on the right path", "Good Job!");
       this.problemTree[this.activeStepCount]['badStepShown'] = false; // Close the bad step subtree
       this.stepIsBeingCorrected = false;
       this.showNextStep(); // Progress to the next step, after the correction
@@ -145,7 +145,7 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   }
 
   incorrectGoodStep() {
-    this.toastr.warning("This is a correct step to take", "Try Again");
+    this.toastr.warning("Mentii did not make a mistake here", "Try Again");
   }
 
   returnToClassPage() {

@@ -26,7 +26,7 @@
     </div>
     <div *ngIf="problem">
       <p class="lead">
-        <img id="mentii-avatar" src="../../../favicon/mentii-avatar2.png" alt="Mentii Logo">
+        <img id="mentii-avatar" src="../../../images/mentii-avatar2.png" alt="Mentii Logo">
         I'm working on this problem, can you help me?
       </p>
       <p class="lead">
@@ -54,16 +54,16 @@
           <!-- Only show the buttons in the panel for the current step that's not a solution -->
           <div *ngIf="!problemIsComplete" class="panel-body">
             <div *ngIf="!stepIsBeingCorrected">
-              <button type="button" class="btn btn-primary btn-sm" (click)="showNextStep()"
+              <a type="button" class="stepAdvance btn btn-sm" (click)="showNextStep()"
               *ngIf="goodStepIndex==activeStepCount && goodStepIndex != problemTree.length-1">
                 <i class="fa fa-thumbs-o-up fa-lg" aria-hidden="true"></i> Go on Mentii
-              </button>
+              </a>
 
               <!-- Only show this button when we've reached a solution -->
-              <button type="button" class="btn btn-primary btn-sm" (click)="showNextStep()"
+              <a type="button" class="stepAdvance btn btn-sm" (click)="showNextStep()"
               *ngIf="goodStepIndex==activeStepCount && goodStepIndex == problemTree.length-1">
                 <i class="fa fa-check-square-o fa-lg" aria-hidden="true"></i> Confirm solution
-              </button>
+              </a>
 
               <!-- Don't show this button if we are on the first good step, that's the
                    problem declaration. This will be shown on the active step -->
@@ -97,19 +97,19 @@
             <!-- Only show the buttons on the active bad step -->
             <div class="panel-body">
               <div *ngIf="!stepIsBeingCorrected">
-                <button class="btn btn-primary btn-sm" (click)="showNextBadStep()"
+                <a type="button" class="stepAdvance btn btn-sm" (click)="showNextBadStep()"
                 *ngIf="badStepIndex==activeBadStepCount && badStepIndex != step.badStepPath.length-1">
                   <i class="fa fa-thumbs-o-up fa-lg" aria-hidden="true"></i> Go on Mentii
-                </button>
+                </a>
 
                 <!-- Only show this button when we've reached a solution for a bad step -->
-                <button class="btn btn-primary btn-sm" (click)="showNextBadStep()"
+                <a type="button" class="stepAdvance btn btn-sm" (click)="showNextBadStep()"
                 *ngIf="badStepIndex == step.badStepPath.length-1">
                   <i class="fa fa-check-square-o fa-lg" aria-hidden="true"></i> Confirm solution
-                </button>
+                </a>
 
                 <!-- Only show this button on the non active bad steps -->
-                <a class="lightBadStep btn btn-sm" (click)="incorrectBadStep(badStepIndex,badStep)"
+                <a type="button" class="lightBadStep btn btn-sm" (click)="incorrectBadStep(badStepIndex,badStep)"
                 *ngIf="badStepIndex != activeBadStepCount">
                   <i class="fa fa-hand-paper-o fa-lg" aria-hidden="true"></i> Mistake here Mentii
                 </a>

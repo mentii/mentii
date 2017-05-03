@@ -133,6 +133,18 @@ label.required::before {
   background: linear-gradient(to bottom, #fb0207 0, #be0205 100%);
 }
 
+.stepAdvance {
+  color: #ffffff;
+  background: linear-gradient(to bottom, #00b33c 0, #00802b 100%);
+}
+
+.stepAdvance:hover,
+.stepAdvance:hover:active,
+.stepAdvance:active{
+  color: #ffffff;
+  background: linear-gradient(to bottom, #009933 0, #006622 100%);
+}
+
 #mentii-avatar {
   border-radius: 10px;
   width: 65px;

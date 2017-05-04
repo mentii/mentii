@@ -3,6 +3,7 @@ from utils.ResponseCreation import ControllerResponse
 import random
 from algebraTemplate import ProblemGenerator
 import re
+import operator
 import utils.MentiiLogging as MentiiLogging
 
 def getProblem(problemTemplate):
@@ -120,6 +121,19 @@ def swapNumbers(step):
   
   return res
 
+def isLastStep(step):
+  regex = r'^\s*x = -?\d+\s*$'
+  return bool(re.search(regex, step))
+
+def badNumber(step):
+  op = random.choice([operator.add, operator.sub, operator.mul, operator.div])
+  num = random.choice(xrange(2, 20))
+  digits = map(int, re.findall(r'-?\d+', step))
+  newDigit = 0
+  if len(digits) > 0:
+    newDigit = int(op(digits[0], num)) 
+  return 'x = {0}'.format(newDigit)
+
 def newTerm(step):
   op = random.choice(["+", "-"])
   num = random.choice(xrange(0, 10))
@@ -131,11 +145,14 @@ def modifyStep(step):
   badStep = step
   success = False
   containsNegOne = r'-1(?:[^\d]|$)'
-  if not re.search(containsNegOne, step):
-    modifications = [dropTerm, swapSign, swapOperator, swapNumbers, newTerm]
+  if isLastStep(step):
+    badStep = badNumber(step)
+  elif not re.search(containsNegOne, step):
+    modifications = [dropTerm, swapSign, swapOperator, swapNumbers]
     modfunc = random.choice(modifications)
     badStep = modfunc(badStep)
-    success = badStep != step
+ 
+  success = badStep != step
 
   return (badStep, success)
 
@@ -164,7 +181,7 @@ def generateTreeWithBadSteps(problemSolutionPath, numOfFailurePoints, failurePoi
   # randomly pick failure points from problem solution path
   if not failurePoints and numOfFailurePoints < (len(problemSolutionPath) - 1):
     #Use a slice so we don't pick the first step as a failure point
-    failurePoints = random.sample(problemSolutionPath[1:-1], numOfFailurePoints)
+    failurePoints = random.sample(problemSolutionPath[1:], numOfFailurePoints)
   elif failurePoints:
     pass #Keep the failure points as they were passed in
   else:

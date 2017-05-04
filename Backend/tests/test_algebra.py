@@ -132,6 +132,7 @@ class ProblemCtrlTests(unittest.TestCase):
     p3 = "3 = -1 + 2x"
     p4 = "Bad Problem"
     p5 = "x / 3 = 2"
+    p6 = "x = 4"
 
     _, res = algebra.modifyStep(p1)
     self.assertTrue(res is not None)
@@ -143,3 +144,32 @@ class ProblemCtrlTests(unittest.TestCase):
     self.assertTrue(res is not None)
     _, res = algebra.modifyStep(p5)
     self.assertTrue(res is not None)
+    _, res = algebra.modifyStep(p6)
+    self.assertTrue(res is not None)
+    
+  def test_isLastStep(self):
+    p1 = "x = 3 * 2"
+    p2 = "2x = 3"
+    p3 = "x = -2"
+    p4 = "Bad Problem"
+    p5 = "x = 4"
+
+    res = algebra.isLastStep(p1)
+    self.assertFalse(res)
+    res = algebra.isLastStep(p2)
+    self.assertFalse(res)
+    res = algebra.isLastStep(p3)
+    self.assertTrue(res)
+    res = algebra.isLastStep(p4)
+    self.assertFalse(res)
+    res = algebra.isLastStep(p5)
+    self.assertTrue(res)
+
+  def test_badNumber(self):
+    p1 = "x = -2"
+    p2 = "x = 4"
+
+    res = algebra.badNumber(p1)
+    self.assertFalse(res == p1)
+    res = algebra.badNumber(p2)
+    self.assertFalse(res == p2)

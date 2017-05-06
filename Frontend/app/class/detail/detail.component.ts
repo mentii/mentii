@@ -16,6 +16,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   model = new ClassModel('', '', '', '', '', [], []);
   private routeSub: any;
   showTeacherView = false;
+  isStudentInClass = false;
   isLoading = true;
   editMode = false;
 
@@ -57,7 +58,8 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
       data.activities,
       data.students
     );
-    this.showTeacherView = data.isTeacher;
+    this.showTeacherView = data.isTeacher || false;
+    this.isStudentInClass = data.isStudent || false ;
     this.isLoading = false;
   }
 

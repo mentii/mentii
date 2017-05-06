@@ -55,8 +55,8 @@ class ProblemCtrlTests(unittest.TestCase):
 
 
   def test_swapSign(self):
-    p1 = "5x = 3 - 2"
-    p2 = "2x = 4"
+    p1 = "5x = 3 + -2"
+    p2 = "-2x = 4"
     p3 = "3 = 1 + 2x"
     p4 = "Bad Problem"
     p5 = "x + 1 = 2"
@@ -64,13 +64,13 @@ class ProblemCtrlTests(unittest.TestCase):
     res = algebra.swapSign(p1)
     self.assertTrue(p1 != res)
     res = algebra.swapSign(p2)
-    self.assertTrue(p2 == res)
+    self.assertTrue(p2 != res)
     res = algebra.swapSign(p3)
-    self.assertTrue(p3 != res)
+    self.assertTrue(p3 == res)
     res = algebra.swapSign(p4)
     self.assertTrue(p4 == res)
     res = algebra.swapSign(p5)
-    self.assertTrue(p5 != res)
+    self.assertTrue(p5 == res)
 
   def test_swapOperator(self):
     p1 = "5x = 3 * 2"

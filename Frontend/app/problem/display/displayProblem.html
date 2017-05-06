@@ -3,7 +3,7 @@
     <h2>
       Solving a Problem
     </h2>
-    <div style="display:none" class="lead">
+    <div class="lead">
       <span>Testing Controls:</span>
       <label for="colorToggle">Bad Step Color</label>
         <button (click)="toggleBadStepColor()" id="colorToggle" type="button" class="btn btn-default">
@@ -12,7 +12,7 @@
         </button>
       <label for="stepLimit">Bad Step Limit</label>
       <span class="dropdown">
-        <button disabled id="stepLimit" type="button" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button id="stepLimit" type="button" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span *ngIf="selectedStepLimit < 0">&infin;&nbsp;</span>
           <span *ngIf="selectedStepLimit > 0">{{selectedStepLimit}}&nbsp;</span>
           <span class="caret"></span>
@@ -79,7 +79,7 @@
               </a>
 
               <!-- Don't show this button if we are on the first good step, that's the
-                   problem declaration. This will be shown on the active step -->
+                problem declaration. This will be shown on the active step -->
               <button type="button" class="buttonPad btn btn-danger btn-sm" (click)="incorrectGoodStep(goodStepIndex)"
                 *ngIf="goodStepIndex != 0 && goodStepIndex == activeStepCount">
                 <i class="fa fa-hand-paper-o fa-lg" aria-hidden="true"></i>

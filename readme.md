@@ -37,7 +37,22 @@ Mentii is an application that students mentor which:
 To install the project locally please follow the documentation in [this wiki page](https://github.com/mentii/mentii/wiki/Local-Development-Setup-for-Ubuntu)
 
 ## Contributing
-To contribute to this project, either fork the repo and self host your own version. Additionally you can fork this repo and issue a pull request. If you want to create a pull request for this repo please follow [this template](https://github.com/mentii/mentii/wiki/Pull-Request-Process) for describing your pull request.
+To contribute to this project, either fork the repo and self host your own version. Additionally you can fork this repo and issue a pull request. If you want to create a pull request for this repo please follow the template below for describing your pull request.
+```
+[Description of PR and what it does]
+
+**Significant Changes**
+1. [change 1]
+2. [change 2]
+3. [...]
+
+**How to Test**
+1. [step 1]
+2. [...]
+
+**Notes**
+[notes]
+```
 
 ## Acknowledgments
 - Huge thanks to [Socratic](https://socratic.org/) for creating [mathsteps](https://github.com/socraticorg/mathsteps). Mathsteps was a huge help in the completion of this project.

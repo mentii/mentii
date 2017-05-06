@@ -9,6 +9,8 @@
 5. [Contributing](#contributing)
 
 ## About
+Mentii was created as a senior project by 5 software engineering students at [Drexel University](https://drexel.edu) as a part of the [College of Computing and Informatics](https://cci.drexel.edu). The project was created over the course of 9 months to fulfill a graduation requirement.
+
 __Goal__: Provide all students with the experience of tutoring someone; naturally reinforcing their own understanding in the process.
 
 Mentii is an application that students mentor which:
@@ -16,13 +18,12 @@ Mentii is an application that students mentor which:
 - Allows students to guide the system to a correct answer, simulating the mentoring process.
 - Will fail in an intelligent manner so that students are asked to provide guidance on topics and concepts that they are still solidifying their understanding on.
 
-
 ## Authors
-[Aaron Segal](https://github.com/aaronmsegal)
-[Alex Palmatier](https://github.com/asp78)
-[Jonathan McDaniel](https://github.com/jonathanmcdaniel)
-[Micah Chao](https://github.com/smc395)
-[Ryan Young](https://github.com/RyanYoung25)
+- [Aaron Segal](https://github.com/aaronmsegal)
+- [Alex Palmatier](https://github.com/asp78)
+- [Jonathan McDaniel](https://github.com/jonathanmcdaniel)
+- [Micah Chao](https://github.com/smc395)
+- [Ryan Young](https://github.com/RyanYoung25)
 
 ## Dependencies
 

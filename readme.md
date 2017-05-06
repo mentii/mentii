@@ -10,7 +10,7 @@
 6. [Acknowledgments](#acknowledgments)
 
 ## About
-Mentii was created as a senior project by 5 software engineering students at [Drexel University](https://drexel.edu) as a part of the [College of Computing and Informatics](https://cci.drexel.edu). The project was created over the course of 9 months to fulfill a graduation requirement.
+Mentii was created as a senior project by 5 software engineering students at [Drexel University](https://drexel.edu) as a part of the [College of Computing and Informatics](https://cci.drexel.edu). The project was created over the course of 9 months.
 
 __Goal__: Provide all students with the experience of tutoring someone; naturally reinforcing their own understanding in the process.
 
@@ -59,4 +59,4 @@ To contribute to this project, either fork the repo and self host your own versi
 
 ***
 
-[![forthebadge](http://forthebadge.com/images/badges/contains-technical-debt.svg)](http://forthebadge.com)
+[![forthebadge](http://forthebadge.com/images/badges/built-with-swag.svg)](http://forthebadge.com)

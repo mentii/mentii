@@ -149,8 +149,8 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     }
   }
 
-  incorrectGoodStep() {
-    this.confirmedStepIndex = this.activeStepCount;
+  incorrectGoodStep(index) {
+    this.confirmedStepIndex = index;
     this.toastr.warning("Mentii did not make a mistake here", "Try Again");
   }
 

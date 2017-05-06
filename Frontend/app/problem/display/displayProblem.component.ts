@@ -50,7 +50,7 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
 
   /* variable to keep track of what step the last correction was so
     that previously confirmed steps do not have a mistake button */
-  lastCorrection = 0;
+  confirmedStepIndex = 0;
 
   constructor(public problemService: ProblemService, public toastr: ToastrService, public router: Router, private activatedRoute: ActivatedRoute){
   }
@@ -95,7 +95,7 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
       this.toastr.success("Your correction got Mentii back on the right path", "Good Job!");
       this.problemTree[this.activeStepCount]['badStepShown'] = false; // Close the bad step subtree
       this.stepIsBeingCorrected = false;
-      this.lastCorrection = this.activeStepCount;
+      this.confirmedStepIndex = this.activeStepCount;
       this.showNextStep(); // Progress to the next step, after the correction
     } else {
       this.toastr.error("This correction won't help Mentii get back on the right path", "Not Quite...");
@@ -150,6 +150,7 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   }
 
   incorrectGoodStep() {
+    this.confirmedStepIndex = this.activeStepCount;
     this.toastr.warning("Mentii did not make a mistake here", "Try Again");
   }
 

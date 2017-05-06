@@ -74,7 +74,7 @@
 
               <!-- Only show this button on the non active steps -->
               <a type="button" class="lightBadStep btn btn-sm" (click)="incorrectGoodStep()"
-              *ngIf="goodStepIndex != 0 && goodStepIndex != activeStepCount">
+              *ngIf="goodStepIndex != 0 && goodStepIndex > lastCorrection && goodStepIndex != activeStepCount">
                 <i class="fa fa-hand-paper-o fa-lg" aria-hidden="true"></i> Mistake here Mentii
               </a>
             </div>

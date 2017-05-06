@@ -51,16 +51,49 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   constructor(public problemService: ProblemService, public toastr: ToastrService, public router: Router, private activatedRoute: ActivatedRoute){
   }
 
+  ngOnInit() {
+    this.routeSub = this.activatedRoute.params.subscribe(params => {
+      // grab codes out of the URL
+      this.classCode = params['classCode'];
+      this.problemCode = params['problemCode'];
+      this.problemService.getProblemSteps(this.classCode,this.problemCode)
+      .subscribe(
+        data => this.handleInitSuccess(data.json()),
+        err => this.handleInitError(err)
+      );
+    });
+  }
+
+  ngOnDestroy() {
+    this.routeSub.unsubscribe();
+  }
+
+  handleInitSuccess(data) {
+    //save the problem
+    this.problemTree = data.payload.problemTree;
+    this.problemIndex = data.payload.problemIndex;
+    //save the equation being solved as different variable
+    this.problem = data.payload.problemTree[0].correctStep;
+    this.isLoading = false;
+  }
+
+  handleInitError(err) {
+    this.isLoading = false;
+    if (!err.isAuthenticationError) {
+      this.toastr.error('The problem steps failed to load.');
+    }
+  }
+
   applyCorrection() {
     let trimmedCorrection = this.correctionModel.correction.replace(/\s+/g, ''); // Removed all whitespace
     let trimmedActual = this.problemTree[this.activeStepCount].correctStep.replace(/\s+/g, ''); // Removed all whitespace
     if (trimmedCorrection == trimmedActual) {
-      this.toastr.success("Your correction got Mentii back on the right path", "Good Job");
+      this.toastr.success("Your correction got Mentii back on the right path", "Good Job!");
       this.problemTree[this.activeStepCount]['badStepShown'] = false; // Close the bad step subtree
       this.stepIsBeingCorrected = false;
       this.showNextStep(); // Progress to the next step, after the correction
     } else {
-      this.toastr.error("Your correction won't help Mentii get back on the right path", "Not Quite...");
+      this.toastr.error("This correction won't help Mentii get back on the right path", "Not Quite...");
     }
   }
 
@@ -93,9 +126,9 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   }
 
   showNextBadStep(){
-    if (this.activeBadStepCount >= this.stepLimit) {
+    if (this.activeBadStepCount >= this.stepLimit || this.activeBadStepCount == this.badStepProblem.length-1) {
       this.sendFailUpdate();
-      this.toastr.error("This doesn't seem quite right", "Uh Oh");
+      this.toastr.error("Mentii made at least one mistake somewhere", "Look Carefully");
     } else {
       this.activeBadStepCount++;
     }
@@ -107,12 +140,12 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
       this.correctionModel.correction = this.badStepProblem[0]; //set the model to the current bad step
       this.stepIsBeingCorrected = true;
     } else {
-      this.toastr.warning("This is part of an incorrect step, but the problem is in a different step", "Almost...");
+      this.toastr.warning("Mentii's mistake is somewhere else", "Try Again");
     }
   }
 
   incorrectGoodStep() {
-    this.toastr.error("This is actually a correct step to take.", "Sorry");
+    this.toastr.warning("Mentii did not make a mistake here", "Try Again");
   }
 
   returnToClassPage() {
@@ -131,39 +164,6 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   sendFailUpdate() {
     this.problemService.postProblemSuccess(this.classCode, this.problemCode, this.problemIndex, "")
       .subscribe();
-  }
-
-  ngOnInit() {
-    this.routeSub = this.activatedRoute.params.subscribe(params => {
-      // grab codes out of the URL
-      this.classCode = params['classCode'];
-      this.problemCode = params['problemCode'];
-      this.problemService.getProblemSteps(this.classCode,this.problemCode)
-      .subscribe(
-        data => this.handleInitSuccess(data.json()),
-        err => this.handleInitError(err)
-      );
-    });
-  }
-
-  ngOnDestroy() {
-    this.routeSub.unsubscribe();
-  }
-
-  handleInitSuccess(data) {
-    //save the problem
-    this.problemTree = data.payload.problemTree;
-    this.problemIndex = data.payload.problemIndex;
-    //save the equation being solved as different variable
-    this.problem = data.payload.problemTree[0].correctStep;
-    this.isLoading = false;
-  }
-
-  handleInitError(err) {
-    this.isLoading = false;
-    if (!err.isAuthenticationError) {
-      this.toastr.error('The problem steps failed to load.');
-    }
   }
 
   selectStepLimit(limit){

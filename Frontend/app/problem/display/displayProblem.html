@@ -80,15 +80,15 @@
 
               <!-- Don't show this button if we are on the first good step, that's the
                    problem declaration. This will be shown on the active step -->
-              <button type="button" class="buttonPad btn btn-danger btn-sm" (click)="incorrectGoodStep()"
-              *ngIf="goodStepIndex != 0 && goodStepIndex == activeStepCount">
+              <button type="button" class="buttonPad btn btn-danger btn-sm" (click)="incorrectGoodStep(goodStepIndex)"
+                *ngIf="goodStepIndex != 0 && goodStepIndex == activeStepCount">
                 <i class="fa fa-hand-paper-o fa-lg" aria-hidden="true"></i>
               </button>
 
               <!-- Only show this button on the non active steps -->
-              <a type="button" class="buttonPad lightBadStep btn btn-sm" (click)="incorrectGoodStep()"
-              *ngIf="goodStepIndex != 0 && goodStepIndex != activeStepCount">
-                <i class="fa fa-hand-paper-o fa-lg" aria-hidden="true"></i>
+              <a type="button" class="buttonPad lightBadStep btn btn-sm" (click)="incorrectGoodStep(goodStepIndex)"
+              *ngIf="goodStepIndex != 0 && goodStepIndex > confirmedStepIndex && goodStepIndex != activeStepCount">
+                <i class="fa fa-hand-paper-o fa-lg" aria-hidden="true"></i> Mistake here Mentii
               </a>
             </div>
           </div>

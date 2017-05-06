@@ -61,7 +61,7 @@ def dropTerm(step):
 
 
 def swapSign(step):
-  signs = [m.start() for m in re.finditer('-\d+', step)]
+  signs = [m.start() for m in re.finditer('-(x|\d+)', step)]
   res = step
   if len(signs) > 0:
     signToSwap = random.choice(signs)

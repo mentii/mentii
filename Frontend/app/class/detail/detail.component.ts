@@ -90,7 +90,6 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   resetBooks() {
     this.books = [];
     this.books.push(this.booksDefault);
-    this.newActivity.bookId = undefined;
     this.resetChapters();
   }
 
@@ -98,7 +97,6 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
     this.chapterData = null;
     this.chapters = [];
     this.chapters.push(this.chaptersDefault);
-    this.newActivity.chapterTitle = undefined;
     this.resetSections();
   }
 
@@ -106,7 +104,6 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
     this.sectionData = null;
     this.sections = [];
     this.sections.push(this.sectionsDefault);
-    this.newActivity.sectionTitle = undefined;
   }
 
   booksRecived(books) {
@@ -128,6 +125,9 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   }
 
   bookSelected() {
+    if(this.newActivity.bookId == null)
+      return;
+
     this.resetChapters();
     this.chapterData = null;
 
@@ -155,6 +155,8 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
 
   chapterSelected(chapterIndex) {
     this.resetSections();
+    if(chapterIndex == "undefined")
+      return;
     this.newActivity.chapterTitle = this.chapterData[chapterIndex].title;
     this.sectionData = this.chapterData[chapterIndex].sections;
     for (var sectionIndex = 0; sectionIndex < this.sectionData.length; sectionIndex++) {
@@ -166,16 +168,26 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   }
 
   sectionSelected(sectionIndex) {
-    console.log('section index selected:' + sectionIndex);
+    //debugger;
+    if(sectionIndex == "undefined")
+      return;
     this.newActivity.sectionTitle = this.sectionData[sectionIndex].title;
     this.bookService.getSampleProblems(
         this.newActivity.bookId,
         this.newActivity.chapterTitle,
         this.newActivity.sectionTitle)
       .subscribe(
-        data => this.bookRecived(data.json().payload),
-        err => this.handleGetBookError(err)
+        data => this.problemsRecived(data.json().payload),
+        err => this.handleGetProblemsError(err)
       );
+  }
+
+  problemsRecived(problems) {
+    console.log(problems)
+  }
+
+  handleGetProblemsError(err) {
+    this.toastr.error('Unable to load sample problems.');
   }
 
   /* Edit Methods */

@@ -106,7 +106,7 @@
       <div class="modal-header">
         <h4 class="modal-title pull-left">Add New Activity</h4>
         <button type="button" class="close pull-right" (click)="hideActivityModal()">
-          <small>Cancel & Close</small>
+          <small>Cancel</small>
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -114,7 +114,7 @@
         <form #createActivityForm="ngForm" autocomplete="off">
           <div class="form-group">
             <label class="required">Name</label>
-            <input type="text" required placeholder="Week 1 Problems" [(ngModel)]="newActivity.title" name="title" class="form-control" clearPlaceholder>
+            <input type="text" required placeholder="Week 1 Problems" [(ngModel)]="newActivity.title" #newActivity.title="ngModel" name="title" class="form-control" clearPlaceholder>
           </div>
           <div class="row">
             <div class="col-xs-12 col-md-6">
@@ -125,7 +125,7 @@
             </div>
             <div class="col-xs-12 col-md-6">
               <div class="form-group">
-                <label>Due Date (Optional)</label>
+                <label>Start Date (Optional)</label>
                 <input type="date" class="form-control">
               </div>
             </div>
@@ -143,15 +143,15 @@
               <div class="form-group">
                 <label class="required">Chapter</label>
                 <select class="form-control" name="chapter" [disabled]="chapters.length < 2" (change)="chapterSelected($event.target.value)">
-                  <option *ngFor="let chapter of chapters; let i = index" [value]="chapter.id" [disabled]="chapter.id === undefined ">{{chapter.title}}</option>
+                  <option *ngFor="let chapter of chapters; let i = index" [value]="chapter.id">{{chapter.title}}</option>
                 </select>
               </div>
             </div>
             <div class="col-xs-12 col-md-4">
               <div class="form-group">
                 <label class="required">Section</label>
-                <select class="form-control"  name="section" [disabled]="sections.length < 2" (change)="sectionSelected($event.target.value)">
-                  <option *ngFor="let section of sections; let i = index" [value]="section.id" [disabled]="section.id === undefined">{{section.title}}</option>
+                <select class="form-control" name="section" [disabled]="sections.length < 2" (change)="sectionSelected($event.target.value)">
+                  <option *ngFor="let section of sections; let i = index" [value]="section.id">{{section.title}}</option>
                 </select>
               </div>
             </div>

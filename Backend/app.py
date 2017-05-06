@@ -334,6 +334,7 @@ def getSampleProblems(bookId, chapterTitle, sectionTitle):
     dynamoDBInstance = getDatabaseClient()
     problemCount = 4
     problems = [ algebra.getProblem( problem_ctrl.getProblemFromBook( bookId, chapterTitle, sectionTitle, dynamoDBInstance)) for _ in xrange(problemCount)]
+    problems = list(set(problems)) #remove duplicates
     if 'Bad Problem' in problems:
       status = 400
     else:

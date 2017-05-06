@@ -3,13 +3,12 @@
     <div class="row" *ngFor="let user of users;">
       <div class="col-xs-12">
         <h5>
-          {{user}}
-          <span>
-            <a (click)="selectedUser(user)" class="pull-right" data-toggle="modal" data-target="#confirmDelete">
+          <span id="removeStudentIcon">
+            <a (click)="selectedUser(user)" class="cursor-pointer" data-toggle="modal" data-target="#confirmDelete">
               <i class="fa fa-times" aria-hidden="true"></i>
-              Remove Student
             </a>
           </span>
+          {{user}}
         </h5>
       </div>
     </div>

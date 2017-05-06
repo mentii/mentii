@@ -30,6 +30,9 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   activeBadStepCount = 0;
   badStepShown = false;
   problemIsComplete = false;
+  problemIndex = 0;
+  classCode = '';
+  problemCode = '';
 
   stepIsBeingCorrected = false;
   correctionModel = {
@@ -41,23 +44,56 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   showBadStepColor = false;
   panelClass = 'panel panel-default';
 
-  //default all bad steps in tree are shown
-  selectedStepLimit = -1;
+  //default show only one bad step
+  selectedStepLimit = 1;
   stepLimit = 0;
 
   constructor(public problemService: ProblemService, public toastr: ToastrService, public router: Router, private activatedRoute: ActivatedRoute){
+  }
+
+  ngOnInit() {
+    this.routeSub = this.activatedRoute.params.subscribe(params => {
+      // grab codes out of the URL
+      this.classCode = params['classCode'];
+      this.problemCode = params['problemCode'];
+      this.problemService.getProblemSteps(this.classCode,this.problemCode)
+      .subscribe(
+        data => this.handleInitSuccess(data.json()),
+        err => this.handleInitError(err)
+      );
+    });
+  }
+
+  ngOnDestroy() {
+    this.routeSub.unsubscribe();
+  }
+
+  handleInitSuccess(data) {
+    //save the problem
+    this.problemTree = data.payload.problemTree;
+    this.problemIndex = data.payload.problemIndex;
+    //save the equation being solved as different variable
+    this.problem = data.payload.problemTree[0].correctStep;
+    this.isLoading = false;
+  }
+
+  handleInitError(err) {
+    this.isLoading = false;
+    if (!err.isAuthenticationError) {
+      this.toastr.error('The problem steps failed to load.');
+    }
   }
 
   applyCorrection() {
     let trimmedCorrection = this.correctionModel.correction.replace(/\s+/g, ''); // Removed all whitespace
     let trimmedActual = this.problemTree[this.activeStepCount].correctStep.replace(/\s+/g, ''); // Removed all whitespace
     if (trimmedCorrection == trimmedActual) {
-      this.toastr.success("Your correction got Mentii back on the right path", "Good Job");
+      this.toastr.success("Your correction got Mentii back on the right path", "Good Job!");
       this.problemTree[this.activeStepCount]['badStepShown'] = false; // Close the bad step subtree
       this.stepIsBeingCorrected = false;
       this.showNextStep(); // Progress to the next step, after the correction
     } else {
-      this.toastr.error("Your correction won't help Mentii get back on the right path", "Not Quite...");
+      this.toastr.error("This correction won't help Mentii get back on the right path", "Not Quite...");
     }
   }
 
@@ -86,17 +122,17 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
       // if more steps exist, increment the counter so the next good step is shown on the page
       this.activeStepCount++;
     }
+    this.scrollToBottom();
   }
 
   showNextBadStep(){
-    // TODO print for testing purposes, will remove in final product
-    console.log('Active Step Count: ' + this.activeBadStepCount);
-    console.log('Step Limit: ' + this.stepLimit);
-    if (this.activeBadStepCount >= this.stepLimit) {
-      this.toastr.error("This doesn't seem quite right", "Uh Oh");
+    if (this.activeBadStepCount >= this.stepLimit || this.activeBadStepCount == this.badStepProblem.length-1) {
+      this.sendFailUpdate();
+      this.toastr.error("Mentii made at least one mistake somewhere", "Look Carefully");
     } else {
       this.activeBadStepCount++;
     }
+    this.scrollToBottom();
   }
 
   incorrectBadStep(badStepIndex: number, problemStep: string) {
@@ -104,51 +140,30 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
       this.correctionModel.correction = this.badStepProblem[0]; //set the model to the current bad step
       this.stepIsBeingCorrected = true;
     } else {
-      this.toastr.warning("This is part of an incorrect step, but the problem is in a different step", "Almost...");
+      this.toastr.warning("Mentii's mistake is somewhere else", "Try Again");
     }
   }
 
   incorrectGoodStep() {
-    this.toastr.error("This is actually a correct step to take.", "Sorry");
+    this.toastr.warning("Mentii did not make a mistake here", "Try Again");
   }
 
   returnToClassPage() {
+    this.sendSuccessUpdate();
     this.activatedRoute.params.subscribe(params => {
       let classCode = params['classCode'];
       this.router.navigateByUrl('/class/' + classCode);
     });
   }
 
-  ngOnInit() {
-    this.routeSub = this.activatedRoute.params.subscribe(params => {
-      // grab codes out of the URL
-      let classCode = params['classCode'];
-      let problemCode = params['problemCode'];
-      this.problemService.getProblemSteps(classCode,problemCode)
-      .subscribe(
-        data => this.handleInitSuccess(data.json()),
-        err => this.handleInitError(err)
-      );
-    });
+  sendSuccessUpdate() {
+    this.problemService.postProblemSuccess(this.classCode, this.problemCode, this.problemIndex, "True")
+      .subscribe();
   }
 
-  ngOnDestroy() {
-    this.routeSub.unsubscribe();
-  }
-
-  handleInitSuccess(data) {
-    //save the problem
-    this.problemTree = data.payload.problemTree;
-    //save the equation being solved as different variable
-    this.problem = data.payload.problemTree[0].correctStep;
-    this.isLoading = false;
-  }
-
-  handleInitError(err) {
-    this.isLoading = false;
-    if (!err.isAuthenticationError) {
-      this.toastr.error('The problem steps failed to load.');
-    }
+  sendFailUpdate() {
+    this.problemService.postProblemSuccess(this.classCode, this.problemCode, this.problemIndex, "")
+      .subscribe();
   }
 
   selectStepLimit(limit){
@@ -172,5 +187,9 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     } else{
       this.panelClass = 'panel panel-default';
     }
+    }
+
+  scrollToBottom(){
+    window.scrollTo(0, document.body.scrollHeight);
   }
 }

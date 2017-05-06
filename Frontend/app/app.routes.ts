@@ -33,10 +33,10 @@ export const routes: Routes = [
   { path: 'reset-password/:id', component: ResetPasswordComponent },
   { path: 'activation/:id', component: ActivationComponent},
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthRouteGuard] },
-  { path: 'class', component: ClassBrowseComponent, canActivate: [AuthRouteGuard] },
   { path: 'class/:id', component: ClassDetailComponent, canActivate: [AuthRouteGuard] },
-  { path: 'admin', component: AdminComponent, canActivate: [AuthRouteGuard, AdminRouteGuard]},
+  { path: 'class', component: ClassBrowseComponent, canActivate: [AuthRouteGuard] },
   { path: 'admin/:control', component: AdminComponent, canActivate: [AuthRouteGuard, AdminRouteGuard]},
+  { path: 'admin', component: AdminComponent, canActivate: [AuthRouteGuard, AdminRouteGuard]},
   { path: 'create/class', component: CreateClassComponent, canActivate: [AuthRouteGuard, TeacherRouteGuard] },
   { path: 'problem/display/:classCode/:problemCode', component: DisplayProblemComponent, canActivate: [AuthRouteGuard] },
 

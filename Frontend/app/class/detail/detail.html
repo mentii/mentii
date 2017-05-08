@@ -19,6 +19,7 @@
           <br/>
         </span>
         <p>{{model.description}}</p>
+        <button class="btn btn-sm btn-primary" (click)="joinClass(model.code)" [ladda]="isJoinClassInprogress" *ngIf="!isStudentInClass">Join Class</button>
         <hr/>
       </div>
     </div>

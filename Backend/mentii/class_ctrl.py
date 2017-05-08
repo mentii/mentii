@@ -47,6 +47,8 @@ def getClass(classCode, dynamoDBInstance, email=None, userRole=None):
     #Else remove students[] from classData, if it exists, because:
     #Only the teacher of a class can get the class's students
     elif 'students' in classData:
+      if email in classData.get('students', []):
+        classData['isStudent'] = True
       del classData['students']
     response.addToPayload('class', classData)
   return response

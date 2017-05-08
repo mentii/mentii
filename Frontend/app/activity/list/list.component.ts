@@ -9,6 +9,6 @@ import { Component, Input } from '@angular/core';
 export class ActivityListComponent {
   @Input() activities;
   @Input() classCode;
-
-  
+  @Input() isStudentInClass;
+  @Input() isTeacher;
 }

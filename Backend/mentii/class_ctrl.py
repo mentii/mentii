@@ -49,7 +49,7 @@ def getClass(classCode, dynamoDBInstance, email=None, userRole=None):
     elif 'students' in classData:
       del classData['students']
     response.addToPayload('class', classData)
-  return response;
+  return response
 
 def getTaughtClassList(dynamoDBInstance, email=None):
   response = ControllerResponse()
@@ -328,7 +328,7 @@ def updateClassDetails(jsonData, dynamodb, email=None, userRole=None):
 
   if classesTable is None:
     MentiiLogging.getLogger().error('Unable to get classes table in getPublicClassList')
-    response.addError('Failed to get class list', 'A database error occured');
+    response.addError('Failed to get class list', 'A database error occured')
   else:
     # get data from request body
     code = jsonData.get('code')
@@ -380,4 +380,37 @@ def updateClassDetails(jsonData, dynamodb, email=None, userRole=None):
         response.addToPayload('Success', 'Class Details Updated')
     else:
       response.addError('Teacher permissions incorrect', 'Unable to update class details')
+  return response
+
+def isTeacherOfClass(email, userRole, classCode, dynamodb):
+  return ((userRole == 'teacher' or userRole == 'admin')
+    and (classCode in getTaughtClassCodesFromUser(dynamodb, email)))
+
+def addActivity(classCode, jsonData, dynamodb, email=None, userRole=None):
+  response = ControllerResponse()
+  classTable = dbUtils.getTable('classes', dynamodb)
+
+  if classTable is None:
+    MentiiLogging.getLogger().error('Unable to get classes table in getPublicClassList')
+    response.addError('Failed to add activity', 'A database error occured')
+  else:
+    if g:
+      email = g.authenticatedUser['email']
+      userRole = g.authenticatedUser['userRole']
+    if isTeacherOfClass(email, userRole, classCode, dynamodb):
+      classData = getClassByCode(classCode, dynamodb)
+      if not classData:
+        response.addError('Failed to add activity', 'A database error occured')
+      else:
+        activities = classData.get('activities',[])
+        activities.append(jsonData)
+        classData['activities'] = activities
+        result = dbUtils.putItem(classData, classTable)
+        if result is None:
+          response.addError('Failed to add activity', 'A database error occured')
+        else:
+          response.addToPayload('Success', 'Activity Added')
+    else:
+      MentiiLogging.getLogger().error(email + ' is not the teacher of ' + classCode + ', but attempted to add an activity.')
+      response.addError('Unable to add activity', 'A permissions error occured')
   return response

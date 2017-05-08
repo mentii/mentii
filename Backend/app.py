@@ -346,6 +346,7 @@ def getBookList():
 @auth.login_required
 @handleOptionsRequest
 def getSampleProblems(bookId, chapterTitle, sectionTitle):
+  print bookId, chapterTitle, sectionTitle
   status = 200
   res = ResponseCreation.ControllerResponse()
   role = g.authenticatedUser['userRole']
@@ -355,13 +356,33 @@ def getSampleProblems(bookId, chapterTitle, sectionTitle):
   else:
     dynamoDBInstance = getDatabaseClient()
     problemCount = 4
-    problems = [ algebra.getProblem( problem_ctrl.getProblemFromBook( bookId, chapterTitle, sectionTitle, dynamoDBInstance)) for _ in xrange(problemCount)]
-    problems = list(set(problems)) #remove duplicates
-    if 'Bad Problem' in problems:
+    sampleProblems = set()
+    for _ in range(problemCount):
+      template = problem_ctrl.getProblemFromBook( bookId, chapterTitle, sectionTitle, g.authenticatedUser['email'], dynamoDBInstance)[1]
+      sampleProblems.add(algebra.getProblem(template))
+    sampleProblems = list(sampleProblems) #remove duplicates
+    if 'Bad Problem' in sampleProblems:
       status = 400
     else:
-      res.addToPayload('problems', problems)
+      res.addToPayload('problems', sampleProblems)
   return ResponseCreation.createResponse(res, status)
+
+@app.route('/class/<classCode>/activities', methods=['POST', 'OPTIONS'])
+@auth.login_required
+@handleOptionsRequest
+def addActivity(classCode):
+  status = 200
+  res = ResponseCreation.ControllerResponse()
+  role = g.authenticatedUser['userRole']
+  if role != 'admin' and role != 'teacher':
+    res.addError('Role Error', 'Only teachers or admins can update a class\' activities')
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    res = class_ctrl.addActivity(classCode, request.json, dynamoDBInstance)
+    if res.hasErrors():
+      status = 400
+  return ResponseCreation.createResponse(res,status)
 
 @app.route('/class/details/update', methods=['POST', 'OPTIONS'])
 @auth.login_required

@@ -32,6 +32,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   sectionsDefault = {id: undefined, title: 'Select a Section'};
   chapterData = null;
   sectionData = null;
+  sampleProblems = [];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -53,7 +54,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
       this.classService.getClass(this.model.code)
       .subscribe(
         data => this.handleSuccess(data.json().payload.class),
-        err => this.handleError(err)
+        err => this.handleError()
       );
     });
   }
@@ -76,20 +77,20 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
     this.isLoading = false;
   }
 
-  handleError(err){
+  handleError(){
     this.toastr.error('Unable to access class.');
     this.router.navigateByUrl('/dashboard');
   }
 
   /* Modal Methods */
   showActivityModal():void {
-    this.newActivity = new ActivityModel('', 5, new Date(), new Date(), undefined, undefined, undefined);
+    this.newActivity = new ActivityModel('', 5, undefined, undefined, undefined, undefined, undefined);
     this.resetBooks();
 
     this.bookService.getAllBookTitlesAndIds()
       .subscribe(
         data => this.booksRecived(data.json().payload.books),
-        err => this.handleGetBooksError(err)
+        err => this.handleGetBooksError()
       );
   }
 
@@ -117,7 +118,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
     this.isModalShown = true;
   }
 
-  handleGetBooksError(err) {
+  handleGetBooksError() {
       this.toastr.error('Unable to load books.');
       this.hideActivityModal();
   }
@@ -140,7 +141,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
     this.bookService.getBook(this.newActivity.bookId)
       .subscribe(
         data => this.bookRecived(data.json().payload),
-        err => this.handleGetBookError(err)
+        err => this.handleGetBookError()
       );
   }
 
@@ -154,7 +155,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  handleGetBookError(err) {
+  handleGetBookError() {
       this.toastr.error('Unable to load selected book.');
       this.hideActivityModal();
   }
@@ -174,7 +175,6 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   }
 
   sectionSelected(sectionIndex) {
-    //debugger;
     if(sectionIndex == "undefined")
       return;
     this.newActivity.sectionTitle = this.sectionData[sectionIndex].title;
@@ -183,17 +183,35 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
         this.newActivity.chapterTitle,
         this.newActivity.sectionTitle)
       .subscribe(
-        data => this.problemsRecived(data.json().payload),
-        err => this.handleGetProblemsError(err)
+        data => this.problemsRecived(data.json().payload.problems),
+        err => this.handleGetProblemsError()
       );
   }
 
   problemsRecived(problems) {
-    console.log(problems)
+    this.sampleProblems = problems;
   }
 
-  handleGetProblemsError(err) {
+  handleGetProblemsError() {
     this.toastr.error('Unable to load sample problems.');
+  }
+
+  addActivity() {
+    this.classService.addActivity(this.model.code, this.newActivity)
+      .subscribe(
+        data => this.activityAdded(),
+        err => this.handleAddActivityError()
+      );
+  }
+
+  activityAdded() {
+    this.toastr.success('New activity added.');
+    this.ngOnInit();
+    this.onHideActivityModal();
+  }
+
+  handleAddActivityError() {
+    this.toastr.error('Unable to add activity.');
   }
 
   /* Edit Methods */
@@ -210,7 +228,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
     this.toastr.success("Class successfully updated.");
   }
 
-  handleUpdateError(err){
+  handleUpdateError(){
     this.toastr.error("Unable to update class details.");
   }
 
@@ -228,7 +246,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
     this.classService.updateClassDetails(newModel)
       .subscribe(
         data => this.updateModel(form),
-        err => this.handleUpdateError(err)
+        err => this.handleUpdateError()
       );
   }
 }

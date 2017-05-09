@@ -48,89 +48,11 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   selectedStepLimit = 1;
   stepLimit = 0;
 
+  /* variable to keep track of what step the last correction was so
+    that previously confirmed steps do not have a mistake button */
+  confirmedStepIndex = 0;
+
   constructor(public problemService: ProblemService, public toastr: ToastrService, public router: Router, private activatedRoute: ActivatedRoute){
-  }
-
-  applyCorrection() {
-    let trimmedCorrection = this.correctionModel.correction.replace(/\s+/g, ''); // Removed all whitespace
-    let trimmedActual = this.problemTree[this.activeStepCount].correctStep.replace(/\s+/g, ''); // Removed all whitespace
-    if (trimmedCorrection == trimmedActual) {
-      this.toastr.success("Your correction got Mentii back on the right path", "Good Job");
-      this.problemTree[this.activeStepCount]['badStepShown'] = false; // Close the bad step subtree
-      this.stepIsBeingCorrected = false;
-      this.showNextStep(); // Progress to the next step, after the correction
-    } else {
-      this.toastr.error("Your correction won't help Mentii get back on the right path", "Not Quite...");
-    }
-  }
-
-  cancelCorrection() {
-    this.stepIsBeingCorrected = false;
-    this.correctionModel.correction = ''; //clear the correction from the text box
-  }
-
-  showNextStep(){
-    this.activeBadStepCount = 0;
-    this.badStepProblem = null;
-    let activeStep = this.problemTree[this.activeStepCount+1];
-    // If nextstep is clicked, and the next step contains bad steps
-    if (activeStep && activeStep.badStep) {
-      this.badStepProblem = this.problemTree[this.activeStepCount+1]["badStepPath"];
-      this.problemTree[this.activeStepCount+1]['badStepShown'] = true;
-      this.activeStepCount++;
-      this.setStepLimit();
-    }
-    // if the active step is only a good step
-    else {
-      // if it is a good step and there are no more steps, the problem is complete
-      if (this.activeStepCount == this.problemTree.length-1) {
-        this.problemIsComplete = true;
-      }
-      // if more steps exist, increment the counter so the next good step is shown on the page
-      this.activeStepCount++;
-    }
-    this.scrollToBottom();
-  }
-
-  showNextBadStep(){
-    if (this.activeBadStepCount >= this.stepLimit) {
-      this.sendFailUpdate();
-      this.toastr.error("This doesn't seem quite right", "Uh Oh");
-    } else {
-      this.activeBadStepCount++;
-    }
-    this.scrollToBottom();
-  }
-
-  incorrectBadStep(badStepIndex: number, problemStep: string) {
-    if (badStepIndex == 0) {
-      this.correctionModel.correction = this.badStepProblem[0]; //set the model to the current bad step
-      this.stepIsBeingCorrected = true;
-    } else {
-      this.toastr.warning("This is part of an incorrect step, but the problem is in a different step", "Almost...");
-    }
-  }
-
-  incorrectGoodStep() {
-    this.toastr.error("This is actually a correct step to take.", "Sorry");
-  }
-
-  returnToClassPage() {
-    this.sendSuccessUpdate();
-    this.activatedRoute.params.subscribe(params => {
-      let classCode = params['classCode'];
-      this.router.navigateByUrl('/class/' + classCode);
-    });
-  }
-
-  sendSuccessUpdate() {
-    this.problemService.postProblemSuccess(this.classCode, this.problemCode, this.problemIndex, "True")
-      .subscribe();
-  }
-
-  sendFailUpdate() {
-    this.problemService.postProblemSuccess(this.classCode, this.problemCode, this.problemIndex, "")
-      .subscribe();
   }
 
   ngOnInit() {
@@ -164,6 +86,90 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     if (!err.isAuthenticationError) {
       this.toastr.error('The problem steps failed to load.');
     }
+  }
+
+  applyCorrection() {
+    let trimmedCorrection = this.correctionModel.correction.replace(/\s+/g, ''); // Removed all whitespace
+    let trimmedActual = this.problemTree[this.activeStepCount].correctStep.replace(/\s+/g, ''); // Removed all whitespace
+    if (trimmedCorrection == trimmedActual) {
+      this.toastr.success("Your correction got Mentii back on the right path", "Good Job!");
+      this.problemTree[this.activeStepCount]['badStepShown'] = false; // Close the bad step subtree
+      this.stepIsBeingCorrected = false;
+      this.confirmedStepIndex = this.activeStepCount;
+      this.showNextStep(); // Progress to the next step, after the correction
+    } else {
+      this.toastr.error("This correction won't help Mentii get back on the right path", "Not Quite...");
+    }
+  }
+
+  cancelCorrection() {
+    this.stepIsBeingCorrected = false;
+    this.correctionModel.correction = ''; //clear the correction from the text box
+  }
+
+  showNextStep(){
+    this.activeBadStepCount = 0;
+    this.badStepProblem = null;
+    let activeStep = this.problemTree[this.activeStepCount+1];
+    // If nextstep is clicked, and the next step contains bad steps
+    if (activeStep && activeStep.badStep) {
+      this.badStepProblem = this.problemTree[this.activeStepCount+1]["badStepPath"];
+      this.problemTree[this.activeStepCount+1]['badStepShown'] = true;
+      this.activeStepCount++;
+      this.setStepLimit();
+    }
+    // if the active step is only a good step
+    else {
+      // if it is a good step and there are no more steps, the problem is complete
+      if (this.activeStepCount == this.problemTree.length-1) {
+        this.problemIsComplete = true;
+      }
+      // if more steps exist, increment the counter so the next good step is shown on the page
+      this.activeStepCount++;
+    }
+    this.scrollToBottom();
+  }
+
+  showNextBadStep(){
+    if (this.activeBadStepCount >= this.stepLimit || this.activeBadStepCount == this.badStepProblem.length-1) {
+      this.sendFailUpdate();
+      this.toastr.error("Mentii made at least one mistake somewhere", "Look Carefully");
+    } else {
+      this.activeBadStepCount++;
+    }
+    this.scrollToBottom();
+  }
+
+  incorrectBadStep(badStepIndex: number, problemStep: string) {
+    if (badStepIndex == 0) {
+      this.correctionModel.correction = this.badStepProblem[0]; //set the model to the current bad step
+      this.stepIsBeingCorrected = true;
+    } else {
+      this.toastr.warning("Mentii's mistake is somewhere else", "Try Again");
+    }
+  }
+
+  incorrectGoodStep(index) {
+    this.confirmedStepIndex = index;
+    this.toastr.warning("Mentii did not make a mistake here", "Try Again");
+  }
+
+  returnToClassPage() {
+    this.sendSuccessUpdate();
+    this.activatedRoute.params.subscribe(params => {
+      let classCode = params['classCode'];
+      this.router.navigateByUrl('/class/' + classCode);
+    });
+  }
+
+  sendSuccessUpdate() {
+    this.problemService.postProblemSuccess(this.classCode, this.problemCode, this.problemIndex, "True")
+      .subscribe();
+  }
+
+  sendFailUpdate() {
+    this.problemService.postProblemSuccess(this.classCode, this.problemCode, this.problemIndex, "")
+      .subscribe();
   }
 
   selectStepLimit(limit){

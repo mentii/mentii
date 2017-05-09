@@ -19,13 +19,14 @@
           <br/>
         </span>
         <p>{{model.description}}</p>
+        <button class="btn btn-sm btn-primary" (click)="joinClass(model.code)" [ladda]="isJoinClassInprogress" *ngIf="!isStudentInClass">Join Class</button>
         <hr/>
       </div>
     </div>
     <div class="row">
       <div class="col-xs-12">
         <h3>Activities</h3>
-        <activity-list [activities]="model.activities" [classCode]="model.code"></activity-list>
+        <activity-list [activities]="model.activities" [classCode]="model.code" [isStudentInClass]="isStudentInClass" [isTeacher]="showTeacherView"></activity-list>
       </div>
     </div>
   </div>

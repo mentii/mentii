@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { ClassService } from '../class.service';
+import { UserService } from '../../user/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { ClassModel } from '../class.model';
 import { NgForm } from '@angular/forms';
@@ -16,13 +17,16 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   model = new ClassModel('', '', '', '', '', [], []);
   private routeSub: any;
   showTeacherView = false;
+  isStudentInClass = false;
   isLoading = true;
   editMode = false;
+  isJoinClassInprogress = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private classService: ClassService,
+    private userService: UserService,
     private toastr: ToastrService
   ){}
 
@@ -57,7 +61,8 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
       data.activities,
       data.students
     );
-    this.showTeacherView = data.isTeacher;
+    this.showTeacherView = data.isTeacher || false;
+    this.isStudentInClass = data.isStudent || false ;
     this.isLoading = false;
   }
 
@@ -99,6 +104,26 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
         data => this.updateModel(form),
         err => this.handleUpdateError(err)
       );
+  }
+
+  joinClass(classCode) {
+    this.isJoinClassInprogress = true;
+    this.userService.joinClass(classCode)
+    .subscribe(
+      data => this.handleJoinSuccess(data.json().payload),
+      err => this.handleJoinError(err)
+    );
+  }
+
+  handleJoinSuccess(json) {
+    this.toastr.success('You have joined ' + json.title);
+    this.isJoinClassInprogress = false;
+    this.isStudentInClass = true;
+  }
+
+  handleJoinError(err) {
+    this.isJoinClassInprogress = false;
+    this.toastr.error('Unable to join class');
   }
 
 }

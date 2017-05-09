@@ -5,14 +5,12 @@
         <div class="panel panel-default">
           <div class="panel-heading">
             <h3 class="panel-title">
-              {{activity.title}}<span *ngIf="activity.targetDate">&nbsp;</span><small>{{activity.targetDate}}</small>
+              {{activity.title}}<span *ngIf="isTeacher && activity.startDate">&nbsp;<small>Start Date {{activity.startDate}}</small></span>
             </h3>
           </div>
           <div class="panel-body">
-            <p *ngIf="activity.description">
-              {{activity.description}}
-            </p>
-            <a [routerLink]="['/problem/display', classCode, activity.title]"><i class="fa fa-paper-plane-o"></i> Do Problem</a>
+            Try to mentor mentii through {{activity.problemCount}} problems<span *ngIf="activity.startDate">, before {{activity.startDate}}</span>:
+            <a [routerLink]="['/problem/display', classCode, activity.title]"><i class="fa fa-pencil"></i> Mentor mentii</a>
           </div>
         </div>
       </div>

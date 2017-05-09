@@ -103,7 +103,7 @@ export class ClassService {
       'title': newActivity.title,
       'problemCount' : newActivity.problemCount,
       'startDate': newActivity.startDate,
-      'unlockDate': newActivity.unlockDate,
+      'dueDate': newActivity.dueDate,
       'bookId': newActivity.bookId,
       'chapterTitle': newActivity.chapterTitle,
       'sectionTitle': newActivity.sectionTitle

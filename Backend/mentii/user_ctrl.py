@@ -9,7 +9,6 @@ import utils.MentiiLogging as MentiiLogging
 import uuid
 import hashlib
 import class_ctrl as class_ctrl
-
 from flask import g
 
 def sendForgotPasswordEmail(httpOrigin, jsonData, mailer, dbInstance):
@@ -348,11 +347,8 @@ def joinClass(jsonData, dynamoDBInstance, email=None):
   return response
 
 def leaveClass(jsonData, dynamoDBInstance, email=None):
-  MentiiLogging.getLogger().info("leaveClass_UC start")
   response = ControllerResponse()
   data = None
-  #g will be not be available during testing
-  #and email will need to be passed to the function
   if g: # pragma: no cover
     email = g.authenticatedUser['email']
   if 'code' not in jsonData.keys() or not jsonData['code']:
@@ -363,7 +359,6 @@ def leaveClass(jsonData, dynamoDBInstance, email=None):
       'email': email,
       'classCode': classCode
     }
-  MentiiLogging.getLogger().info("leaveClass_UC end")
   return class_ctrl.removeStudent(dynamoDBInstance, data, response, userRole=None)
 
 def addClassCodeToStudent(email, classCode, dynamoDBInstance):

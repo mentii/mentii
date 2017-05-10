@@ -38,5 +38,4 @@ export class ClassListItemComponent {
     this.isJoinClassInprogress = false;
     this.toastr.error('Unable to join class');
   }
-
 }

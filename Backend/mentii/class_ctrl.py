@@ -198,7 +198,6 @@ def getPublicClassList(dynamodb, email=None):
   return response
 
 def removeStudent(dynamoDBInstance, jsonData, response=None, userRole=None):
-  MentiiLogging.getLogger().info("leaveClass_CC start")
   currentUserEmail = None
   if response is None:
     response = ControllerResponse()
@@ -207,8 +206,6 @@ def removeStudent(dynamoDBInstance, jsonData, response=None, userRole=None):
   if g:
     userRole = g.authenticatedUser['userRole']
     currentUserEmail = g.authenticatedUser['email']
-    MentiiLogging.getLogger().info("currentUserEmail: " + currentUserEmail)
-    MentiiLogging.getLogger().info("email: " + email)
   if (userRole != 'teacher' and userRole != 'admin') and (currentUserEmail != email):
     response.addError('Role error', 'Only those with teacher privileges can remove students from classes')
   elif email is None or classCode is None:
@@ -217,7 +214,6 @@ def removeStudent(dynamoDBInstance, jsonData, response=None, userRole=None):
     removeClassFromStudent(dynamoDBInstance, response, email, classCode)
     if not response.hasErrors():
       removeStudentFromClass(dynamoDBInstance, response, email, classCode)
-  MentiiLogging.getLogger().info("leaveClass_CC end")
   return response
 
 def buildUpdateJsonData(keyName, keyValue, attributeName, attributeValue):

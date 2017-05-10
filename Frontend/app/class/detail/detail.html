@@ -130,7 +130,7 @@
             <div class="col-xs-12 col-md-4">
               <div class="form-group">
                 <label class="required"># of Problems to Complete</label>
-                <input type="number" min="1" step="1" value="5" [(ngModel)]="newActivity.problemCount" name="problemCount" class="form-control">
+                <input type="number" required pattern="(^[^-0])\d" min="1" step="1" value="5" [(ngModel)]="newActivity.problemCount" name="problemCount" class="form-control">
               </div>
             </div>
             <div class="col-xs-12 col-md-4">

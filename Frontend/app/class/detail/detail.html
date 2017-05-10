@@ -140,13 +140,13 @@
             <div class="col-xs-12 col-md-4">
               <div class="form-group">
                 <label>Start Date (Optional)</label>
-                <input type="date" class="form-control" [(ngModel)]="newActivity.startDate" name="startDate">
+                <input type="date" class="form-control" [min]="minActivityStartDate" [(ngModel)]="newActivity.startDate" name="startDate" (change)=startDateSelected()>
               </div>
             </div>
             <div class="col-xs-12 col-md-4">
               <div class="form-group">
                 <label>Due Date (Optional)</label>
-                <input type="date" class="form-control" [(ngModel)]="newActivity.dueDate" name="dueDate">
+                <input type="date" class="form-control" [min]="newActivity.startDate" [(ngModel)]="newActivity.dueDate" name="dueDate">
               </div>
             </div>
           </div>

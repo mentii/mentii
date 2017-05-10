@@ -26,6 +26,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   public isModalShown:boolean = false;
   editMode = false;
   newActivity = null;
+  minActivityStartDate = new Date().toJSON().split('T')[0];
   books:Array<Object> = [];
   booksDefault = {id: undefined, title: 'Select a Textbook'};
   chapters:Array<Object> = [];
@@ -87,7 +88,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl('/dashboard');
   }
 
-  /* Modal Methods */
+  /* Activity Modal Methods */
   showActivityModal():void {
     this.newActivity = new ActivityModel('', '', 5, undefined, undefined, undefined, undefined, undefined);
     this.resetBooks();
@@ -97,6 +98,11 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
         data => this.booksRecived(data.json().payload.books),
         err => this.handleGetBooksError()
       );
+  }
+
+  startDateSelected() {
+    if(this.newActivity.startDate > this.newActivity.dueDate)
+      this.newActivity.dueDate = this.newActivity.startDate;
   }
 
   resetBooks() {

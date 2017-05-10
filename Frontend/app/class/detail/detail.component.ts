@@ -35,6 +35,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   sectionsDefault = {id: undefined, title: 'Select a Section'};
   chapterData = null;
   sectionData = null;
+  sampleProblemsLoading = false;
   sampleProblems = [];
   isJoinClassInprogress = false;
 
@@ -90,7 +91,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
 
   /* Activity Modal Methods */
   showActivityModal():void {
-    this.newActivity = new ActivityModel('', '', 5, undefined, undefined, undefined, undefined, undefined);
+    this.newActivity = new ActivityModel('', undefined, 5, undefined, undefined, undefined, undefined, undefined);
     this.resetBooks();
 
     this.bookService.getAllBookTitlesAndIds()
@@ -122,6 +123,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
     this.sectionData = null;
     this.sections = [];
     this.sections.push(this.sectionsDefault);
+    this.sampleProblems = [];
   }
 
   booksRecived(books) {
@@ -189,6 +191,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
     if(sectionIndex == "undefined")
       return;
     this.newActivity.sectionTitle = this.sectionData[sectionIndex].title;
+    this.sampleProblemsLoading = true;
     this.bookService.getSampleProblems(
         this.newActivity.bookId,
         this.newActivity.chapterTitle,
@@ -200,10 +203,12 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   }
 
   problemsRecived(problems) {
+    this.sampleProblemsLoading = false;
     this.sampleProblems = problems;
   }
 
   handleGetProblemsError() {
+    this.sampleProblemsLoading = false;
     this.toastr.error('Unable to load sample problems.');
   }
 

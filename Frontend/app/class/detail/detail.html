@@ -128,7 +128,7 @@
           </div>
           <div class="form-group">
             <label>Description (Optional)</label>
-            <input type="text" placeholder="These problems cover addition and subtraction." [(ngModel)]="newActivity.description" name="title" class="form-control" clearPlaceholder>
+            <input type="text" placeholder="These problems cover addition and subtraction." [(ngModel)]="newActivity.description" name="description" class="form-control" clearPlaceholder>
           </div>
           <div class="row">
             <div class="col-xs-12 col-md-4">
@@ -175,13 +175,22 @@
                 </select>
               </div>
             </div>
+            <!-- show if problem(s) are loading -->
+            <div *ngIf="isLoading">
+              <div class="row">
+                <div class="col-xs-12">
+                  <i class="fa fa-spinner fa-spin"></i> Loading the problem...
+                </div>
+              </div>
+            </div>
+            <!-- show if problem(s) loaded -->
             <div class="col-xs-12 col-md-4" *ngIf="sampleProblems.length > 0">
               <label>Sample Problem(s)</label>
               <pre><code><div *ngFor="let problem of sampleProblems">{{problem}}</div></code></pre>
             </div>
           </div>
           <div class="modal-footer">
-            <p class="text-danger" *ngIf="!createActivityForm.form.valid">* Required Fields</p>
+            <p class="text-danger">* Required Fields</p>
             <div class="form-group">
               <button type="button" class="btn btn-primary pull-right" [disabled]="!createActivityForm.form.valid || !newActivity.bookId || !newActivity.chapterTitle || !newActivity.sectionTitle" (click)="addActivity()" >
                 Add New Activity

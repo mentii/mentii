@@ -15,7 +15,6 @@ export class ClassListItemComponent {
   @Input() joinClassButtonShown;
   @Input() editClassButtonShown;
   isJoinClassInprogress = false;
-  isLeaveClassInProgress = false;
 
   constructor(public toastr: ToastrService, public router: Router, public userService: UserService ){
   }
@@ -29,17 +28,8 @@ export class ClassListItemComponent {
     );
   }
 
-  leaveClass(classCode) {
-    this.isLeaveClassInProgress = true;
-    this.userService.leaveClass(classCode)
-    .subscribe(
-      data => this.handleLeaveSuccess(data.json().payload),
-      err => this.handleLeaveError(err)
-    );
-  }
-
   handleJoinSuccess(json) {
-    this.isJoinClassInprogress = false;
+    this.isJoinClassInprogress = true;
     this.toastr.success('You have joined ' + json.title);
     this.router.navigateByUrl('/class/' + json.code);
   }
@@ -49,14 +39,4 @@ export class ClassListItemComponent {
     this.toastr.error('Unable to join class');
   }
 
-  handleLeaveSuccess(json) {
-    this.isLeaveClassInProgress = false;
-    this.toastr.success('You have left ' + json.title);
-    this.router.navigateByUrl('/dashboard');
-  }
-
-  handleLeaveError(err) {
-    this.isLeaveClassInProgress = false;
-    this.toastr.error('Unable to leave class');
-  }
 }

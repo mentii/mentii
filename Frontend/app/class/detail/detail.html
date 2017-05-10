@@ -126,11 +126,15 @@
             <label class="required">Name</label>
             <input type="text" required placeholder="Week 1 Problems" [(ngModel)]="newActivity.title" name="title" class="form-control" clearPlaceholder>
           </div>
+          <div class="form-group">
+            <label>Description (Optional)</label>
+            <input type="text" placeholder="These problems cover addition and subtraction." [(ngModel)]="newActivity.description" name="title" class="form-control" clearPlaceholder>
+          </div>
           <div class="row">
             <div class="col-xs-12 col-md-4">
               <div class="form-group">
                 <label class="required"># of Problems to Complete</label>
-                <input type="number" required pattern="(^[^-0])\d" min="1" step="1" value="5" [(ngModel)]="newActivity.problemCount" name="problemCount" class="form-control">
+                <input type="number" required pattern="[1-9][0-9]*" min="1" step="1" value="5" [(ngModel)]="newActivity.problemCount" name="problemCount" class="form-control">
               </div>
             </div>
             <div class="col-xs-12 col-md-4">

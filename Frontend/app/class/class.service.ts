@@ -101,6 +101,7 @@ export class ClassService {
     let addActivityUrl = this.mentiiConfig.getRootUrl() + '/class/'+classCode+'/activities';
     let body = {
       'title': newActivity.title,
+      'description' : newActivity.description,
       'problemCount' : newActivity.problemCount,
       'startDate': newActivity.startDate,
       'dueDate': newActivity.dueDate,

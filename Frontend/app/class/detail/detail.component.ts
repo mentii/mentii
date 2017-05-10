@@ -89,7 +89,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
 
   /* Modal Methods */
   showActivityModal():void {
-    this.newActivity = new ActivityModel('', 5, undefined, undefined, undefined, undefined, undefined);
+    this.newActivity = new ActivityModel('', '', 5, undefined, undefined, undefined, undefined, undefined);
     this.resetBooks();
 
     this.bookService.getAllBookTitlesAndIds()

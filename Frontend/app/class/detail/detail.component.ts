@@ -138,12 +138,12 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
 
   handleLeaveSuccess(json) {
     this.isLeaveClassInProgress = false;
-    this.toastr.success('You have left ' + json.title);
+    this.toastr.success('Successfully unenrolled');
     this.router.navigateByUrl('/dashboard');
   }
 
   handleLeaveError(err) {
     this.isLeaveClassInProgress = false;
-    this.toastr.error('Unable to leave class');
+    this.toastr.error('Unable to unenroll');
   }
 }

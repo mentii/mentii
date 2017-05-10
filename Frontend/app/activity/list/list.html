@@ -10,7 +10,9 @@
           </div>
           <div class="panel-body">
             Try to mentor mentii through {{activity.problemCount}} problems<span *ngIf="activity.startDate">, before {{activity.startDate}}</span>:
-            <a [routerLink]="['/problem/display', classCode, activity.title]"><i class="fa fa-pencil"></i> Mentor mentii</a>
+            <a [routerLink]="['/problem/display', classCode, activity.title]">
+            <br/>
+            <i class="fa fa-pencil"></i> Mentor mentii</a>
           </div>
         </div>
       </div>

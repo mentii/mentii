@@ -45,7 +45,7 @@ def createBook(bookData, dynamoDBInstance, userRole=None):
 def editBook(bookData, dynamoDBInstance):
   response = ControllerResponse()
   # check for required options
-  if 'title' not in bookData.keys() or 'description' not in bookData.keys() or 'bookId' not in bookData.keys():
+  if not bookData or 'title' not in bookData.keys() or 'description' not in bookData.keys() or 'bookId' not in bookData.keys():
     response.addError('Book update failed.', 'Invalid book data given.')
   else:
     # Get books table
@@ -109,8 +109,8 @@ def updateBookWithUserData(bookId, chapterTitle, sectionTitle, userId, weights, 
             if 'users' not in section.keys():
               section['users'] = {}
             section['users'][userId] = weights
-            break 
-        break 
+            break
+        break
   return not editBook(book, dynamoDBInstance).hasErrors()
 
 
@@ -123,7 +123,7 @@ def getSectionFromBook(bookId, chapterTitle, sectionTitle, dynamoDBInstance):
         sections = chapter.get('sections', [])
         for section in sections:
           if section.get('title', '') == sectionTitle:
-            sectionToUse = section           
+            sectionToUse = section
             break #Break out of section loop
         break #Break out of chapter loop
 

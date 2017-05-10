@@ -7,13 +7,13 @@
   </div>
   <div class="panel-body">
     <div class="form-group">
-      <label for="chapterTitle" class="required">Chapter Title</label>
+      <label for="title" class="required">Chapter Title</label>
       <input  type="text"
-              formControlName="chapterTitle"
+              formControlName="title"
               placeholder="Chapter 1 - Foundations for Algebra"
               class="form-control"
               clearPlaceholder/>
-      <span [hidden]="chapter.controls.chapterTitle.pristine || chapter.controls.chapterTitle.valid" class="text-danger">
+      <span [hidden]="chapter.controls.title.pristine || chapter.controls.title.valid" class="text-danger">
           Chapter title required
       </span>
     </div>

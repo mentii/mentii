@@ -206,7 +206,7 @@ def removeStudent(dynamoDBInstance, jsonData, response=None, userRole=None):
   if g:
     userRole = g.authenticatedUser['userRole']
     currentUserEmail = g.authenticatedUser['email']
-  if (userRole != 'teacher' and userRole != 'admin') and (currentUserEmail != email):
+  if not (userRole == 'teacher' or userRole == 'admin' or currentUserEmail == email):
     response.addError('Role error', 'Only those with teacher privileges can remove students from classes')
   elif email is None or classCode is None:
     response.addError('Failed to remove student from class', 'Invalid data given')

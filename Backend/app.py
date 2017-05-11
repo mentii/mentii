@@ -356,11 +356,11 @@ def getSampleProblems(bookId, chapterTitle, sectionTitle):
   else:
     dynamoDBInstance = getDatabaseClient()
     problemCount = 4
-    sampleProblems = set()
+    sampleProblems = set() #prevent duplicates
     for _ in range(problemCount):
       template = problem_ctrl.getProblemFromBook( bookId, chapterTitle, sectionTitle, g.authenticatedUser['email'], dynamoDBInstance)[1]
       sampleProblems.add(algebra.getProblem(template))
-    sampleProblems = list(sampleProblems) #remove duplicates
+    sampleProblems = list(sampleProblems)
     if 'Bad Problem' in sampleProblems:
       status = 400
     else:

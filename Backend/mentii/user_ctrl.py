@@ -359,7 +359,7 @@ def leaveClass(jsonData, dynamoDBInstance, email=None):
       'email': email,
       'classCode': classCode
     }
-  return class_ctrl.removeStudent(dynamoDBInstance, data, response, userRole=None)
+  return class_ctrl.removeStudent(dynamoDBInstance, data, response=response, userRole=None)
 
 def addClassCodeToStudent(email, classCode, dynamoDBInstance):
   userTable = dbUtils.getTable('users', dynamoDBInstance)

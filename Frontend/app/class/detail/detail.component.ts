@@ -21,6 +21,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   isLoading = true;
   editMode = false;
   isJoinClassInprogress = false;
+  isLeaveClassInProgress = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -126,4 +127,23 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
     this.toastr.error('Unable to join class');
   }
 
+  leaveClass(classCode) {
+    this.isLeaveClassInProgress = true;
+    this.userService.leaveClass(classCode)
+    .subscribe(
+      data => this.handleLeaveSuccess(data.json().payload),
+      err => this.handleLeaveError(err)
+    );
+  }
+
+  handleLeaveSuccess(json) {
+    this.isLeaveClassInProgress = false;
+    this.toastr.success('Successfully unenrolled');
+    this.router.navigateByUrl('/dashboard');
+  }
+
+  handleLeaveError(err) {
+    this.isLeaveClassInProgress = false;
+    this.toastr.error('Unable to unenroll');
+  }
 }

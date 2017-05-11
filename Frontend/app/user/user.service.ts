@@ -93,6 +93,23 @@ export class UserService {
   }
 
   /**
+  * Service method to remove a user from a class and vice versa
+  * @param  {string} classCode code of class user will join
+  * @return {Observable<any>} data.json() will contain the class code
+  */
+  leaveClass(classCode) : Observable<any> {
+    let leaveClassUrl = this.mentiiConfig.getRootUrl() + '/user/classes/leave';
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let options = new RequestOptions({ headers: headers })
+    let body = {
+      "code": classCode
+    }
+    return this.authHttp.post(leaveClassUrl, body)
+    .map((res:Response) => res)
+    .catch((error:any) => Observable.throw(error));
+  }
+
+  /**
   * Service method to activate a user
   * @param  {string} activationId
   * @return {Observable<any>} data.json() will contain status "Success" in payload or errors

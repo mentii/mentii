@@ -197,13 +197,16 @@ def getPublicClassList(dynamodb, email=None):
     response.addToPayload('classes', classes)
   return response
 
-def removeStudent(dynamoDBInstance, jsonData, userRole=None):
-  response = ControllerResponse()
+def removeStudent(dynamoDBInstance, jsonData, response=None, userRole=None):
+  currentUserEmail = None
+  if response is None:
+    response = ControllerResponse()
   email = jsonData.get('email')
   classCode = jsonData.get('classCode')
   if g:
     userRole = g.authenticatedUser['userRole']
-  if userRole != 'teacher' and userRole != 'admin':
+    currentUserEmail = g.authenticatedUser['email']
+  if not (userRole == 'teacher' or userRole == 'admin' or currentUserEmail == email):
     response.addError('Role error', 'Only those with teacher privileges can remove students from classes')
   elif email is None or classCode is None:
     response.addError('Failed to remove student from class', 'Invalid data given')

@@ -396,7 +396,7 @@ def addActivity(classCode, jsonData, dynamodb, email=None, userRole=None):
     MentiiLogging.getLogger().error('Unable to get classes table in getPublicClassList')
     response.addError('Failed to add activity', 'A database error occured')
   else:
-    if g:
+    if g: # pragma: no cover
       email = g.authenticatedUser['email']
       userRole = g.authenticatedUser['userRole']
     if isTeacherOfClass(email, userRole, classCode, dynamodb):

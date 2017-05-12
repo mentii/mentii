@@ -190,6 +190,8 @@ def generateTreeWithBadSteps(problemSolutionPath, numOfFailurePoints, failurePoi
   for correctStep  in problemSolutionPath:
     step = {}
     step['correctStep'] = correctStep
+    stepToDisplay = re.sub('[()]', '', correctStep)
+    step['stepToDisplay'] = stepToDisplay
     response.append(step)
 
   # for each failure point generate the bad step and path
@@ -199,6 +201,12 @@ def generateTreeWithBadSteps(problemSolutionPath, numOfFailurePoints, failurePoi
     if successful:
       badStepPath = mathsteps.getStepsForProblem(badStep)
       response[failureIndex]['badStep'] = badStep
+
+      badStepToDisplay = re.sub('[()]', '', badStep)
+      response[failureIndex]['badStepToDisplay'] = badStepToDisplay
+
       response[failureIndex]['badStepPath'] = badStepPath
+
+
 
   return response

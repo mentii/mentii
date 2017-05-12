@@ -67,7 +67,7 @@
         <div class="panel panel-default" [attr.data-good-index]="goodStepIndex" *ngIf="goodStepIndex <= activeStepCount && !step.badStepShown">
           <div class="panel-heading">
             <h3 class="panel-title">
-              {{step.correctStep}}
+              {{step.stepToDisplay}}
             </h3>
           </div>
           <!-- Only show the buttons in the panel for the current step that's not a solution -->
@@ -104,7 +104,7 @@
           <div class={{panelClass}} *ngIf="badStepIndex <= activeBadStepCount">
             <div class="panel-heading">
               <h3 class="panel-title">
-                {{badStep}}
+                {{step.badStepToDisplay}}
               </h3>
             </div>
             <!-- Only show the buttons on the active bad step -->
@@ -116,13 +116,13 @@
                 </a>
 
                 <!-- Only show this button on the non active bad steps -->
-                <a type="button" class="buttonPad lightBadStep btn btn-sm" (click)="incorrectBadStep(badStepIndex,badStep)"
+                <a type="button" class="buttonPad lightBadStep btn btn-sm" (click)="incorrectBadStep(badStepIndex,step.badStepToDisplay)"
                 *ngIf="badStepIndex != activeBadStepCount">
                   <i class="fa fa-hand-paper-o fa-lg" aria-hidden="true"></i>
                 </a>
 
                 <!-- Show this button on the active bad step -->
-                <button class="buttonPad btn btn-danger btn-sm" (click)="incorrectBadStep(badStepIndex,badStep)"
+                <button class="buttonPad btn btn-danger btn-sm" (click)="incorrectBadStep(badStepIndex,step.badStepToDisplay)"
                 *ngIf="badStepIndex == activeBadStepCount">
                   <i class="fa fa-hand-paper-o fa-lg" aria-hidden="true"></i>
                 </button>

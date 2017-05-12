@@ -79,6 +79,7 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
     //save the equation being solved as different variable
     this.problem = data.payload.problemTree[0].correctStep;
     this.isLoading = false;
+    console.log(data.payload)
   }
 
   handleInitError(err) {
@@ -90,7 +91,9 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
 
   applyCorrection() {
     let trimmedCorrection = this.correctionModel.correction.replace(/\s+/g, ''); // Removed all whitespace
-    let trimmedActual = this.problemTree[this.activeStepCount].correctStep.replace(/\s+/g, ''); // Removed all whitespace
+    //let trimmedActual = this.problemTree[this.activeStepCount].correctStep.replace(/\s+/g, ''); // Removed all whitespace
+    let trimmedActual = this.problemTree[this.activeStepCount].stepToDisplay.replace(/\s+/g, '');
+
     if (trimmedCorrection == trimmedActual) {
       this.toastr.success("Your correction got Mentii back on the right path", "Good Job!");
       this.problemTree[this.activeStepCount]['badStepShown'] = false; // Close the bad step subtree
@@ -142,7 +145,8 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
 
   incorrectBadStep(badStepIndex: number, problemStep: string) {
     if (badStepIndex == 0) {
-      this.correctionModel.correction = this.badStepProblem[0]; //set the model to the current bad step
+      this.correctionModel.correction = problemStep; // set model to current bad step display
+      //this.badStepProblem[0]; //set the model to the current bad step
       this.stepIsBeingCorrected = true;
     } else {
       this.toastr.warning("Mentii's mistake is somewhere else", "Try Again");

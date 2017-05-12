@@ -796,6 +796,35 @@ class ClassCtrlDBTests(unittest.TestCase):
     self.assertFalse('department' in c['Item'])
     self.assertEqual(c['Item']['classSection'], 'lkjh')
 
+  def test_isCodeInTaughtList(self):
+    print('Running isCodeInTaughtList test case')
+    email = 'teacher@user.com'
+
+    # put user with taught list into db
+    usersTable = db.getTable('users', dynamodb)
+    userJsonData = {
+      'email': email,
+      'userRole': 'teacher',
+      'teaching': ['d26713cc-f02d-4fd6-80f0-026784d1ab9b'] #algebra 1 from mock classes data
+    }
+
+    db.putItem(userJsonData, usersTable)
+
+    # code is in teaching list
+    jsonData = { 'code' :'d26713cc-f02d-4fd6-80f0-026784d1ab9b' }
+    response = class_ctrl.isCodeInTaughtList(jsonData, dynamodb, email)
+    self.assertTrue(response)
+
+    # code is not in teaching list
+    jsonData = { 'code' :'000000-f02d-4fd6-80f0-026784d1ab9b' }
+    response = class_ctrl.isCodeInTaughtList(jsonData, dynamodb, email)
+    self.assertFalse(response)
+
+    # no code given
+    jsonData = {}
+    response = class_ctrl.isCodeInTaughtList(jsonData, dynamodb, email)
+    self.assertFalse(response)
+
 if __name__ == '__main__':
   if __package__ is None:
     import sys

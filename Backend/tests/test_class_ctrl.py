@@ -345,7 +345,7 @@ class ClassCtrlDBTests(unittest.TestCase):
       'email': email,
       'classCode':classCode
     }
-    res = class_ctrl.removeStudent(dynamodb, jsonData, userRole)
+    res = class_ctrl.removeStudent(dynamodb, jsonData, userRole=userRole)
     self.assertFalse(res.hasErrors())
 
   def test_removeStudent_role_fail(self):
@@ -360,7 +360,7 @@ class ClassCtrlDBTests(unittest.TestCase):
       'email': email,
       'classCode':classCode
     }
-    res = class_ctrl.removeStudent(dynamodb, jsonData, userRole)
+    res = class_ctrl.removeStudent(dynamodb, jsonData, userRole=userRole)
     self.assertTrue(res.hasErrors())
     self.assertEqual(res.errors[0], {'message': 'Only those with teacher privileges can remove students from classes', 'title': 'Role error'})
 
@@ -404,7 +404,7 @@ class ClassCtrlDBTests(unittest.TestCase):
       'email': email,
       'classCode':'f24abcdc-f09d-4fd6-81f1-026784d6cc9b'
     }
-    res = class_ctrl.removeStudent(dynamodb, jsonData, userRole)
+    res = class_ctrl.removeStudent(dynamodb, jsonData, userRole=userRole)
     self.assertTrue(res.hasErrors())
     self.assertEqual(res.errors[0], {'message': 'Class not found', 'title': 'Failed to remove class from student'})
 
@@ -421,7 +421,7 @@ class ClassCtrlDBTests(unittest.TestCase):
       'email': 'bad@user.me',
       'classCode':classCode
     }
-    res = class_ctrl.removeStudent(dynamodb, jsonData, userRole)
+    res = class_ctrl.removeStudent(dynamodb, jsonData, userRole=userRole)
     self.assertTrue(res.hasErrors())
     self.assertEqual(res.errors[0], {'message': 'Unable to find user', 'title': 'Failed to remove student from class'})
 

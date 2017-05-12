@@ -29,6 +29,7 @@ export class ClassListItemComponent {
   }
 
   handleJoinSuccess(json) {
+    this.isJoinClassInprogress = false;
     this.toastr.success('You have joined ' + json.title);
     this.router.navigateByUrl('/class/' + json.code);
   }

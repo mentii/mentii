@@ -20,6 +20,7 @@
         </span>
         <p>{{model.description}}</p>
         <button class="btn btn-sm btn-primary" (click)="joinClass(model.code)" [ladda]="isJoinClassInprogress" *ngIf="!isStudentInClass && !showTeacherView">Join Class</button>
+        <button class="btn btn-sm btn-danger" (click)="leaveClass(model.code)" [ladda]="isLeaveClassInProgress" *ngIf="isStudentInClass">Leave Class</button>
         <hr/>
       </div>
     </div>

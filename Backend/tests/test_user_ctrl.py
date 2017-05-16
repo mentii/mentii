@@ -303,7 +303,7 @@ class UserControlDBTests(unittest.TestCase):
       code = c['code']
       allClassCodes.add(code)
       joinData = { 'code' : code }
-      res = usr.joinClass(joinData, dynamodb, joinEmail)
+      res = usr.joinClass(joinData, dynamodb, joinEmail, teacherRole)
       self.assertFalse(res.hasErrors())
       self.assertEqual(res.payload['code'], code)
 
@@ -320,7 +320,7 @@ class UserControlDBTests(unittest.TestCase):
     badJoinData = { 'bad' : 'data' }
     for c in classes:
       code = c['code']
-      res = usr.joinClass(badJoinData, dynamodb, joinEmail2)
+      res = usr.joinClass(badJoinData, dynamodb, joinEmail2, 'student')
       self.assertTrue(res.hasErrors())
 
     joined = classCtrl.getClassCodesFromUser(dynamodb, joinEmail2)
@@ -407,6 +407,28 @@ class UserControlDBTests(unittest.TestCase):
     self.assertEqual(prod, 'http://app.mentii.me')
     localHost = usr.getProperEnvironment('anything else that doesnt match prod or staging')
     self.assertEqual(localHost, 'http://localhost:3000')
+
+  def test_addDataToClassAndUser(self):
+    userRole = 'student'
+    email = 'jim@mentii.me'
+    classCode = 'abcef12345'
+    title = 'some class'
+    response = ControllerResponse()
+
+    # add student to user table
+    usersTable = db.getTable('users', dynamodb)
+    jsonData = { 'email' : email }
+    db.putItem(jsonData , usersTable)
+
+    # add class to class table
+    classesTable = db.getTable('classes', dynamodb)
+    jsonData = { 'code': classCode, 'title': title }
+    db.putItem(jsonData, classesTable)
+
+    addDataToClassAndUser(classCode, email, response, dynamodb)
+    self.assertFalse(response.hasErrors())
+    self.assertEqual(response.payload['title'], title)
+    self.assertEqual(response.payload['code'], code)
 
 if __name__ == '__main__':
   if __package__ is None:

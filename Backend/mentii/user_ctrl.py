@@ -324,27 +324,38 @@ def getRole(userEmail, dynamoDBInstance):
 
   return userRole
 
-def joinClass(jsonData, dynamoDBInstance, email=None):
+def joinClass(jsonData, dynamoDBInstance, email=None, userRole=None):
   response = ControllerResponse()
   #g will be not be available during testing
   #and email will need to be passed to the function
   if g: # pragma: no cover
     email = g.authenticatedUser['email']
+    userRole = g.authenticatedUser['userRole']
+
   if 'code' not in jsonData.keys() or not jsonData['code']:
     response.addError('Key Missing Error', 'class code missing from data')
+  elif userRole == 'teacher' or userRole == 'admin':
+    if class_ctrl.isCodeInTaughtList(jsonData, dynamoDBInstance):
+      response.addError('Role Error', 'Teachers cannot join their taught class as a student')
+    else:
+      classCode = jsonData['code']
+      addDataToClassAndUser(classCode, email, response, dynamoDBInstance)
   else:
     classCode = jsonData['code']
-    updatedClassCodes = addClassCodeToStudent(email, classCode, dynamoDBInstance)
-    if not updatedClassCodes:
-      response.addError('joinClass call Failed', 'Unable to update user data')
-    else:
-      updatedClass = addStudentToClass(classCode, email, dynamoDBInstance)
-      if not updatedClass:
-        response.addError('joinClass call Failed', 'Unable to update class data')
-      else:
-        response.addToPayload('title', updatedClass['title'])
-        response.addToPayload('code', updatedClass['code'])
+    addDataToClassAndUser(classCode, email, response, dynamoDBInstance)
   return response
+
+def addDataToClassAndUser(classCode, email, response, dynamoDBInstance):
+  updatedClassCodes = addClassCodeToStudent(email, classCode, dynamoDBInstance)
+  if not updatedClassCodes:
+    response.addError('joinClass call Failed', 'Unable to update user data')
+  else:
+    updatedClass = addStudentToClass(classCode, email, dynamoDBInstance)
+    if not updatedClass:
+      response.addError('joinClass call Failed', 'Unable to update class data')
+    else:
+      response.addToPayload('title', updatedClass['title'])
+      response.addToPayload('code', updatedClass['code'])
 
 def leaveClass(jsonData, dynamoDBInstance, email=None):
   response = ControllerResponse()

@@ -157,17 +157,7 @@ def class_list():
 def joinClass():
   status = 200
   dynamoDBInstance = getDatabaseClient()
-  res = ResponseCreation.ControllerResponse()
-  role = g.authenticatedUser['userRole']
-  # if the user is a teacher or admin, check if the class code is in taught list, if in list do ont allow to add code
-  # if no errors then join class
-  if role == 'teacher' or role == 'admin':
-    if not class_ctrl.isCodeInTaughtList(request.json, dynamoDBInstance):
-      res = user_ctrl.joinClass(request.json, dynamoDBInstance)
-    else:
-      res.addError('Role Error', 'Teachers cannot join their taught class as a student')
-  else:
-    res = user_ctrl.joinClass(request.json, dynamoDBInstance)
+  res = user_ctrl.joinClass(request.json, dynamoDBInstance)
   if res.hasErrors():
     status = 400
   return ResponseCreation.createResponse(res, status)

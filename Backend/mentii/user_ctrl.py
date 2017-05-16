@@ -335,7 +335,7 @@ def joinClass(jsonData, dynamoDBInstance, email=None, userRole=None):
   if 'code' not in jsonData.keys() or not jsonData['code']:
     response.addError('Key Missing Error', 'class code missing from data')
   elif userRole == 'teacher' or userRole == 'admin':
-    if class_ctrl.isCodeInTaughtList(jsonData, dynamoDBInstance):
+    if class_ctrl.isCodeInTaughtList(jsonData, dynamoDBInstance, email):
       response.addError('Role Error', 'Teachers cannot join their taught class as a student')
     else:
       classCode = jsonData['code']

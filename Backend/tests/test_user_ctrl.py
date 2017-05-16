@@ -425,10 +425,10 @@ class UserControlDBTests(unittest.TestCase):
     jsonData = { 'code': classCode, 'title': title }
     db.putItem(jsonData, classesTable)
 
-    addDataToClassAndUser(classCode, email, response, dynamodb)
+    usr.addDataToClassAndUser(classCode, email, response, dynamodb)
     self.assertFalse(response.hasErrors())
     self.assertEqual(response.payload['title'], title)
-    self.assertEqual(response.payload['code'], code)
+    self.assertEqual(response.payload['code'], classCode)
 
 if __name__ == '__main__':
   if __package__ is None:

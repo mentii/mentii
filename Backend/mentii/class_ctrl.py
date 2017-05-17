@@ -386,3 +386,13 @@ def updateClassDetails(jsonData, dynamodb, email=None, userRole=None):
     else:
       response.addError('Teacher permissions incorrect', 'Unable to update class details')
   return response
+
+def isCodeInTaughtList(jsonData, dynamoDBInstance, email=None):
+  codeFound = False
+  if g: # pragma: no cover
+    email = g.authenticatedUser['email']
+  classCode = jsonData.get('code', None)
+  classCodes = getTaughtClassCodesFromUser(dynamoDBInstance, email)
+  if classCode in classCodes:
+    codeFound = True
+  return codeFound

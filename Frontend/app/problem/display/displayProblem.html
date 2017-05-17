@@ -3,7 +3,7 @@
     <h2>
       Solving a Problem
     </h2>
-    <div class="lead">
+    <div style="display:none" class="lead">
       <span>Testing Controls:</span>
       <label for="colorToggle">Bad Step Color</label>
         <button (click)="toggleBadStepColor()" id="colorToggle" type="button" class="btn btn-default">
@@ -27,7 +27,7 @@
     <div *ngIf="problem">
       <p class="lead">
         <img id="mentii-avatar" src="../../../images/mentii-avatar2.png" alt="Mentii Logo">
-        I'm working on this problem, can you help me?
+        Hi, I'm Mentii. I'm working on this problem, can you help me?
       </p>
       <div class="panel panel-default" style="max-width: 400px">
         <div class="panel-body">
@@ -44,7 +44,7 @@
             <a type="button" class="buttonPad btn btn-danger btn-sm">
               <i class="fa fa-hand-paper-o fa-lg" aria-hidden="true"></i>
             </a>
-            if you think I made a mistake there
+            if you think I made a mistake
           </p>
         </div>
       </div>

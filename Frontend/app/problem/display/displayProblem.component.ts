@@ -26,11 +26,11 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   problemTree = null;
   problem = null;
   badStepProblem = null;
-  activeStepCount = 0;
+  activeStepCount = 1;
   activeBadStepCount = 0;
   badStepShown = false;
   problemIsComplete = false;
-  problemIndex = 0;
+  problemIndex = 1;
   classCode = '';
   problemCode = '';
 
@@ -44,8 +44,8 @@ export class DisplayProblemComponent implements OnInit, OnDestroy {
   showBadStepColor = false;
   panelClass = 'panel panel-default';
 
-  //default show only one bad step
-  selectedStepLimit = 1;
+  //default bad step limit
+  selectedStepLimit = 3;
   stepLimit = 0;
 
   /* variable to keep track of what step the last correction was so

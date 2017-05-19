@@ -199,12 +199,12 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
         this.newActivity.chapterTitle,
         this.newActivity.sectionTitle)
       .subscribe(
-        data => this.problemsRecived(data.json().payload.problems),
+        data => this.problemsReceived(data.json().payload.problems),
         err => this.handleGetProblemsError()
       );
   }
 
-  problemsRecived(problems) {
+  problemsReceived(problems) {
     this.sampleProblemsLoading = false;
     this.sampleProblems = problems;
   }

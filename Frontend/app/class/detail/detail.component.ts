@@ -97,7 +97,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
 
     this.bookService.getAllBookTitlesAndIds()
       .subscribe(
-        data => this.booksRecived(data.json().payload.books),
+        data => this.booksReceived(data.json().payload.books),
         err => this.handleGetBooksError()
       );
   }
@@ -127,7 +127,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
     this.sampleProblems = [];
   }
 
-  booksRecived(books) {
+  booksReceived(books) {
     this.books = this.books.concat(books);
     this.isModalShown = true;
   }

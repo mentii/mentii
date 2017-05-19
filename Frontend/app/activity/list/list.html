@@ -10,7 +10,7 @@
           </div>
           <div class="panel-body">
             <p>{{activity.description}}</p>
-            <p>Try to mentor mentii through {{activity.problemCount}} problems<span *ngIf="activity.startDate">, before {{activity.startDate}}</span>:</p>
+            <p>Try to mentor mentii through {{activity.problemCount}} problems<span *ngIf="activity.dueDate">, before {{activity.dueDate}}</span>:</p>
             <button class="btn btn-success btn-small" [routerLink]="['/problem/display', classCode, activity.title]"><i class="fa fa-pencil"></i> Mentor mentii</button>
           </div>
         </div>

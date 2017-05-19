@@ -26,10 +26,6 @@ class ControllerResponse:
     value = self.prepForJsonDump(value)
     self.payload[attribute] = value
 
-  def setPayload(self, payload):
-    value = self.prepForJsonDump(payload)
-    self.payload = value
-
   def prepForJsonDump(self, item):
     isDict = None
     isList = None

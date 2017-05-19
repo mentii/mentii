@@ -162,6 +162,16 @@ def joinClass():
     status = 400
   return ResponseCreation.createResponse(res, status)
 
+@app.route('/user/classes/leave', methods=['POST'])
+@auth.login_required
+def leaveClass():
+  status = 200
+  dynamoDBInstance = getDatabaseClient()
+  res = user_ctrl.leaveClass(request.json, dynamoDBInstance)
+  if res.hasErrors():
+    status = 400
+  return ResponseCreation.createResponse(res, status)
+
 @app.route('/teacher/classes/', methods=['GET', 'OPTIONS'])
 @auth.login_required
 @handleOptionsRequest

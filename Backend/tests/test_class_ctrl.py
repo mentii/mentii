@@ -345,7 +345,7 @@ class ClassCtrlDBTests(unittest.TestCase):
       'email': email,
       'classCode':classCode
     }
-    res = class_ctrl.removeStudent(dynamodb, jsonData, userRole)
+    res = class_ctrl.removeStudent(dynamodb, jsonData, userRole=userRole)
     self.assertFalse(res.hasErrors())
 
   def test_removeStudent_role_fail(self):
@@ -360,7 +360,7 @@ class ClassCtrlDBTests(unittest.TestCase):
       'email': email,
       'classCode':classCode
     }
-    res = class_ctrl.removeStudent(dynamodb, jsonData, userRole)
+    res = class_ctrl.removeStudent(dynamodb, jsonData, userRole=userRole)
     self.assertTrue(res.hasErrors())
     self.assertEqual(res.errors[0], {'message': 'Only those with teacher privileges can remove students from classes', 'title': 'Role error'})
 
@@ -404,7 +404,7 @@ class ClassCtrlDBTests(unittest.TestCase):
       'email': email,
       'classCode':'f24abcdc-f09d-4fd6-81f1-026784d6cc9b'
     }
-    res = class_ctrl.removeStudent(dynamodb, jsonData, userRole)
+    res = class_ctrl.removeStudent(dynamodb, jsonData, userRole=userRole)
     self.assertTrue(res.hasErrors())
     self.assertEqual(res.errors[0], {'message': 'Class not found', 'title': 'Failed to remove class from student'})
 
@@ -421,7 +421,7 @@ class ClassCtrlDBTests(unittest.TestCase):
       'email': 'bad@user.me',
       'classCode':classCode
     }
-    res = class_ctrl.removeStudent(dynamodb, jsonData, userRole)
+    res = class_ctrl.removeStudent(dynamodb, jsonData, userRole=userRole)
     self.assertTrue(res.hasErrors())
     self.assertEqual(res.errors[0], {'message': 'Unable to find user', 'title': 'Failed to remove student from class'})
 
@@ -912,6 +912,34 @@ class ClassCtrlDBTests(unittest.TestCase):
     mockClassesTable.get_item.assert_called_once_with(Key={'code': '777'})
     mockClassesTable.put_item.assert_called_once_with(Item={'activities': ['Activity1', 'Activity2', 'Activity3'], 'code': '777', 'title': 'Maths'})
 
+  def test_isCodeInTaughtList(self):
+    print('Running isCodeInTaughtList test case')
+    email = 'teacher@user.com'
+
+    # put user with taught list into db
+    usersTable = db.getTable('users', dynamodb)
+    userJsonData = {
+      'email': email,
+      'userRole': 'teacher',
+      'teaching': ['d26713cc-f02d-4fd6-80f0-026784d1ab9b'] #algebra 1 from mock classes data
+    }
+
+    db.putItem(userJsonData, usersTable)
+
+    # code is in teaching list
+    jsonData = { 'code' :'d26713cc-f02d-4fd6-80f0-026784d1ab9b' }
+    response = class_ctrl.isCodeInTaughtList(jsonData, dynamodb, email)
+    self.assertTrue(response)
+
+    # code is not in teaching list
+    jsonData = { 'code' :'000000-f02d-4fd6-80f0-026784d1ab9b' }
+    response = class_ctrl.isCodeInTaughtList(jsonData, dynamodb, email)
+    self.assertFalse(response)
+
+    # no code given
+    jsonData = {}
+    response = class_ctrl.isCodeInTaughtList(jsonData, dynamodb, email)
+    self.assertFalse(response)
 
 if __name__ == '__main__':
   if __package__ is None:

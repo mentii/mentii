@@ -197,13 +197,16 @@ def getPublicClassList(dynamodb, email=None):
     response.addToPayload('classes', classes)
   return response
 
-def removeStudent(dynamoDBInstance, jsonData, userRole=None):
-  response = ControllerResponse()
+def removeStudent(dynamoDBInstance, jsonData, response=None, userRole=None):
+  currentUserEmail = None
+  if response is None:
+    response = ControllerResponse()
   email = jsonData.get('email')
   classCode = jsonData.get('classCode')
   if g:
     userRole = g.authenticatedUser['userRole']
-  if userRole != 'teacher' and userRole != 'admin':
+    currentUserEmail = g.authenticatedUser['email']
+  if not (userRole == 'teacher' or userRole == 'admin' or currentUserEmail == email):
     response.addError('Role error', 'Only those with teacher privileges can remove students from classes')
   elif email is None or classCode is None:
     response.addError('Failed to remove student from class', 'Invalid data given')
@@ -416,3 +419,13 @@ def addActivity(classCode, jsonData, dynamodb, email=None, userRole=None):
       MentiiLogging.getLogger().error(email + ' is not the teacher of ' + classCode + ', but attempted to add an activity.')
       response.addError('Unable to add activity', 'A permissions error occured')
   return response
+
+def isCodeInTaughtList(jsonData, dynamoDBInstance, email=None):
+  codeFound = False
+  if g: # pragma: no cover
+    email = g.authenticatedUser['email']
+  classCode = jsonData.get('code', None)
+  classCodes = getTaughtClassCodesFromUser(dynamoDBInstance, email)
+  if classCode in classCodes:
+    codeFound = True
+  return codeFound

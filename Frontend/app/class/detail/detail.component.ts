@@ -154,12 +154,12 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
 
     this.bookService.getBook(this.newActivity.bookId)
       .subscribe(
-        data => this.bookRecived(data.json().payload.book),
+        data => this.bookReceived(data.json().payload.book),
         err => this.handleGetBookError()
       );
   }
 
-  bookRecived(book) {
+  bookReceived(book) {
     this.chapterData = book.chapters;
     for (var i = 0; i < this.chapterData.length; i++) {
       this.chapters.push({

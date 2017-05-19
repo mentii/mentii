@@ -356,7 +356,6 @@ def getBookList():
 @auth.login_required
 @handleOptionsRequest
 def getSampleProblems(bookId, chapterTitle, sectionTitle):
-  print bookId, chapterTitle, sectionTitle
   status = 200
   res = ResponseCreation.ControllerResponse()
   role = g.authenticatedUser['userRole']

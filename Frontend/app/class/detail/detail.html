@@ -176,18 +176,14 @@
                 </select>
               </div>
             </div>
-            <!-- show if problem(s) are loading -->
-            <div *ngIf="isLoading">
-              <div class="row">
-                <div class="col-xs-12">
-                  <i class="fa fa-spinner fa-spin"></i> Loading the problem...
-                </div>
-              </div>
-            </div>
-            <!-- show if problem(s) loaded -->
-            <div class="col-xs-12 col-md-4" *ngIf="sampleProblems.length > 0">
+            <div *ngIf="sampleProblems.length > 0 || sampleProblemsLoading" class="col-xs-12 col-md-4">
               <label>Sample Problem(s)</label>
-              <pre><code><div *ngFor="let problem of sampleProblems">{{problem}}</div></code></pre>
+              <!-- show if problem(s) loaded -->
+              <pre *ngIf="sampleProblems.length > 0"><code><div *ngFor="let problem of sampleProblems">{{problem}}</div></code></pre>
+              <!-- show if problem(s) are loading -->
+              <div *ngIf="sampleProblemsLoading">
+                <i class="fa fa-spinner fa-spin"></i> Loading the problems...
+              </div>
             </div>
           </div>
           <div class="modal-footer">

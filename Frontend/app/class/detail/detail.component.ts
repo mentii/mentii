@@ -191,6 +191,7 @@ export class ClassDetailComponent implements OnInit, OnDestroy {
   sectionSelected(sectionIndex) {
     if(sectionIndex == "undefined")
       return;
+    this.sampleProblems = [];
     this.newActivity.sectionTitle = this.sectionData[sectionIndex].title;
     this.sampleProblemsLoading = true;
     this.bookService.getSampleProblems(

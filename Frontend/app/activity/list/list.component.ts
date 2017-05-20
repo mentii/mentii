@@ -11,4 +11,10 @@ export class ActivityListComponent {
   @Input() classCode;
   @Input() isStudentInClass;
   @Input() isTeacher;
+
+  isAfterStartDate(activity) {
+    if (new Date(activity.startDate) <= new Date())
+      return true;
+    return false;
+  }
 }

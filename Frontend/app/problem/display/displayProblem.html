@@ -3,16 +3,16 @@
     <h2>
       Solving a Problem
     </h2>
-    <div class="lead">
-    <span>Testing Controls:</span>
-    <label for="colorToggle">Bad Step Color</label>
+    <div style="display:none" class="lead">
+      <span>Testing Controls:</span>
+      <label for="colorToggle">Bad Step Color</label>
         <button (click)="toggleBadStepColor()" id="colorToggle" type="button" class="btn btn-default">
           <span class="text-danger" *ngIf="showBadStepColor">On</span>
           <span *ngIf="!showBadStepColor">Off</span>
         </button>
       <label for="stepLimit">Bad Step Limit</label>
       <span class="dropdown">
-        <button disabled id="stepLimit" type="button" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button id="stepLimit" type="button" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span *ngIf="selectedStepLimit < 0">&infin;&nbsp;</span>
           <span *ngIf="selectedStepLimit > 0">{{selectedStepLimit}}&nbsp;</span>
           <span class="caret"></span>
@@ -24,9 +24,34 @@
         </ul>
       </span>
     </div>
-    <p class="lead" *ngIf="problem">
-      Equation I'm trying to solve: <em>{{problem}}</em>
-    </p>
+    <div *ngIf="problem">
+      <p class="lead">
+        <img id="mentii-avatar" src="../../../images/mentii-avatar2.png" alt="Mentii Logo">
+        Hi, I'm Mentii. I'm working on this problem, can you help me?
+      </p>
+      <div class="panel panel-default" style="max-width: 400px">
+        <div class="panel-body">
+          <p><strong>At each step:</strong></p>
+          <p>
+            Click
+            <a type="button" class="buttonPad stepAdvance btn btn-sm">
+              &nbsp;<i class="fa fa-thumbs-o-up fa-lg" aria-hidden="true"></i>
+            </a>
+            if you think I should continue
+          </p>
+          <p>
+            Click
+            <a type="button" class="buttonPad btn btn-danger btn-sm">
+              <i class="fa fa-hand-paper-o fa-lg" aria-hidden="true"></i>
+            </a>
+            if you think I made a mistake
+          </p>
+        </div>
+      </div>
+      <p class="lead">
+        <strong><em>{{problem}}</em></strong>
+      </p>
+    </div>
   </div>
 </div>
 <!-- show if the problem has loaded -->
@@ -45,15 +70,27 @@
               {{step.correctStep}}
             </h3>
           </div>
-          <!-- Only show the buttons in the panel for the current step -->
-          <div class="panel-body">
-            <button class="btn btn-primary btn-sm" (click)="showNextStep()" *ngIf="goodStepIndex==activeStepCount">
-              Continue to Next Step
-            </button>
-            <!-- Don't show this button if we are on the first good step, that's the problem declaration -->
-            <button class="btn btn-danger btn-sm" (click)="incorrectGoodStep()" *ngIf="goodStepIndex != 0">
-              This Step is Incorrect
-            </button>
+          <!-- Only show the buttons in the panel for the current step that's not a solution -->
+          <div *ngIf="!problemIsComplete" class="panel-body">
+            <div *ngIf="!stepIsBeingCorrected">
+              <a type="button" class="buttonPad stepAdvance btn btn-sm" (click)="showNextStep()"
+              *ngIf="goodStepIndex==activeStepCount">
+                <i class="fa fa-thumbs-o-up fa-lg" aria-hidden="true"></i>
+              </a>
+
+              <!-- Don't show this button if we are on the first good step, that's the
+                problem declaration. This will be shown on the active step -->
+              <button type="button" class="buttonPad btn btn-danger btn-sm" (click)="incorrectGoodStep(goodStepIndex)"
+                *ngIf="goodStepIndex != 0 && goodStepIndex == activeStepCount">
+                <i class="fa fa-hand-paper-o fa-lg" aria-hidden="true"></i>
+              </button>
+
+              <!-- Only show this button on the non active steps -->
+              <a type="button" class="buttonPad lightBadStep btn btn-sm" (click)="incorrectGoodStep(goodStepIndex)"
+              *ngIf="goodStepIndex != 0 && goodStepIndex > confirmedStepIndex && goodStepIndex != activeStepCount">
+                <i class="fa fa-hand-paper-o fa-lg" aria-hidden="true"></i>
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -62,7 +99,8 @@
     <div *ngFor="let badStep of step.badStepPath; let badStepIndex = index;">
       <div class="row" [attr.data-bad-index]="badStepIndex" *ngIf="goodStepIndex == activeStepCount && step.badStepShown">
         <div class="col-xs-12">
-          <!-- Show all of the bad steps upto the current active bad step, similar to how we show the overall steps in the above loop -->
+          <!-- Show all of the bad steps upto the current active bad step,
+               similar to how we show the overall steps in the above loop -->
           <div class={{panelClass}} *ngIf="badStepIndex <= activeBadStepCount">
             <div class="panel-heading">
               <h3 class="panel-title">
@@ -72,21 +110,32 @@
             <!-- Only show the buttons on the active bad step -->
             <div class="panel-body">
               <div *ngIf="!stepIsBeingCorrected">
-                <button class="btn btn-primary btn-sm" (click)="showNextBadStep()" *ngIf="badStepIndex==activeBadStepCount">
-                  Continue to Next Step
-                </button>
-                <button class="btn btn-danger btn-sm" (click)="incorrectBadStep(badStepIndex,badStep)">
-                  This Step is Incorrect
+                <a type="button" class="buttonPad stepAdvance btn btn-sm" (click)="showNextBadStep()"
+                *ngIf="badStepIndex==activeBadStepCount">
+                  <i class="fa fa-thumbs-o-up fa-lg" aria-hidden="true"></i>
+                </a>
+
+                <!-- Only show this button on the non active bad steps -->
+                <a type="button" class="buttonPad lightBadStep btn btn-sm" (click)="incorrectBadStep(badStepIndex,badStep)"
+                *ngIf="badStepIndex != activeBadStepCount">
+                  <i class="fa fa-hand-paper-o fa-lg" aria-hidden="true"></i>
+                </a>
+
+                <!-- Show this button on the active bad step -->
+                <button class="buttonPad btn btn-danger btn-sm" (click)="incorrectBadStep(badStepIndex,badStep)"
+                *ngIf="badStepIndex == activeBadStepCount">
+                  <i class="fa fa-hand-paper-o fa-lg" aria-hidden="true"></i>
                 </button>
               </div>
-              <form #applyCorrectionForm="ngForm" autocomplete="off" class="form-inline" *ngIf="stepIsBeingCorrected && badStepIndex==0">
+              <form #applyCorrectionForm="ngForm" autocomplete="off" class="form-inline"
+                *ngIf="stepIsBeingCorrected && badStepIndex==0">
                 <div class="form-group">
                   <label for="correction">Correction: </label>
-                  <input type="text" required placeholder="Enter your correction for this step here" class="form-control" id="correction" [(ngModel)]="correctionModel.correction" name="correction" #correction="ngModel" clearPlaceholder>
+                  <input type="text" required placeholder="Enter correction here" class="form-control" id="correction" [(ngModel)]="correctionModel.correction" name="correction" #correction="ngModel" clearPlaceholder>
                 </div>
 
                 <button type='button' class="btn btn-primary" [disabled]="!applyCorrectionForm.form.valid" (click)="applyCorrection()">
-                  Apply Correction
+                  Correct Mentii
                 </button>
                 <button type='button' class="btn btn-default" (click)="cancelCorrection()">
                   Cancel
@@ -105,7 +154,7 @@
   <div class="row">
     <div class="col-xs-12">
       <h4 class="text-success">
-        <i class="fa fa-check"></i> You've Successfully Completed this Problem
+        <i class="fa fa-check"></i> You've Successfully Helped Mentii!
       </h4>
     </div>
   </div>

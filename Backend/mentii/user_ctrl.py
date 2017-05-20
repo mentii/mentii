@@ -8,6 +8,7 @@ from utils import db_utils as dbUtils
 import utils.MentiiLogging as MentiiLogging
 import uuid
 import hashlib
+import class_ctrl as class_ctrl
 from flask import g
 
 def sendForgotPasswordEmail(httpOrigin, jsonData, mailer, dbInstance):
@@ -323,27 +324,53 @@ def getRole(userEmail, dynamoDBInstance):
 
   return userRole
 
-def joinClass(jsonData, dynamoDBInstance, email=None):
+def joinClass(jsonData, dynamoDBInstance, email=None, userRole=None):
   response = ControllerResponse()
   #g will be not be available during testing
   #and email will need to be passed to the function
+  if g: # pragma: no cover
+    email = g.authenticatedUser['email']
+    userRole = g.authenticatedUser['userRole']
+
+  if 'code' not in jsonData.keys() or not jsonData['code']:
+    response.addError('Key Missing Error', 'class code missing from data')
+  elif userRole == 'teacher' or userRole == 'admin':
+    if class_ctrl.isCodeInTaughtList(jsonData, dynamoDBInstance, email):
+      response.addError('Role Error', 'Teachers cannot join their taught class as a student')
+    else:
+      classCode = jsonData['code']
+      addDataToClassAndUser(classCode, email, response, dynamoDBInstance)
+  else:
+    classCode = jsonData['code']
+    addDataToClassAndUser(classCode, email, response, dynamoDBInstance)
+  return response
+
+def addDataToClassAndUser(classCode, email, response, dynamoDBInstance):
+  updatedClassCodes = addClassCodeToStudent(email, classCode, dynamoDBInstance)
+  if not updatedClassCodes:
+    response.addError('joinClass call Failed', 'Unable to update user data')
+  else:
+    updatedClass = addStudentToClass(classCode, email, dynamoDBInstance)
+    if not updatedClass:
+      response.addError('joinClass call Failed', 'Unable to update class data')
+    else:
+      response.addToPayload('title', updatedClass['title'])
+      response.addToPayload('code', updatedClass['code'])
+
+def leaveClass(jsonData, dynamoDBInstance, email=None):
+  response = ControllerResponse()
+  data = None
   if g: # pragma: no cover
     email = g.authenticatedUser['email']
   if 'code' not in jsonData.keys() or not jsonData['code']:
     response.addError('Key Missing Error', 'class code missing from data')
   else:
     classCode = jsonData['code']
-    updatedClassCodes = addClassCodeToStudent(email, classCode, dynamoDBInstance)
-    if not updatedClassCodes:
-      response.addError('joinClass call Failed', 'Unable to update user data')
-    else:
-      updatedClass = addStudentToClass(classCode, email, dynamoDBInstance)
-      if not updatedClass:
-        response.addError('joinClass call Failed', 'Unable to update class data')
-      else:
-        response.addToPayload('title', updatedClass['title'])
-        response.addToPayload('code', updatedClass['code'])
-  return response
+    data = {
+      'email': email,
+      'classCode': classCode
+    }
+  return class_ctrl.removeStudent(dynamoDBInstance, data, response=response, userRole=None)
 
 def addClassCodeToStudent(email, classCode, dynamoDBInstance):
   userTable = dbUtils.getTable('users', dynamoDBInstance)

@@ -47,9 +47,11 @@ def getClass(classCode, dynamoDBInstance, email=None, userRole=None):
     #Else remove students[] from classData, if it exists, because:
     #Only the teacher of a class can get the class's students
     elif 'students' in classData:
+      if email in classData.get('students', []):
+        classData['isStudent'] = True
       del classData['students']
     response.addToPayload('class', classData)
-  return response;
+  return response
 
 def getTaughtClassList(dynamoDBInstance, email=None):
   response = ControllerResponse()
@@ -195,13 +197,16 @@ def getPublicClassList(dynamodb, email=None):
     response.addToPayload('classes', classes)
   return response
 
-def removeStudent(dynamoDBInstance, jsonData, userRole=None):
-  response = ControllerResponse()
+def removeStudent(dynamoDBInstance, jsonData, response=None, userRole=None):
+  currentUserEmail = None
+  if response is None:
+    response = ControllerResponse()
   email = jsonData.get('email')
   classCode = jsonData.get('classCode')
   if g:
     userRole = g.authenticatedUser['userRole']
-  if userRole != 'teacher' and userRole != 'admin':
+    currentUserEmail = g.authenticatedUser['email']
+  if not (userRole == 'teacher' or userRole == 'admin' or currentUserEmail == email):
     response.addError('Role error', 'Only those with teacher privileges can remove students from classes')
   elif email is None or classCode is None:
     response.addError('Failed to remove student from class', 'Invalid data given')
@@ -328,7 +333,7 @@ def updateClassDetails(jsonData, dynamodb, email=None, userRole=None):
 
   if classesTable is None:
     MentiiLogging.getLogger().error('Unable to get classes table in getPublicClassList')
-    response.addError('Failed to get class list', 'A database error occured');
+    response.addError('Failed to get class list', 'A database error occured')
   else:
     # get data from request body
     code = jsonData.get('code')
@@ -381,3 +386,46 @@ def updateClassDetails(jsonData, dynamodb, email=None, userRole=None):
     else:
       response.addError('Teacher permissions incorrect', 'Unable to update class details')
   return response
+
+def isTeacherOfClass(email, userRole, classCode, dynamodb):
+  return ((userRole == 'teacher' or userRole == 'admin')
+    and (classCode in getTaughtClassCodesFromUser(dynamodb, email)))
+
+def addActivity(classCode, jsonData, dynamodb, email=None, userRole=None):
+  response = ControllerResponse()
+  classTable = dbUtils.getTable('classes', dynamodb)
+
+  if classTable is None:
+    MentiiLogging.getLogger().error('Unable to get classes table in getPublicClassList')
+    response.addError('Failed to add activity', 'A database error occured')
+  else:
+    if g: # pragma: no cover
+      email = g.authenticatedUser['email']
+      userRole = g.authenticatedUser['userRole']
+    if isTeacherOfClass(email, userRole, classCode, dynamodb):
+      classData = getClassByCode(classCode, dynamodb)
+      if not classData:
+        response.addError('Failed to add activity', 'A database error occured')
+      else:
+        activities = classData.get('activities',[])
+        activities.append(jsonData)
+        classData['activities'] = activities
+        result = dbUtils.putItem(classData, classTable)
+        if result is None:
+          response.addError('Failed to add activity', 'A database error occured')
+        else:
+          response.addToPayload('Success', 'Activity Added')
+    else:
+      MentiiLogging.getLogger().error(email + ' is not the teacher of ' + classCode + ', but attempted to add an activity.')
+      response.addError('Unable to add activity', 'A permissions error occured')
+  return response
+
+def isCodeInTaughtList(jsonData, dynamoDBInstance, email=None):
+  codeFound = False
+  if g: # pragma: no cover
+    email = g.authenticatedUser['email']
+  classCode = jsonData.get('code', None)
+  classCodes = getTaughtClassCodesFromUser(dynamoDBInstance, email)
+  if classCode in classCodes:
+    codeFound = True
+  return codeFound

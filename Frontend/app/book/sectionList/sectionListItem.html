@@ -7,13 +7,13 @@
   </div>
   <div class="panel-body">
     <div class="form-group">
-      <label for="sectionTitle" class="required">Section Title</label>
+      <label for="title" class="required">Section Title</label>
       <input  type="text"
-              formControlName="sectionTitle"
+              formControlName="title"
               placeholder="Section 1.1 - Addition"
               class="form-control"
               clearPlaceholder/>
-      <span [hidden]="section.controls.sectionTitle.pristine || section.controls.sectionTitle.valid" class="text-danger">
+      <span [hidden]="section.controls.title.pristine || section.controls.title.valid" class="text-danger">
           Section title required
       </span>
     </div>

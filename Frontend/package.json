@@ -1,6 +1,6 @@
 {
   "name": "mentii",
-  "version": "0.13.9",
+  "version": "1.0.0",
   "description": "mentii-frontend",
   "scripts": {
     "start": "tsc && concurrently \"tsc -w\" \"lite-server\" ",

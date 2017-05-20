@@ -45,7 +45,7 @@ def createBook(bookData, dynamoDBInstance, userRole=None):
 def editBook(bookData, dynamoDBInstance):
   response = ControllerResponse()
   # check for required options
-  if 'title' not in bookData.keys() or 'description' not in bookData.keys() or 'bookId' not in bookData.keys():
+  if not bookData or 'title' not in bookData.keys() or 'description' not in bookData.keys() or 'bookId' not in bookData.keys():
     response.addError('Book update failed.', 'Invalid book data given.')
   else:
     # Get books table
@@ -64,18 +64,37 @@ def editBook(bookData, dynamoDBInstance):
   return response
 
 def getBook(bookId, dynamoDBInstance):
-  response = {}
+  book = None
   booksTable = dbUtils.getTable('books', dynamoDBInstance)
   if booksTable is None:
-    MentiiLogging.getLogger().error('Could not get book table') 
+    MentiiLogging.getLogger().error('Could not get book table')
   else:
     bookQuery = {'Key': {'bookId': bookId}}
     res = dbUtils.getItem(bookQuery, booksTable)
     if res is not None and 'Item' in res.keys():
-      response = res['Item']
+      book = res['Item']
     else:
-      MentiiLogging.getLogger().warning('Could not get an item from the books table') 
+      MentiiLogging.getLogger().warning('Could not get an item from the books table')
+  return book
 
+def getBookList(dynamoDBInstance):
+  response = ControllerResponse()
+  booksTable = dbUtils.getTable('books', dynamoDBInstance)
+  if booksTable is None:
+    MentiiLogging.getLogger().error('Could not get book table')
+    response.addError('Failed to get book list', 'A database error occured')
+  else:
+    books = dbUtils.scan(booksTable)
+    bookList = []
+    if books is not None and 'Items' in books:
+      for book in books.get('Items'):
+        bookList.append({
+          'id' : book.get('bookId'),
+          'title' : book.get('title')
+        })
+      response.addToPayload('books', bookList)
+    else:
+      MentiiLogging.getLogger().warning('Could not scan books table')
   return response
 
 def updateBookWithUserData(bookId, chapterTitle, sectionTitle, userId, weights, dynamoDBInstance):
@@ -90,8 +109,8 @@ def updateBookWithUserData(bookId, chapterTitle, sectionTitle, userId, weights, 
             if 'users' not in section.keys():
               section['users'] = {}
             section['users'][userId] = weights
-            break 
-        break 
+            break
+        break
   return not editBook(book, dynamoDBInstance).hasErrors()
 
 
@@ -104,7 +123,7 @@ def getSectionFromBook(bookId, chapterTitle, sectionTitle, dynamoDBInstance):
         sections = chapter.get('sections', [])
         for section in sections:
           if section.get('title', '') == sectionTitle:
-            sectionToUse = section           
+            sectionToUse = section
             break #Break out of section loop
         break #Break out of chapter loop
 

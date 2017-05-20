@@ -25,7 +25,7 @@ export class ChapterListItemComponent {
 
   static buildItem() {
     return new FormGroup({
-      chapterTitle: new FormControl('', [Validators.required]),
+      title: new FormControl('', [Validators.required]),
       sections: SectionListComponent.buildItems()
     });
   }

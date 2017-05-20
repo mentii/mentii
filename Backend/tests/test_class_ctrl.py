@@ -1,5 +1,5 @@
 import unittest
-from mock import MagicMock
+from mock import MagicMock, call
 
 import boto3
 from botocore.exceptions import ClientError
@@ -795,6 +795,122 @@ class ClassCtrlDBTests(unittest.TestCase):
     self.assertTrue('Item' in c.keys())
     self.assertFalse('department' in c['Item'])
     self.assertEqual(c['Item']['classSection'], 'lkjh')
+
+  def test_addActivity(self):
+    print('Running addActivity test')
+
+    #No classes Table
+    mockDB = MagicMock()
+    mockDB.Table.side_effect = ClientError({'Error': {}}, 'error')
+    res = class_ctrl.addActivity( None, None, mockDB)
+    mockDB.Table.assert_called_once_with('classes')
+    self.assertTrue(res.hasErrors())
+
+    #student role
+    mockTable = MagicMock()
+    mockDB = MagicMock()
+    mockDB.Table = MagicMock(return_value = mockTable)
+    res = class_ctrl.addActivity('code', None, mockDB, 'email', 'student')
+    mockDB.Table.assert_called_once_with('classes')
+    self.assertTrue(res.hasErrors())
+
+    #classCode not in taught list as teacher
+    mockClassesTable = MagicMock()
+    mockUsersTable = MagicMock()
+    user = {'Item':{'email':'email', 'teaching': ['777']}}
+    mockUsersTable.get_item = MagicMock(return_value = user)
+    mockDB = MagicMock()
+    mockDB.Table = MagicMock(side_effect = [mockClassesTable, mockUsersTable])
+    res = class_ctrl.addActivity('not777', None, mockDB, 'email', 'teacher')
+    self.assertTrue(res.hasErrors())
+    mockDB.Table.assert_has_calls([ call('classes'), call('users')])
+    self.assertFalse(mockClassesTable.get_item.called)
+    mockUsersTable.get_item.assert_called_once_with(Key={'email': 'email'}, ProjectionExpression='teaching')
+
+    #classCode not in taught list as admin
+    mockClassesTable = MagicMock()
+    mockUsersTable = MagicMock()
+    user = {'Item':{'email':'email', 'teaching': ['777']}}
+    mockUsersTable.get_item = MagicMock(return_value = user)
+    mockDB = MagicMock()
+    mockDB.Table = MagicMock(side_effect = [mockClassesTable, mockUsersTable])
+    res = class_ctrl.addActivity('not777', None, mockDB, 'email', 'admin')
+    self.assertTrue(res.hasErrors())
+    mockDB.Table.assert_has_calls([ call('classes'), call('users')])
+    self.assertFalse(mockClassesTable.get_item.called)
+    mockUsersTable.get_item.assert_called_once_with(Key={'email': 'email'}, ProjectionExpression='teaching')
+
+    #no class data
+    mockClassesTable = MagicMock()
+    classData = None
+    mockClassesTable.get_item = MagicMock(return_value = classData)
+    mockUsersTable = MagicMock()
+    user = {'Item':{'email':'email', 'teaching': ['777']}}
+    mockUsersTable.get_item = MagicMock(return_value = user)
+    mockDB = MagicMock()
+    mockDB.Table = MagicMock(side_effect = [mockClassesTable, mockUsersTable, mockClassesTable])
+    res = class_ctrl.addActivity('777', None, mockDB, 'email', 'admin')
+    self.assertTrue(res.hasErrors())
+    mockDB.Table.assert_has_calls([ call('classes'), call('users'), call('classes')])
+    mockUsersTable.get_item.assert_called_once_with(Key={'email': 'email'}, ProjectionExpression='teaching')
+    mockClassesTable.get_item.assert_called_once_with(Key={'code': '777'})
+
+    #failed put
+    mockClassesTable = MagicMock()
+    classData = {'Item':{'code':'777', 'title':'Maths'}}
+    mockClassesTable.get_item = MagicMock(return_value = classData)
+    mockClassesTable.put_item = MagicMock(return_value = None)
+    mockUsersTable = MagicMock()
+    user = {'Item':{'email':'email', 'teaching': ['777']}}
+    mockUsersTable.get_item = MagicMock(return_value = user)
+    mockDB = MagicMock()
+    mockDB.Table = MagicMock(side_effect = [mockClassesTable, mockUsersTable, mockClassesTable])
+    res = class_ctrl.addActivity('777', 'ActivityData', mockDB, 'email', 'admin')
+    self.assertTrue(res.hasErrors())
+    mockDB.Table.assert_has_calls([ call('classes'), call('users'), call('classes')])
+    mockUsersTable.get_item.assert_called_once_with(Key={'email': 'email'}, ProjectionExpression='teaching')
+    mockClassesTable.get_item.assert_called_once_with(Key={'code': '777'})
+    mockClassesTable.put_item.assert_called_once_with(Item={'activities': ['ActivityData'], 'code': '777', 'title': 'Maths'})
+
+    #success, no existing activities
+    mockClassesTable = MagicMock()
+    classData = {'Item':{'code':'777', 'title':'Maths'}}
+    mockClassesTable.get_item = MagicMock(return_value = classData)
+    mockClassesTable.put_item = MagicMock(return_value = 'NotNone')
+    mockUsersTable = MagicMock()
+    user = {'Item':{'email':'email', 'teaching': ['777']}}
+    mockUsersTable.get_item = MagicMock(return_value = user)
+    mockDB = MagicMock()
+    mockDB.Table = MagicMock(side_effect = [mockClassesTable, mockUsersTable, mockClassesTable])
+    res = class_ctrl.addActivity('777', 'ActivityData', mockDB, 'email', 'admin')
+    self.assertFalse(res.hasErrors())
+    self.assertTrue(res.payload)
+    self.assertTrue('Success' in res.payload)
+    self.assertEqual(res.payload['Success'], 'Activity Added')
+    mockDB.Table.assert_has_calls([ call('classes'), call('users'), call('classes')])
+    mockUsersTable.get_item.assert_called_once_with(Key={'email': 'email'}, ProjectionExpression='teaching')
+    mockClassesTable.get_item.assert_called_once_with(Key={'code': '777'})
+    mockClassesTable.put_item.assert_called_once_with(Item={'activities': ['ActivityData'], 'code': '777', 'title': 'Maths'})
+
+    #success, existing activities
+    mockClassesTable = MagicMock()
+    classData = {'Item':{'code':'777', 'title':'Maths', 'activities': ['Activity1', 'Activity2']}}
+    mockClassesTable.get_item = MagicMock(return_value = classData)
+    mockClassesTable.put_item = MagicMock(return_value = 'NotNone')
+    mockUsersTable = MagicMock()
+    user = {'Item':{'email':'email', 'teaching': ['777']}}
+    mockUsersTable.get_item = MagicMock(return_value = user)
+    mockDB = MagicMock()
+    mockDB.Table = MagicMock(side_effect = [mockClassesTable, mockUsersTable, mockClassesTable])
+    res = class_ctrl.addActivity('777', 'Activity3', mockDB, 'email', 'admin')
+    self.assertFalse(res.hasErrors())
+    self.assertTrue(res.payload)
+    self.assertTrue('Success' in res.payload)
+    self.assertEqual(res.payload['Success'], 'Activity Added')
+    mockDB.Table.assert_has_calls([ call('classes'), call('users'), call('classes')])
+    mockUsersTable.get_item.assert_called_once_with(Key={'email': 'email'}, ProjectionExpression='teaching')
+    mockClassesTable.get_item.assert_called_once_with(Key={'code': '777'})
+    mockClassesTable.put_item.assert_called_once_with(Item={'activities': ['Activity1', 'Activity2', 'Activity3'], 'code': '777', 'title': 'Maths'})
 
   def test_isCodeInTaughtList(self):
     print('Running isCodeInTaughtList test case')

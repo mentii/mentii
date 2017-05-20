@@ -1,8 +1,8 @@
-<div class="row">
   <!-- Only show if the api is currently loading -->
   <div class="col-xs-12 col-sm-offset-1 col-sm-10" *ngIf="isLoading">
     <i class="fa fa-spinner fa-spin"></i> Loading the class...
   </div>
+
   <!-- Only show if the api done loading -->
   <div class="col-xs-12 col-md-8" *ngIf="!isLoading && !editMode">
     <div class="row">
@@ -27,6 +27,11 @@
     <div class="row">
       <div class="col-xs-12">
         <h3>Activities</h3>
+        <div class="form-group" *ngIf="showTeacherView">
+          <button type="button" class="btn btn-primary"  (click)="showActivityModal()">
+            Add New Activity
+          </button>
+        </div>
         <activity-list [activities]="model.activities" [classCode]="model.code" [isStudentInClass]="isStudentInClass" [isTeacher]="showTeacherView"></activity-list>
       </div>
     </div>
@@ -101,6 +106,95 @@
             <user-list [classCode]="model.code" [users]="model.students"></user-list>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Add Activity Modal -->
+<div *ngIf="isModalShown" [config]="{ show: true }" (onHidden)="onHideActivityModal()" bsModal #addActivityModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Add New Activity</h4>
+        <button type="button" class="close pull-right" (click)="hideActivityModal()">
+          <small>Cancel</small>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #createActivityForm="ngForm" autocomplete="off">
+          <div class="form-group">
+            <label class="required">Name</label>
+            <input type="text" required placeholder="Week 1 Problems" [(ngModel)]="newActivity.title" name="title" class="form-control" clearPlaceholder>
+          </div>
+          <div class="form-group">
+            <label>Description (Optional)</label>
+            <input type="text" placeholder="These problems cover addition and subtraction." [(ngModel)]="newActivity.description" name="description" class="form-control" clearPlaceholder>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 col-md-4">
+              <div class="form-group">
+                <label class="required"># of Problems to Complete</label>
+                <input type="number" required pattern="[1-9][0-9]*" min="1" step="1" value="5" [(ngModel)]="newActivity.problemCount" name="problemCount" class="form-control">
+              </div>
+            </div>
+            <div class="col-xs-12 col-md-4">
+              <div class="form-group">
+                <label>Start Date (Optional)</label>
+                <input type="date" class="form-control" [min]="minActivityStartDate" [(ngModel)]="newActivity.startDate" name="startDate" (change)=startDateSelected()>
+              </div>
+            </div>
+            <div class="col-xs-12 col-md-4">
+              <div class="form-group">
+                <label>Due Date (Optional)</label>
+                <input type="date" class="form-control" [min]="newActivity.startDate" [(ngModel)]="newActivity.dueDate" name="dueDate">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 col-md-4">
+              <div class="form-group">
+                <label class="required">Book</label>
+                <select class="form-control" [(ngModel)]="newActivity.bookId" #newActivity.bookId="ngModel" name="book" (change)="bookSelected()">
+                  <option *ngFor="let book of books" [value]="book.id" [disabled]="book.id === undefined">{{book.title}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-xs-12 col-md-4">
+              <div class="form-group">
+                <label class="required">Chapter</label>
+                <select class="form-control" name="chapter" [disabled]="chapters.length < 2" (change)="chapterSelected($event.target.value)">
+                  <option *ngFor="let chapter of chapters; let i = index" [value]="chapter.id">{{chapter.title}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-xs-12 col-md-4">
+              <div class="form-group">
+                <label class="required">Section</label>
+                <select class="form-control" name="section" [disabled]="sections.length < 2" (change)="sectionSelected($event.target.value)">
+                  <option *ngFor="let section of sections; let i = index" [value]="section.id">{{section.title}}</option>
+                </select>
+              </div>
+            </div>
+            <div *ngIf="sampleProblems.length > 0 || sampleProblemsLoading" class="col-xs-12 col-md-4">
+              <label>Sample Problem(s)</label>
+              <!-- show if problem(s) loaded -->
+              <pre *ngIf="sampleProblems.length > 0"><code><div *ngFor="let problem of sampleProblems">{{problem}}</div></code></pre>
+              <!-- show if problem(s) are loading -->
+              <div *ngIf="sampleProblemsLoading">
+                <i class="fa fa-spinner fa-spin"></i> Loading the problems...
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <p class="text-danger">* Required Fields</p>
+            <div class="form-group">
+              <button type="button" class="btn btn-primary pull-right" [disabled]="!createActivityForm.form.valid || !newActivity.bookId || !newActivity.chapterTitle || !newActivity.sectionTitle" (click)="addActivity()" >
+                Add New Activity
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   </div>

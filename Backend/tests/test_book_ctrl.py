@@ -1,4 +1,6 @@
 import unittest
+from mock import MagicMock
+
 import boto3
 from botocore.exceptions import ClientError
 import sys
@@ -162,10 +164,17 @@ class BookControlDBTests(unittest.TestCase):
   def test_getBook(self):
     bookId = 'd6742cc-f02d-4fd6-80f0-026784g1ab9b'
     badBook = 'foobar'
-    response = book_ctrl.getBook(bookId, dynamodb)
-    self.assertTrue(len(response) != 0)
-    response = book_ctrl.getBook(badBook, dynamodb)
-    self.assertTrue(len(response) == 0)
+    book = book_ctrl.getBook(bookId, dynamodb)
+    self.assertEqual(book.get('bookId'), bookId)
+    book = book_ctrl.getBook(badBook, dynamodb)
+    self.assertIsNone(book)
+
+  def test_getBook_noBookTable(self):
+    mockDB = MagicMock()
+    mockDB.Table.side_effect = ClientError({'Error': {}}, 'error')
+    book = book_ctrl.getBook('id', mockDB)
+    mockDB.Table.assert_called_once_with('books')
+    self.assertIsNone(book)
 
   def test_editBook(self):
     print('Running editBook test case')
@@ -219,7 +228,7 @@ class BookControlDBTests(unittest.TestCase):
         }
       ]
     }
-    
+
     #Edit the existing book
     book_ctrl.editBook(bookData, dynamodb)
     bookId = 'd6742cc-f02d-4fd6-80f0-026784g1ab9b'
@@ -232,17 +241,16 @@ class BookControlDBTests(unittest.TestCase):
     bookId = 'd6742cc-f02d-4fd6-80f0-026784g1ab9b'
     chapterTitle = 'Chapter One'
     sectionTitle = 'Section One'
-    
+
     res = book_ctrl.getSectionFromBook(bookId, chapterTitle, sectionTitle, dynamodb)
     self.assertNotEqual(res, {})
-    
+
     chapterTitle2 = 'Non Existant'
-    
+
     res = book_ctrl.getSectionFromBook(bookId, chapterTitle2, sectionTitle, dynamodb)
     self.assertEqual(res, {})
-  
 
-  def test_updateBookWithUserData(self): 
+  def test_updateBookWithUserData(self):
     print('Running updateBookWithUserData test case')
     bookId = 'd6742cc-f02d-4fd6-80f0-026784g1ab9b'
     chapterTitle = 'Chapter One'
@@ -253,6 +261,49 @@ class BookControlDBTests(unittest.TestCase):
     self.assertTrue(success)
     res = book_ctrl.getSectionFromBook(bookId, chapterTitle, sectionTitle, dynamodb)
     self.assertTrue(res['users'][userId] == weights)
-    
 
+  def test_getBookList(self):
+    #No Book Table
+    mockDB = MagicMock()
+    mockDB.Table.side_effect = ClientError({'Error': {}}, 'error')
+    res = book_ctrl.getBookList(mockDB)
+    mockDB.Table.assert_called_once()
+    self.assertTrue(res.hasErrors())
 
+    #books is None
+    mockTable = MagicMock()
+    mockTable.scan = MagicMock(return_value = None)
+    mockDB = MagicMock()
+    mockDB.Table = MagicMock(return_value = mockTable)
+    res = book_ctrl.getBookList(mockDB)
+    mockTable.scan.assert_called_once()
+    mockDB.Table.assert_called_once()
+    self.assertFalse(res.payload)
+
+    #no items in books
+    noItems = {'otherAttribute':'noBooks'}
+    mockTable = MagicMock()
+    mockTable.scan = MagicMock(return_value = noItems)
+    mockDB = MagicMock()
+    mockDB.Table = MagicMock(return_value = mockTable)
+    res = book_ctrl.getBookList(mockDB)
+    mockTable.scan.assert_called_once()
+    mockDB.Table.assert_called_once()
+    self.assertFalse(res.payload)
+
+    #got books
+    books = {'Items':[{'id':'777', 'title':'TheGoodBook', 'otherAttribute':'dontInclude'}]}
+    mockTable = MagicMock()
+    mockTable.scan = MagicMock(return_value = books)
+    mockDB = MagicMock()
+    mockDB.Table = MagicMock(return_value = mockTable)
+    res = book_ctrl.getBookList(mockDB)
+    mockTable.scan.assert_called_once()
+    mockDB.Table.assert_called_once()
+    self.assertTrue(res.payload)
+    self.assertTrue('books' in res.payload)
+    bookList = res.payload['books']
+    self.assertEqual(len(bookList), 1)
+    self.assertTrue('title' in bookList[0])
+    self.assertTrue('id' in bookList[0])
+    self.assertFalse('otherAttribute' in bookList[0])

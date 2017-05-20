@@ -25,7 +25,7 @@ export class SectionListItemComponent {
 
   static buildItem() {
     return new FormGroup({
-      sectionTitle : new FormControl('', [Validators.required]),
+      title : new FormControl('', [Validators.required]),
       problems: ProblemListComponent.buildItems()
     });
   }

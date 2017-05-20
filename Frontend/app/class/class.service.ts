@@ -7,11 +7,12 @@ import 'rxjs/add/operator/catch';
 import { NgForm } from '@angular/forms';
 
 // Services
-import { AuthHttp } from '../utils/AuthHttp.service'
+import { AuthHttp } from '../utils/AuthHttp.service';
 // Utilities
-import { MentiiConfig } from '../mentii.config'
+import { MentiiConfig } from '../mentii.config';
 // Models
 import { ClassModel } from './class.model';
+import { ActivityModel } from '../activity/activity.model';
 
 @Injectable()
 export class ClassService {
@@ -94,5 +95,22 @@ export class ClassService {
     return this.authHttp.post(updateClassDetailsUrl, body)
     .map((res:Response) => res)
     .catch((error:any) => Observable.throw(error));
+  }
+
+  addActivity(classCode: string, newActivity: ActivityModel):Observable<any> {
+    let addActivityUrl = this.mentiiConfig.getRootUrl() + '/class/'+classCode+'/activities';
+    let body = {
+      'title': newActivity.title,
+      'description' : newActivity.description,
+      'problemCount' : newActivity.problemCount,
+      'startDate': newActivity.startDate,
+      'dueDate': newActivity.dueDate,
+      'bookId': newActivity.bookId,
+      'chapterTitle': newActivity.chapterTitle,
+      'sectionTitle': newActivity.sectionTitle
+    }
+    return this.authHttp.post(addActivityUrl, body)
+      .map((res:Response) => res)
+      .catch((error:any) => Observable.throw(error));
   }
 }

@@ -1,4 +1,4 @@
-import json
+import json, decimal
 from flask import Response, g
 import utils.MentiiLogging as MentiiLogging
 
@@ -44,6 +44,8 @@ class ControllerResponse:
       for i in iterator:
         #recursive call
         item[i] = self.prepForJsonDump(item[i])
+    elif isinstance(item, decimal.Decimal): #also numbers cant be dumped ??!
+      item = str(item)
     return item
 
   def hasErrors(self):

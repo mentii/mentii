@@ -316,6 +316,83 @@ def createBook():
       status = 400
   return ResponseCreation.createResponse(res,status)
 
+@app.route('/book/<bookId>', methods=['GET'])
+@auth.login_required
+def getBook(bookId):
+  status = 200
+  res = ResponseCreation.ControllerResponse()
+  role = g.authenticatedUser['userRole']
+  if role != "teacher" and role != "admin" :
+    res.addError('Role error', 'Only those with teacher privileges can get a book.')
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    book = book_ctrl.getBook(bookId, dynamoDBInstance)
+    if not book:
+      res.addError('Data error', 'Unable to retrive book.')
+      status = 400
+    else:
+      res.addToPayload('book', book)
+  return ResponseCreation.createResponse(res,status)
+
+@app.route('/books', methods=['GET', 'OPTIONS'])
+@auth.login_required
+@handleOptionsRequest
+def getBookList():
+  status = 200
+  res = ResponseCreation.ControllerResponse()
+  role = g.authenticatedUser['userRole']
+  if role != "teacher" and role != "admin" :
+    res.addError('Role error', 'Only those with teacher privileges can get all books.')
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    res = book_ctrl.getBookList(dynamoDBInstance)
+    if res.hasErrors():
+      status = 400
+  return ResponseCreation.createResponse(res,status)
+
+@app.route('/book/<bookId>/<chapterTitle>/<sectionTitle>/', methods=['GET', 'OPTIONS'])
+@auth.login_required
+@handleOptionsRequest
+def getSampleProblems(bookId, chapterTitle, sectionTitle):
+  status = 200
+  res = ResponseCreation.ControllerResponse()
+  role = g.authenticatedUser['userRole']
+  if role != "teacher" and role != "admin" :
+    res.addError('Role error', 'Only those with teacher privileges can get sample problems from a book.')
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    problemCount = 4
+    sampleProblems = set() #prevent duplicates
+    for _ in range(problemCount):
+      template = problem_ctrl.getProblemFromBook( bookId, chapterTitle, sectionTitle, g.authenticatedUser['email'], dynamoDBInstance)[1]
+      sampleProblems.add(algebra.getProblem(template))
+    sampleProblems = list(sampleProblems)
+    if 'Bad Problem' in sampleProblems:
+      status = 400
+    else:
+      res.addToPayload('problems', sampleProblems)
+  return ResponseCreation.createResponse(res, status)
+
+@app.route('/class/<classCode>/activities', methods=['POST', 'OPTIONS'])
+@auth.login_required
+@handleOptionsRequest
+def addActivity(classCode):
+  status = 200
+  res = ResponseCreation.ControllerResponse()
+  role = g.authenticatedUser['userRole']
+  if role != 'admin' and role != 'teacher':
+    res.addError('Role Error', 'Only teachers or admins can update a class\' activities')
+    status = 403
+  else:
+    dynamoDBInstance = getDatabaseClient()
+    res = class_ctrl.addActivity(classCode, request.json, dynamoDBInstance)
+    if res.hasErrors():
+      status = 400
+  return ResponseCreation.createResponse(res,status)
+
 @app.route('/class/details/update', methods=['POST', 'OPTIONS'])
 @auth.login_required
 @handleOptionsRequest

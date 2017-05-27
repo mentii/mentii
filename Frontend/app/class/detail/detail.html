@@ -189,7 +189,7 @@
           <div class="modal-footer">
             <p class="text-danger">* Required Fields</p>
             <div class="form-group">
-              <button type="button" class="btn btn-primary pull-right" [disabled]="!createActivityForm.form.valid || !newActivity.bookId || !newActivity.chapterTitle || !newActivity.sectionTitle" (click)="addActivity()" >
+              <button type="button" [routerLink]="['/class', model.code]" class="btn btn-primary pull-right" [disabled]="!createActivityForm.form.valid || !newActivity.bookId || !newActivity.chapterTitle || !newActivity.sectionTitle" (click)="addActivity()" >
                 Add New Activity
               </button>
             </div>
